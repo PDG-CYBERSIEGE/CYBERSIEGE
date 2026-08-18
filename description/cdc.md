@@ -1,8 +1,28 @@
-
-
 # Cahier des charges
 
+
 ## Introduction
+
+### Contexte
+
+Ce projet est réalisé dans le cadre de l’unité d’enseignement Projet de groupe (PDG) à la HEIG-VD. Cette unité a pour objectif, à travers la réalisation en équipe d’une application de taille importante, de mettre en pratique les compétences acquises durant la formation ainsi qu'acquérir de manière indépendante des connaissances sur des sujets nouveaux.
+
+### Objectif
+
+#### Principe du jeu
+
+L’objectif du projet est de développer un jeu multijoueur en ligne 1VS1 inspiré du principe d’Angry Birds. Deux joueurs s’affrontent dans une partie composée de plusieurs manches, le premier joueur à en remporter la majorité remportant la partie. Chaque manche se déroule en deux phases : une phase de construction, durant laquelle chaque joueur crée une structure destinée à protéger son [Roi cochon], puis une phase de bataille, durant laquelle les joueurs utilisent différents types [d’oiseaux] qu’ils catapultent afin de tenter de détruire la structure adverse. Le premier joueur à détruire le [Roi cochon] adverse remporte la manche.
+
+Lors de la phase de construction, les joueurs disposent de différents types de blocs, chacun possédant des caractéristiques propres qui influencent leur comportement lors des collisions. Pendant la phase de bataille, les collisions subies par les blocs leur infligent des dégâts en fonction du type et de la vitesse de l’impact. Leurs points de vie diminuent en conséquence et un bloc est détruit lorsque ceux-ci atteignent zéro.
+
+#### Réalisation
+
+La réalisation du jeu nécessite notamment la mise en place d’une simulation physique (aidée par un framework spécialisé) permettant de gérer les mouvements des oiseaux et des blocs, ainsi que les collisions et leurs conséquences. Cette simulation doit prendre en compte les caractéristiques des différents éléments afin de reproduire de manière cohérente leurs interactions.
+
+Le jeu repose également sur un serveur responsable de la gestion de l’état des parties en validant les actions effectuées par les joueurs. Il constitue ainsi la source de vérité du jeu et maintient un état cohérent entre les deux clients, notamment lors des échanges temps réel.
+
+Enfin, le projet comprend la gestion des comptes utilisateurs, l’authentification, la mise en place d’un système de file d'attente pour trouver une partie et la gestion des parties jusqu’à avoir un gagnant.
+
 
 ## Besoins
 
@@ -46,6 +66,7 @@ Phase 2 : bataille
 Fin de la partie
     - Une fois un joueur victorieux, un écran de victoire (ou de défaite) est affiché chez chacun des joueurs
     - L'écran de victoire/défaite permet de relancer une partie ou de retourner au menu
+    - En cas de déconnection, le joueur restant gagne la partie
 
 
 ### Non fonctionnel
