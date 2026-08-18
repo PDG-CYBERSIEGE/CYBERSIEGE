@@ -104,3 +104,14 @@ Nous avons choisi GitHub comme gestionnaire de versions plutôt que GitLab ou Bi
 
 Enfin, afin de garantir un environnement reproductible et stable, nous avons décidé d'utiliser Docker et Docker Compose, permettant de lancer notre application et notre base de données de manière reproductible et coordonnée, facilitant ainsi le déploiement de l'application.
 
+## Processus de travail
+
+Le développement du projet suivra une approche agile pour permettre une progression régulière et faciliter l’adaptation aux problèmes ou changements rencontrés pedant la réalisation.
+
+Le travail sera organisé en sprints de trois jours. Au début de chaque sprint, les tâches à réaliser seront sélectionnées à partir du backlog en fonction de leur priorité et de l’avancement du projet. Les tâches seront ensuite réparties entre les membres du groupe et suivies au cours du sprint.
+
+Le suivi des tâches sera effectué avec un tableau Kanban permettant de visualiser leur état d’avancement (Backlog, Doing, Review, Done) et de répartir le travail entre les membres du groupe.
+
+À la fin de chaque sprint, une réunion permettra de faire le point sur les tâches réalisées, celles encore en cours et les éventuelles difficultés rencontrées.
+
+La gestion du code source reposera sur Git, avec GitHub comme plateforme de collaboration, et le modèle Git Flow. Une branche dev sera utilisée pour intégrer les fonctionnalités en cours de développement, tandis qu'une branche main contiendra uniquement les versions validées. Chaque fonctionnalité ou correction sera développée sur une branche dédiée, puis revue et testée avant d’être intégrée à dev. Les versions validées seront ensuite intégrées à main.
