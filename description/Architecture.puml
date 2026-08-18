@@ -1,0 +1,16 @@
+@startuml
+package "Frontend" {
+  [Frontend - LibGDX/Quarkus]
+}
+
+package "Serveur" {
+  [Backend - Quarkus]
+}
+
+database "PostgreSQL" {
+  [Base de données]
+}
+
+[Frontend - LibGDX/Quarkus] --> [Backend - Quarkus] : CRUD / WebSocket
+[Backend - Quarkus] --> [Base de données] : Hibernate
+@enduml

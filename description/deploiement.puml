@@ -1,0 +1,17 @@
+@startuml
+node "Poste client" {
+  [Frontend - LibGDX]
+}
+
+node "Serveur (Docker)" {
+  node "Container Backend" {
+    [Quarkus]
+  }
+  node "Container DB" {
+    database "PostgreSQL"
+  }
+}
+
+[Frontend - LibGDX] -left-> [Quarkus] : HTTP / WebSocket
+[Quarkus] --> PostgreSQL : JDBC
+@enduml

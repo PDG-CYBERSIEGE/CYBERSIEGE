@@ -60,3 +60,25 @@ Fin de la partie
 - Les mots de passes doivent être hashé grâce à une librairie digne des standarts de l'industrie
 - le serveur doit être protegé contre les injections sql
 - rediriger les requêtes http vers https
+
+
+## Architecture
+### Description préliminaire de l'architecture
+
+Notre application sera composée d'un frontend permettant d'afficher et de faire tourner le jeu côté client, ainsi que d'un serveur backend qui servira de source unique de vérité, assurera la persistance des données nécessaires et gérera l'authentification des utilisateurs. Une base de données relationnelle sera également nécessaire afin de stocker les informations utiles au bon fonctionnement de l'application, comme les comptes utilisateurs. Un ORM sera par ailleurs utilisé afin de résoudre les problèmes de différence de structure entre les données manipulées par le backend et celles stockées en base de données (impedance mismatch). Enfin, un pipeline CI/CD permettra d'automatiser les tâches redondantes telles que les tests et le déploiement.
+
+### Description des choix techniques
+
+![architecture](Architecture.png)
+
+Nous avons tout d'abord décidé de travailler avec le langage Java, ce qui a orienté l'ensemble de nos choix techniques.
+
+Concernant le frontend, l'objectif était de choisir un outil permettant de faire le rendu du jeu. Plusieurs options existent, notamment des bibliothèques graphiques comme PixiJS, ou des moteurs de jeu (game engines) comme Phaser, Unity, Godot ou LibGDX. Par souci de simplicité, nous nous sommes orientés vers un moteur de jeu, qui met à disposition de nombreuses fonctionnalités telles qu'une boucle de gameplay et un système de physique, contrairement aux bibliothèques de rendu qui se limitent à l'affichage de sprites. Nous avons également souhaité privilégier un outil bénéficiant d'une large communauté, afin de disposer d'une documentation riche et de nombreux exemples facilitant son apprentissage. Enfin, comme mentionné précédemment, nous avons privilégié une solution permettant de coder en Java. Nous avons donc choisi le framework LibGDX, qui nous permet de faire le rendu du jeu en temps réel côté client, ainsi que de communiquer avec notre backend via HTTP (.NET), pour effectuer des requêtes CRUD ou établir des connexions WebSocket selon nos besoins.
+
+Notre backend a pour rôle de valider les entrées utilisateur, de gérer les différents accès à nos endpoints, ainsi que l'authentification des utilisateurs et la persistance des données. Pour cela, nous avions le choix entre plusieurs frameworks tels que Quarkus, Spring Boot ou Play. Nous nous sommes orientés vers un framework que nous connaissions déjà et avec lequel nous avions de l'expérience : Quarkus, qui répond à l'ensemble de nos besoins.
+
+Pour notre base de données, nous avons également opté pour une technologie que nous maîtrisions déjà, à savoir PostgreSQL comme SGBD. Pour faire le lien entre notre backend et notre base de données, nous avons choisi un ORM que nous avions déjà utilisé, Hibernate, plutôt que de nous tourner vers d'autres outils que nous ne connaissions pas mais qui auraient pu offrir un résultat similaire, comme JOOQ par exemple.
+
+Nous avons choisi GitHub comme gestionnaire de versions plutôt que GitLab ou Bitbucket. C'est une solution qui nous semblait la plus simple à mettre en œuvre et avec laquelle nous avions déjà de l'expérience, notamment via GitHub Actions, que nous utiliserons pour mettre en place notre pipeline CI/CD. En ce qui concerne les tests nous allons utiliser Junit pour tester la logique de notre application et afin de s'assurer de la qualité du code nous allons utiliser Jacoco pour avoir un appercu du coverage des nos tests.
+
+Enfin, afin de garantir un environnement reproductible et stable, nous avons décidé d'utiliser Docker et Docker Compose, permettant de lancer notre application et notre base de données de manière reproductible et coordonnée, facilitant ainsi le déploiement de l'application.
