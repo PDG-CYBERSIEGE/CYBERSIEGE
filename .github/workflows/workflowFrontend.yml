@@ -1,0 +1,159 @@
+name: workflowFrontend.yml (LibGDX)
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/workflowFrontend.yml'
+  pull_request:
+    branches: ['**']
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/workflowFrontend.yml'
+
+defaults:
+  run:
+    working-directory: frontend
+
+jobs:
+  lint: # check du formatage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-frontend-${{ hashFiles('frontend/**/*.gradle*', 'frontend/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-frontend-
+
+      - name: Rendre gradlew exécutable
+        run: chmod +x ./gradlew
+
+      - name: Vérifier le formatage (Spotless)
+        run: ./gradlew spotlessCheck --no-daemon
+
+
+  test: # check des tests
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-frontend-${{ hashFiles('frontend/**/*.gradle*', 'frontend/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-frontend-
+
+      - name: Rendre gradlew exécutable
+        run: chmod +x ./gradlew
+
+      - name: Build + Tests
+        run: ./gradlew build test --no-daemon
+
+  coverage: # check du coverage
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-frontend-${{ hashFiles('frontend/**/*.gradle*', 'frontend/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-frontend-
+
+      - name: Rendre gradlew exécutable
+        run: chmod +x ./gradlew
+
+      - name: Générer le rapport de coverage
+        run: ./gradlew test jacocoTestReport --no-daemon
+
+      - name: Upload rapport HTML JaCoCo
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-jacoco-report
+          path: 'frontend/**/build/reports/jacoco/test/html/'
+          retention-days: 30
+
+      - name: Publier le résumé de coverage
+        uses: madrapps/jacoco-report@v1.7.1
+        with:
+          paths: 'frontend/**/build/reports/jacoco/test/jacocoTestReport.xml'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 0
+          min-coverage-changed-files: 0
+          title: 'Coverage — Frontend'
+
+  documentation: # check de la documentation
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-frontend-${{ hashFiles('frontend/**/*.gradle*', 'frontend/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-frontend-
+
+      - name: Rendre gradlew exécutable
+        run: chmod +x ./gradlew
+
+        # si il y a des problèmes pour la javadoc avec libGDX, regarder si les pages html sont bien exclu du test dans le gradle du frontend sinon ca plante
+      - name: Générer la Javadoc (échoue si commentaires manquants/invalides)
+        run: ./gradlew javadoc --no-daemon
+
+      - name: Upload Javadoc générée
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-javadoc
+          path: 'frontend/**/build/docs/javadoc/'
+          retention-days: 30
