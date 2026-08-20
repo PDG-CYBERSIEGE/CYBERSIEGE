@@ -4,8 +4,16 @@
 
 ## Lancement de l'application
 
-Pour lancer l'app vous avez juste a pull la dernière version et faire : 
+Pour lancer l'app vous devez avoir un personnal access token pour read:packages, 
+si vous avez ca alors vous pourrez vous connecter avec
 ```cmd
+docker login ghcr.io
+```
+
+une fois connecter avec votre username et votre clé vous pouvez
+
+```cmd
+docker compose pull
 docker compose up
 ```
 
