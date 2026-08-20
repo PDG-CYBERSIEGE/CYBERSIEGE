@@ -114,11 +114,11 @@ Enfin, afin de garantir un environnement reproductible et stable, nous avons dé
 
 Le développement du projet suivra une approche agile pour permettre une progression régulière et faciliter l’adaptation aux problèmes ou changements rencontrés pedant la réalisation.
 
-Le travail sera organisé en sprints de trois jours. Au début de chaque sprint, les tâches à réaliser seront sélectionnées à partir du backlog en fonction de leur priorité et de l’avancement du projet. Les tâches seront ensuite réparties entre les membres du groupe et suivies au cours du sprint.
+Le travail sera organisé en sprints de trois jours. Un backlog sera constitué des features qui découlent des user stories liées aux personas du projet. Au début de chaque sprint, les tâches à réaliser seront sélectionnées à partir du backlog en fonction de leur priorité et de l’avancement du projet. Les tâches seront ensuite réparties entre les membres du groupe et suivies au cours du sprint.
 
-Le suivi des tâches sera effectué avec un tableau Kanban permettant de visualiser leur état d’avancement (Backlog, Doing, Review, Done) et de répartir le travail entre les membres du groupe.
+Le suivi des tâches sera effectué avec un tableau Kanban permettant de visualiser leur état d’avancement (Backlog, Ready, In progress, In review, Done) et de répartir le travail entre les membres du groupe. Ce suivi sera réalisé à l’aide des issues et des pull requests de GitHub, permettant notamment de suivre les tâches, les modifications apportées et leur revue avant intégration.
 
 À la fin de chaque sprint, une réunion permettra de faire le point sur les tâches réalisées, celles encore en cours et les éventuelles difficultés rencontrées.
 
-La gestion du code source reposera sur Git, avec GitHub comme plateforme de collaboration, et le modèle Git Flow. Une branche dev sera utilisée pour intégrer les fonctionnalités en cours de développement, tandis qu'une branche main contiendra uniquement les versions validées. Chaque fonctionnalité ou correction sera développée sur une branche dédiée, puis revue et testée avant d’être intégrée à dev. Les versions validées seront ensuite intégrées à main.
-a
+La gestion du code source reposera sur Git, avec GitHub comme plateforme de collaboration, et le modèle Git Flow. Une branche dev sera utilisée pour intégrer les fonctionnalités en cours de développement, tandis qu'une branche main contiendra uniquement les versions validées. Chaque fonctionnalité ou correction sera développée sur une branche dédiée, puis revue et testée avant d’être intégrée à dev. Les versions validées seront ensuite intégrées à main. L'intégration dans dev et main se fera uniquement via des Pull Requests et après la revue d'un autre membre du groupe. Aucune modification directe ne sera autorisée sur ces deux branches. De plus, chaque membre vise à faire au moins un commit par jour.
+
