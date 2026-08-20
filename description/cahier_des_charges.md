@@ -7,7 +7,13 @@
 
 Ce projet est réalisé dans le cadre de l’unité d’enseignement Projet de groupe (PDG) à la HEIG-VD. Cette unité a pour objectif, à travers la réalisation en équipe d’une application de taille importante, de mettre en pratique les compétences acquises durant la formation ainsi qu'acquérir de manière indépendante des connaissances sur des sujets nouveaux.
 
-### Objectif
+### Problématique
+
+Les jeux basés sur la destruction de structures demandent aux joueurs de lancer différents projectiles sur une construction adverse pour tenter de la détruire. Le joueur doit notamment choisir où tirer et comment exploiter la physique du jeu pour faire le plus de dégâts possible. Cependant, ces jeux proposent généralement des niveaux prédéfinis et se jouent seul. Cela limite la possibilité pour les joueurs de développer leurs propres stratégies et de les confronter directement à celles d'autres joueurs.
+
+L'objectif de notre projet est d'offrire aux joueurs la possibilité de redécouvrir ce principe dans un jeu multijoueur en 1VS1, où chaque joueur construit sa propre structure avant d'affronter son adversaire. Les joueurs peuvent ensuite s'attaquer en temps réel, en choisissant leurs tirs pour tenter de détruire la structure adverse. Le but est de permettre aux joueurs de développer leurs propres stratégies de construction et d'attaque afin de déterminer lequel est le meilleur.
+
+### Cadre du projet
 
 #### Principe du jeu
 
@@ -24,7 +30,7 @@ Le jeu repose également sur un serveur responsable de la gestion de l’état d
 Enfin, le projet comprend la gestion des comptes utilisateurs, l’authentification, la mise en place d’un système de file d'attente pour trouver une partie et la gestion des parties jusqu’à avoir un gagnant.
 
 
-## Besoins
+## Description
 
 ### Fonctionnels
 
