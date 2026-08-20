@@ -17,6 +17,9 @@
 		<link rel="stylesheet" href="dist/plugin/highlight/monokai.css" />
 
 		<style>
+			:root {
+				--r-main-font-size: 28px;
+			}
 			.columns {
 				display: flex;
 				align-items: center;
@@ -37,6 +40,18 @@
 				box-shadow: none;
 				background: none;
 			}
+			.columns.compact {
+				font-size: 0.65em;
+			}
+			.columns.compact li {
+				margin-bottom: 0.3em;
+			}
+			.full-slide-img {
+				width: 100%;
+				height: 100%;
+				object-fit: contain; /* ou "cover" */
+			}
+
 			/* variante colonnes inégales : ajouter class="wide" ou "narrow" */
 			.columns .col-text.wide, .columns .col-img.wide { flex: 1.5; }
 			.columns .col-text.narrow, .columns .col-img.narrow { flex: 0.7; }
@@ -49,22 +64,7 @@
 			<section data-markdown data-separator="^\r?\n---\r?\n$" data-separator-vertical="^\r?\n--\r?\n$" data-separator-notes="^Note:">
 				<script type="text/template">
 					# Projet de groupe — HEIG-VD
-					## Jeu de destruction multijoueur 1v1
-
-					Note:
-					Titre du projet à personnaliser (nom du jeu).
-					Présentateur(s), date, cours PDG.
-
-					---
-
-					## Sommaire
-
-					- Contexte & problématique
-					- Solution proposée
-					- Mockups & landing page
-					- Architecture technique
-					- Processus de travail
-					- Pipeline DevOps
+					## CYBERSIEGE
 
 					---
 
@@ -205,9 +205,13 @@
 					--
 
 					## Mockup
-					![](../../description/mockups/mockup_menu.jpg)
+
+					<img src="image/mockup_menu.jpg" class="full-slide-img">
+
 					--
-					![](../../description/mockups/mockup_partie.jpg)
+
+					<img src="image/img.png" class="full-slide-img">
+
 					--
 
 					## Landing page
@@ -223,20 +227,18 @@
 
 					## Vue d'ensemble
 
-					<div class="columns">
+					<div class="columns compact">
 						<div class="col-text">
-
-							- **Frontend** : rendu et exécution du jeu côté client
-							- **Backend** : source unique de vérité, persistance, authentification
-							- **Base de données relationnelle** : comptes utilisateurs, données de jeu
-							- **ORM** : résolution de l'impedance mismatch
-							- **CI/CD** : automatisation tests & déploiement
-
+							<ul>
+								<li><strong>Frontend</strong> : rendu et exécution du jeu côté client</li>
+								<li><strong>Backend</strong> : source unique de vérité, persistance, authentification</li>
+								<li><strong>Base de données relationnelle</strong> : comptes utilisateurs, données de jeu</li>
+								<li><strong>ORM</strong> : résolution de l'impedance mismatch</li>
+								<li><strong>CI/CD</strong> : automatisation tests &amp; déploiement</li>
+							</ul>
 						</div>
 						<div class="col-img">
-
-							![Architecture](../../description/Architecture.png)
-
+							<img src="image/Architecture.png" alt="Architecture">
 						</div>
 					</div>
 
