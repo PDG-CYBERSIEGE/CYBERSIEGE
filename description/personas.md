@@ -22,6 +22,7 @@
 - Story 1 : En tant qu'utilisateur, je souhaite disposer d'un menu d'accueil afin de naviguer entre les différentes fonctionnalités du jeu en 2-3 clics.
     - Feature 1.1 : Menu avec un bouton de connexion ou un bouton pour lancer une partie si l'utilisateur est déjà connecté.
     - Feature 1.2 : Affichage du pseudonyme de l'utilisateur une fois connecté.
+    - Feature 1.3 : Creation du skin contenant les différantes textures.
 - Story 2 : En tant qu'utilisateur, je souhaite pouvoir gérer mon compte afin de jouer sous mon pseudonyme.
     - Feature 2.1 : Connexion au compte.
     - Feature 2.2 : Création d'un compte.

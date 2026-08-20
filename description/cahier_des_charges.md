@@ -7,7 +7,13 @@
 
 Ce projet est réalisé dans le cadre de l’unité d’enseignement Projet de groupe (PDG) à la HEIG-VD. Cette unité a pour objectif, à travers la réalisation en équipe d’une application de taille importante, de mettre en pratique les compétences acquises durant la formation ainsi qu'acquérir de manière indépendante des connaissances sur des sujets nouveaux.
 
-### Objectif
+### Problématique
+
+Les jeux basés sur la destruction de structures demandent aux joueurs de lancer différents projectiles sur une construction adverse pour tenter de la détruire. Le joueur doit notamment choisir où tirer et comment exploiter la physique du jeu pour faire le plus de dégâts possible. Cependant, ces jeux proposent généralement des niveaux prédéfinis et se jouent seul. Cela limite la possibilité pour les joueurs de développer leurs propres stratégies et de les confronter directement à celles d'autres joueurs.
+
+L'objectif de notre projet est d'offrire aux joueurs la possibilité de redécouvrir ce principe dans un jeu multijoueur en 1VS1, où chaque joueur construit sa propre structure avant d'affronter son adversaire. Les joueurs peuvent ensuite s'attaquer en temps réel, en choisissant leurs tirs pour tenter de détruire la structure adverse. Le but est de permettre aux joueurs de développer leurs propres stratégies de construction et d'attaque afin de déterminer lequel est le meilleur.
+
+### Cadre du projet
 
 #### Principe du jeu
 
@@ -24,7 +30,7 @@ Le jeu repose également sur un serveur responsable de la gestion de l’état d
 Enfin, le projet comprend la gestion des comptes utilisateurs, l’authentification, la mise en place d’un système de file d'attente pour trouver une partie et la gestion des parties jusqu’à avoir un gagnant.
 
 
-## Besoins
+## Description
 
 ### Fonctionnels
 
@@ -108,10 +114,12 @@ Enfin, afin de garantir un environnement reproductible et stable, nous avons dé
 
 Le développement du projet suivra une approche agile pour permettre une progression régulière et faciliter l’adaptation aux problèmes ou changements rencontrés pedant la réalisation.
 
-Le travail sera organisé en sprints de trois jours. Au début de chaque sprint, les tâches à réaliser seront sélectionnées à partir du backlog en fonction de leur priorité et de l’avancement du projet. Les tâches seront ensuite réparties entre les membres du groupe et suivies au cours du sprint.
+Le travail sera organisé en sprints de trois jours. Un backlog sera constitué des features qui découlent des user stories liées aux personas du projet. Au début de chaque sprint, les tâches à réaliser seront sélectionnées à partir du backlog en fonction de leur priorité et de l’avancement du projet. Les tâches seront ensuite réparties entre les membres du groupe et suivies au cours du sprint.
 
-Le suivi des tâches sera effectué avec un tableau Kanban permettant de visualiser leur état d’avancement (Backlog, Doing, Review, Done) et de répartir le travail entre les membres du groupe.
+Le suivi des tâches sera effectué avec un tableau Kanban permettant de visualiser leur état d’avancement (Backlog, Ready, In progress, In review, Done) et de répartir le travail entre les membres du groupe. Ce suivi sera réalisé à l’aide des issues et des pull requests de GitHub, permettant notamment de suivre les tâches, les modifications apportées et leur revue avant intégration.
 
 À la fin de chaque sprint, une réunion permettra de faire le point sur les tâches réalisées, celles encore en cours et les éventuelles difficultés rencontrées.
 
-La gestion du code source reposera sur Git, avec GitHub comme plateforme de collaboration, et le modèle Git Flow. Une branche dev sera utilisée pour intégrer les fonctionnalités en cours de développement, tandis qu'une branche main contiendra uniquement les versions validées. Chaque fonctionnalité ou correction sera développée sur une branche dédiée, puis revue et testée avant d’être intégrée à dev. Les versions validées seront ensuite intégrées à main.
+
+La gestion du code source reposera sur Git, avec GitHub comme plateforme de collaboration, et le modèle Git Flow. Une branche dev sera utilisée pour intégrer les fonctionnalités en cours de développement, tandis qu'une branche main contiendra uniquement les versions validées. Chaque fonctionnalité ou correction sera développée sur une branche dédiée, puis revue et testée avant d’être intégrée à dev. Les versions validées seront ensuite intégrées à main. L'intégration dans dev et main se fera uniquement via des Pull Requests et après la revue d'un autre membre du groupe. Aucune modification directe ne sera autorisée sur ces deux branches. De plus, chaque membre vise à faire au moins un commit par jour.
+
