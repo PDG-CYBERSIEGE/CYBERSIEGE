@@ -10,7 +10,7 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: pdg-cybersiege/pdg-1v1-server
+  IMAGE_NAME: pdg-cybersiege/cybersiege
 
 jobs:
   build-and-push:
