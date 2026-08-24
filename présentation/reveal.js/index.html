@@ -210,7 +210,11 @@
 
 					--
 
-					<img src="image/img.png" class="full-slide-img">
+					<img src="image/mockup_chargement.jpg" class="full-slide-img">
+
+					--
+
+					<img src="image/mockup_partie.jpg" class="full-slide-img">
 
 					--
 
@@ -252,7 +256,8 @@
 					| Backend | **Quarkus** | expérience préalable, répond aux besoins |
 					| Base de données | **PostgreSQL** | maîtrisé par l'équipe |
 					| ORM | **Hibernate** | déjà utilisé, évite impedance mismatch |
-					| Versioning | **GitHub** | simplicité, expérience GitHub Actions |
+					| Versioning | **GitHub** | simplicité |
+					| Pipeline CI/CD | **Github actions** | expérience au préalable |
 					| Tests | **JUnit** | tests de la logique applicative |
 					| Coverage | **Jacoco** | qualité / couverture du code |
 					| Conteneurisation | **Docker / Docker Compose** | environnement reproductible |
@@ -268,32 +273,14 @@
 
 					--
 
-					## Objectifs du pipeline
-
-					- Automatiser les tâches redondantes : tests, build, déploiement
-					- Garantir la qualité et la reproductibilité
-					- Support de l'approche agile (intégration continue rapide)
-
-					--
-
-					## Outils
-
-					- **GitHub Actions** : orchestration CI/CD
-					- **JUnit** : exécution des tests automatisés
-					- **Jacoco** : mesure de la couverture de code
-					- **Docker / Docker Compose** : packaging et exécution reproductible
-					de l'application et de la base de données
-
-					--
-
 					## Étapes du pipeline (proposition)
 
 					1. Push / Pull Request sur `dev` ou `main`
-					2. Build du backend (Quarkus) et du frontend (LibGDX)
+					2. Build du backend (Quarkus) et du frontend (LibGDX) a l'aide de gradle
+					3. vérification formatage/documentation
 					3. Exécution des tests unitaires (JUnit)
 					4. Analyse de couverture (Jacoco)
-					5. Build des images Docker
-					6. Déploiement (staging / production) via Docker Compose
+					5. Build des images Docker et enregistrement sur le repository
 
 					--
 
