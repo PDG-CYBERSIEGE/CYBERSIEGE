@@ -1,0 +1,78 @@
+
+uiskin.png
+size: 512, 512
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+2
+  rotate: false
+  xy: 67, 322
+  size: 15, 21
+  orig: 15, 21
+  offset: 0, 0
+  index: -1
+CyberpunkCraftpixPixel
+  rotate: false
+  xy: 1, 477
+  size: 505, 27
+  orig: 505, 27
+  offset: 0, 0
+  index: -1
+frame
+  rotate: false
+  xy: 1, 345
+  size: 96, 64
+  split: 44, 44, 29, 21
+  pad: 16, 16, 16, 15
+  orig: 96, 64
+  offset: 0, 0
+  index: -1
+frame2
+  rotate: false
+  xy: 99, 411
+  size: 64, 64
+  split: 25, 25, 29, 16
+  pad: 16, 16, 18, 15
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+green_button_up
+  rotate: false
+  xy: 165, 443
+  size: 32, 32
+  split: 4, 4, 6, 2
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+red_button_down
+  rotate: false
+  xy: 1, 245
+  size: 32, 32
+  split: 4, 4, 5, 2
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+red_button_up
+  rotate: false
+  xy: 1, 411
+  size: 96, 64
+  split: 4, 4, 6, 2
+  orig: 96, 64
+  offset: 0, 0
+  index: -1
+light_textbox
+  rotate: false
+  xy: 99, 377
+  size: 32, 32
+  split: 3, 3, 5, 3
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+textbox
+  rotate: false
+  xy: 1, 279
+  size: 64, 64
+  split: 15, 15, 15, 15
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
