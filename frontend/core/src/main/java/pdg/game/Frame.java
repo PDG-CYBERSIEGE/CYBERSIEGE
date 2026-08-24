@@ -15,7 +15,7 @@ public class Frame extends Table {
   private Button button1, button2;
   private Window window;
   private Table content;
-
+  
   public Frame() {
     this(new Button(), new Button(), 400, 300, "Frame Title");
   }
@@ -36,6 +36,7 @@ public class Frame extends Table {
     window = new Window(title, skin);
 
     window.getTitleLabel().setAlignment(Align.center);
+    window.setMovable(false);
 
     // =========================
     // Content (background) of the frame
@@ -76,6 +77,7 @@ public class Frame extends Table {
 
     this.button1 = button1;
     this.button2 = button2;
+    
   }
 
   public Button getButton1() {
@@ -93,4 +95,5 @@ public class Frame extends Table {
   public Table getContent() {
     return content;
   }
+  
 }

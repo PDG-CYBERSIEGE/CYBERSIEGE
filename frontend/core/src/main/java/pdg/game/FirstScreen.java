@@ -17,6 +17,8 @@ public class FirstScreen implements Screen {
   private Main game;
   private Stage stage;
   private Skin skin;
+  Frame frame;
+  boolean isVisible = true;
 
   public FirstScreen(final Main game) {
     this.game = game;
@@ -67,8 +69,11 @@ public class FirstScreen implements Screen {
             + button2.getWidth()
             + "x"
             + button2.getHeight());
-    Frame frame = new Frame(button1, button2, 400, 300, "Connection");
+    frame = new Frame(button1, button2, 400, 300, "Connection");
     frame.getContent().add(new TextField("username", skin));
+    frame.setPosition(
+        Gdx.graphics.getWidth() / 2f - frame.getWidth() / 2f,
+        Gdx.graphics.getHeight() / 2f - frame.getHeight() / 2f);
     stage.addActor(frame);
   }
 
@@ -76,15 +81,28 @@ public class FirstScreen implements Screen {
   public void render(float delta) {
 
     ScreenUtils.clear(0, 0, 0, 1);
-
+    if (isVisible){
     stage.act(delta);
     stage.draw();
+    }
   }
 
   @Override
   public void resize(int width, int height) {
 
     stage.getViewport().update(width, height, true);
+
+    if (frame.getWidth() > width || frame.getHeight() > height) {
+      isVisible = false;
+    }
+    else
+    {
+      isVisible = true;
+    }
+    frame.setPosition(
+    Gdx.graphics.getWidth() / 2f - frame.getWidth() / 2f,
+    Gdx.graphics.getHeight() / 2f - frame.getHeight() / 2f);
+    
   }
 
   @Override
