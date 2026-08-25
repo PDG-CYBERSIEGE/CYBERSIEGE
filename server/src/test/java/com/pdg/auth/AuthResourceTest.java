@@ -1,18 +1,24 @@
 package com.pdg.auth;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.pdg.user.User;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.test.junit.QuarkusTest;
+import io.smallrye.jwt.auth.principal.JWTParser;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.MediaType;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
 public class AuthResourceTest {
+
+  @Inject JWTParser parser;
 
   @BeforeEach
   @Transactional
@@ -20,7 +26,7 @@ public class AuthResourceTest {
     User.deleteAll();
   }
 
-  private void createUser() {
+  private User createUser() {
     QuarkusTransaction.begin();
     User user = new User();
     user.email = "test@test.com";
@@ -28,6 +34,7 @@ public class AuthResourceTest {
     user.passwordHash = BcryptUtil.bcryptHash("psw12345");
     user.persist();
     QuarkusTransaction.commit();
+    return user;
   }
 
   @Test
@@ -262,5 +269,31 @@ public class AuthResourceTest {
         .post("/auth/login")
         .then()
         .statusCode(400);
+  }
+
+  @Test
+  void loginReturnsValidJwt() throws Exception {
+    User user = createUser();
+
+    String token =
+        given()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(
+                """
+                  {
+                    "username": "usr",
+                    "password": "psw12345"
+                  }
+                """)
+            .when()
+            .post("/auth/login")
+            .then()
+            .statusCode(200)
+            .extract()
+            .asString();
+
+    JsonWebToken jwt = parser.parse(token);
+
+    assertEquals(String.valueOf(user.id), jwt.getSubject());
   }
 }

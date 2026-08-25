@@ -2,6 +2,7 @@ package com.pdg.auth;
 
 import com.pdg.user.User;
 import io.quarkus.elytron.security.common.BcryptUtil;
+import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Response;
@@ -46,7 +47,9 @@ public class AuthService {
       return Response.status(Response.Status.UNAUTHORIZED).entity("Invalid password").build();
     }
 
-    // Login success
-    return Response.ok().build();
+    // Generate token
+    String token = Jwt.subject(String.valueOf(user.id)).sign();
+
+    return Response.ok(token).build();
   }
 }
