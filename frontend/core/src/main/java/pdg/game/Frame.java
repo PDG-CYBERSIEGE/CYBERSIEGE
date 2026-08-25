@@ -15,7 +15,7 @@ public class Frame extends Table {
   private Button button1, button2;
   private Window window;
   private Table content;
-  
+
   public Frame() {
     this(new Button(), new Button(), 400, 300, "Frame Title");
   }
@@ -45,7 +45,9 @@ public class Frame extends Table {
     // =========================
 
     TiledDrawable backgroundTexture =
-        new TiledDrawable(new TextureRegion(new Texture(Gdx.files.internal("Frame_56.png"))));
+        new TiledDrawable(
+            new TextureRegion(
+                new Texture(Gdx.files.internal("gui/frame_background/base_frame.png"))));
 
     content = new Table();
     Table window_content = new Table();
@@ -77,7 +79,6 @@ public class Frame extends Table {
 
     this.button1 = button1;
     this.button2 = button2;
-    
   }
 
   public Button getButton1() {
@@ -95,5 +96,4 @@ public class Frame extends Table {
   public Table getContent() {
     return content;
   }
-  
 }

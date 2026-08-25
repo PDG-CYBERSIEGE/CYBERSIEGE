@@ -33,6 +33,9 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
 		font: CyberpunkCraftpixPixel1
 		fontColor: white
+	}
+	thick: {
+		font: CyberpunkCraftpixPixel1
 		background: textbox
 	}
 }
@@ -73,6 +76,10 @@ com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
 com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	default: {
 		background: frame2
+		titleFont: CyberpunkCraftpixPixel1
+	}
+	score: {
+		background: score_frame
 		titleFont: CyberpunkCraftpixPixel1
 	}
 }
