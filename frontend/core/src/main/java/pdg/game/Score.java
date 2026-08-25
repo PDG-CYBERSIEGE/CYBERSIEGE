@@ -31,11 +31,18 @@ public class Score extends Table {
 
   public Score(String p1, String p2, int width, int height, int nbManches) {
     this(p1, p2, nbManches);
+    if (width <= 0 || height <= 0) return;
     setSize(width, height);
   }
 
   public Score(String p1, String p2, int nbManches) {
 
+    // =========================
+    // TEST PARAMETERS
+    // =========================
+
+    if (p1 == null || p2 == null || nbManches <= 0) return;
+    
     // =========================
     // SKIN
     // =========================
@@ -97,9 +104,9 @@ public class Score extends Table {
       scoreDisplay1[i] = new Image(emptyScoreTexture);
       scoreDisplay2[i] = new Image(emptyScoreTexture);
 
-      score1.add(scoreDisplay1[i]).height(timer.getPrefHeight() * 2);
+      score1.add(scoreDisplay1[i]).height(15);
 
-      score2.add(scoreDisplay2[i]);
+      score2.add(scoreDisplay2[i]).height(15);
     }
 
     // =========================

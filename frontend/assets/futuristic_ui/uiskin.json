@@ -22,7 +22,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	}
 	green: {
 		up: green_button_up
-		down: red_button_down
+		down: green_button_down
 	}
 	red: {
 		up: red_button_up
@@ -34,8 +34,14 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 		font: CyberpunkCraftpixPixel1
 		fontColor: white
 	}
+	thin: {
+		font: CyberpunkCraftpixPixel1
+		fontColor: white
+		background: light_textbox
+	}
 	thick: {
 		font: CyberpunkCraftpixPixel1
+		fontColor: white
 		background: textbox
 	}
 }
@@ -43,17 +49,14 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: {
 		font: CyberpunkCraftpixPixel1
 		fontColor: white
-		downFontColor: white
-		overFontColor: white
-		focusedFontColor: white
 		up: green_button_up
-		down: red_button_down
+		down: green_button_down
 	}
 	green: {
 		font: CyberpunkCraftpixPixel1
 		fontColor: white
 		up: green_button_up
-		down: red_button_down
+		down: green_button_down
 	}
 	red: {
 		font: CyberpunkCraftpixPixel1
@@ -81,6 +84,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	score: {
 		background: score_frame
 		titleFont: CyberpunkCraftpixPixel1
+		titleFontColor: white
 	}
 }
 }

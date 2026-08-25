@@ -12,29 +12,38 @@ import com.badlogic.gdx.utils.Align;
 
 public class Frame extends Table {
 
-  private Button button1, button2;
+  private Button[] buttons;
   private Window window;
   private Table content;
 
-  public Frame() {
-    this(new Button(), new Button(), 400, 300, "Frame Title");
+  public Frame(Button... buttons) {
+    this(400, 300, "Frame Title", buttons);
   }
 
-  public Frame(Button button1, Button button2, float width, float height, String title) {
+  public Frame(float width, float height, String title, Button... buttons) {
+
+    // =========================
+    // TEST PARAMETERS
+    // =========================
+
+    if (width <= 0 || height <= 0 || title == null
+        || buttons == null || buttons.length <= 0) {
+      return;
+    }
 
     // =========================
     // SKIN
     // =========================
+
     Skin skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
 
-    this.setSize(width, height);
+    setSize(width, height);
 
     // =========================
     // frame window for the borders
     // =========================
 
     window = new Window(title, skin);
-
     window.getTitleLabel().setAlignment(Align.center);
     window.setMovable(false);
 
@@ -44,49 +53,69 @@ public class Frame extends Table {
     // it is set as the background of a Table, which is added to the window.
     // =========================
 
-    TiledDrawable backgroundTexture =
-        new TiledDrawable(
-            new TextureRegion(
-                new Texture(Gdx.files.internal("gui/frame_background/base_frame.png"))));
+    TiledDrawable backgroundTexture = new TiledDrawable(
+        new TextureRegion(
+            new Texture(Gdx.files.internal(
+                "gui/frame_background/base_frame.png"
+            ))
+        )
+    );
 
     content = new Table();
-    Table window_content = new Table();
+    Table windowContent = new Table();
 
-    window_content.setBackground(backgroundTexture);
+    windowContent.setBackground(backgroundTexture);
 
-    window.add(window_content).fill().expand();
-    window_content.add(content).fill().expand().top();
+    windowContent.add(content)
+        .fill()
+        .expand()
+        .top();
+
+    window.add(windowContent)
+        .fill()
+        .expand();
 
     // =========================
     // BOUTONS
     // =========================
 
-    // space on the left, right and between the buttons
-    float pad = (width - button1.getWidth() - button2.getWidth()) / 3f;
-    // Table to hold the buttons, so they are aligned horizontally
+    float pad = width;
+
+    for (Button button : buttons) {
+      pad -= button.getWidth();
+    }
+
+    pad /= 3f;
+
     Table buttonRow = new Table();
-    buttonRow.add(button1).size(button1.getWidth(), button1.getHeight()).padRight(pad);
-    buttonRow.add(button2).size(button2.getWidth(), button2.getHeight());
+    buttonRow.padLeft(pad);
 
-    window_content.row();
-    window_content.add(buttonRow).expand().bottom().padBottom(10);
+    for (Button button : buttons) {
+      buttonRow.add(button)
+          .size(button.getWidth(), button.getHeight())
+          .padRight(pad);
+    }
 
-    this.add(window).fill().expand();
+    windowContent.row();
+
+    windowContent.add(buttonRow)
+        .expand()
+        .bottom()
+        .padBottom(10);
+
+    add(window)
+        .fill()
+        .expand();
 
     // =========================
     // set internal variables
     // =========================
 
-    this.button1 = button1;
-    this.button2 = button2;
+    this.buttons = buttons;
   }
 
-  public Button getButton1() {
-    return button1;
-  }
-
-  public Button getButton2() {
-    return button2;
+  public Button getButton(int i) {
+    return buttons[i];
   }
 
   public Window getWindow() {

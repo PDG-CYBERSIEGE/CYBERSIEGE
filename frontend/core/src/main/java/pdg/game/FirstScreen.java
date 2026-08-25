@@ -53,13 +53,13 @@ public class FirstScreen implements Screen {
     // SKIN
     // =========================
 
-    Skin skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
+    skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
 
     TextButton button1 = new TextButton("cancel", skin, "red");
     TextButton button2 = new TextButton("accept", skin, "green");
     button1.setSize(100, 30);
     button2.setSize(100, 30);
-    frame = new Frame(button1, button2, 400, 300, "Connection");
+    frame = new Frame(400, 300, "Connection", button1, button2);
     frame.getContent().add(new TextField("username", skin));
     frame.setPosition(
         Gdx.graphics.getWidth() / 2f - frame.getWidth() / 2f,
