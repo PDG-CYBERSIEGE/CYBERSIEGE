@@ -1,6 +1,10 @@
 package com.pdg.auth;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class LoginRequest {
-  public String username;
-  public String password;
+
+  @NotBlank public String username;
+
+  @NotBlank public String password;
 }

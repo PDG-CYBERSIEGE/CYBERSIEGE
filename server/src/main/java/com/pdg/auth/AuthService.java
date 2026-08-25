@@ -36,7 +36,9 @@ public class AuthService {
 
     // Invalid username
     if (user == null) {
-      return Response.status(Response.Status.UNAUTHORIZED).entity("No player with that username").build();
+      return Response.status(Response.Status.UNAUTHORIZED)
+          .entity("No player with that username")
+          .build();
     }
 
     // Invalid password

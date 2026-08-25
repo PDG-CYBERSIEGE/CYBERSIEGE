@@ -1,6 +1,7 @@
 package com.pdg.auth;
 
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -15,14 +16,14 @@ public class AuthResource {
   @POST
   @Path("/register")
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response register(RegisterRequest request) {
+  public Response register(@Valid RegisterRequest request) {
     return authService.register(request.email, request.username, request.password);
   }
 
   @POST
   @Path("/login")
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response login(LoginRequest request) {
+  public Response login(@Valid LoginRequest request) {
     return authService.login(request.username, request.password);
   }
 }
