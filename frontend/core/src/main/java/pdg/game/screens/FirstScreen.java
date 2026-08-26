@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
 import pdg.game.Main;
 import pdg.game.blocks.Block;
 import pdg.game.blocks.HeavyBlock;
@@ -59,9 +58,17 @@ public class FirstScreen implements Screen {
     // STAGE
     // =========================
 
-    stage = new Stage(new FitViewport(1920, 1080)); // stage pour l'ui, dimention de l'écran pour etre précis
-    itemStage = new Stage(new FitViewport(32, 18)); // stage pour construire le niveau, avec les dimention en nombre de block (si leur taille est pas changé) garder dimentions de l'écran (multiple de 16:9)
-    // fitViewPort pour que les coordonnées soient indépendant sde la taille de la fenêtre, et pour pas étirer l'affichage.
+    stage =
+        new Stage(
+            new FitViewport(1920, 1080)); // stage pour l'ui, dimention de l'écran pour etre précis
+    itemStage =
+        new Stage(
+            new FitViewport(
+                32,
+                18)); // stage pour construire le niveau, avec les dimention en nombre de block (si
+    // leur taille est pas changé) garder dimentions de l'écran (multiple de 16:9)
+    // fitViewPort pour que les coordonnées soient indépendant sde la taille de la fenêtre, et pour
+    // pas étirer l'affichage.
 
     // affichage du background
     for (int i = 1; i <= 5; i++) {
@@ -71,7 +78,8 @@ public class FirstScreen implements Screen {
       Image background = new Image(backgroundTexture);
       background.setFillParent(true);
 
-      itemStage.addActor(background); // l'ui est par dessus le niveau, on peut donc pas mettre sur stage ui
+      itemStage.addActor(
+          background); // l'ui est par dessus le niveau, on peut donc pas mettre sur stage ui
     }
 
     Gdx.input.setInputProcessor(stage);
@@ -94,8 +102,8 @@ public class FirstScreen implements Screen {
         stage.getWidth() / 2f - frame.getWidth() / 2f,
         stage.getHeight() / 2f - frame.getHeight() / 2f);
     stage.addActor(frame);
-    
-    // ui de comptage de points 
+
+    // ui de comptage de points
     score = new Score("henri", "xxPaulgamerXX", 10);
     score.setPosition(
         stage.getWidth() / 2f - score.getWidth() / 2f, stage.getHeight() - score.getHeight());
@@ -178,7 +186,6 @@ public class FirstScreen implements Screen {
     } else {
       isVisible = true;
     }
-    
   }
 
   @Override
