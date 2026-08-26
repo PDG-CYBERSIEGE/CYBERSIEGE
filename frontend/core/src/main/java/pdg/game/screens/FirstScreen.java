@@ -1,4 +1,4 @@
-package pdg.game;
+package pdg.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -10,6 +10,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+
+import pdg.game.Main;
+import pdg.game.blocks.Block;
+import pdg.game.blocks.HeavyBlock;
+import pdg.game.blocks.LightBlock;
+import pdg.game.blocks.MediumBlock;
+import pdg.game.ui.Frame;
+import pdg.game.ui.Score;
 
 /** First screen of the application. */
 public class FirstScreen implements Screen {
