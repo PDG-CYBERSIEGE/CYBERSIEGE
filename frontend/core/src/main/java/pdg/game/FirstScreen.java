@@ -9,13 +9,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
 /** First screen of the application. */
 public class FirstScreen implements Screen {
 
   private Main game;
-  private Stage stage;
+  private Stage stage, itemStage;
   private Skin skin;
   Frame frame;
   Score score;
@@ -35,7 +35,9 @@ public class FirstScreen implements Screen {
     // STAGE
     // =========================
 
-    stage = new Stage(new ScreenViewport());
+    stage = new Stage(new FitViewport(1920, 1080));
+    itemStage = new Stage(new FitViewport(32, 18));
+    
 
     for (int i = 1; i <= 5; i++) {
 
@@ -44,7 +46,7 @@ public class FirstScreen implements Screen {
       Image background = new Image(backgroundTexture);
       background.setFillParent(true);
 
-      stage.addActor(background);
+      itemStage.addActor(background);
     }
 
     Gdx.input.setInputProcessor(stage);
@@ -62,8 +64,8 @@ public class FirstScreen implements Screen {
     frame = new Frame(400, 300, "Connection", button1, button2);
     frame.getContent().add(new TextField("username", skin));
     frame.setPosition(
-        Gdx.graphics.getWidth() / 2f - frame.getWidth() / 2f,
-        Gdx.graphics.getHeight() / 2f - frame.getHeight() / 2f);
+        stage.getWidth() / 2f - frame.getWidth() / 2f,
+        stage.getHeight() / 2f - frame.getHeight() / 2f);
     stage.addActor(frame);
 
     score = new Score("henri", "xxPaulgamerXX", 10);
@@ -71,6 +73,42 @@ public class FirstScreen implements Screen {
         stage.getWidth() / 2f - score.getWidth() / 2f, stage.getHeight() - score.getHeight());
     stage.addActor(score);
     score.addScoreP1();
+
+    Block block1 = new MediumBlock(5);
+    block1.setPosition(10, 2);
+    block1.resize(2);
+    //block1.setRotation(45);
+    itemStage.addActor(block1);
+
+    Block block2 = new LightBlock(3);
+    block2.setPosition(10, 2);
+    block2.resize(2);
+    itemStage.addActor(block2);
+
+    Block block3 = new HeavyBlock(4);
+    block3.setPosition(10, 4);
+    block3.resize(2);
+    itemStage.addActor(block3);
+
+    //Actor child = block1.getChild(0);
+    /*child.remove();
+    stage.addActor(child);
+    child.setSize(100, 100);
+    child.setPosition(19, 2);*/
+
+
+         Texture texture = new Texture("throwables/base.png");
+
+        // Image Scene2D
+        Image image = new Image(texture);
+
+        // Position et taille dans le monde 8 x 5
+        image.setPosition(2, 1);
+        image.setSize(1, 1);
+
+        // Ajout au Stage
+        itemStage.addActor(image);
+    
   }
 
   @Override
@@ -84,6 +122,10 @@ public class FirstScreen implements Screen {
     }
     ScreenUtils.clear(0, 0, 0, 1);
     if (isVisible) {
+      itemStage.getViewport().apply();
+      itemStage.act(delta);
+      itemStage.draw();
+      stage.getViewport().apply();
       stage.act(delta);
       stage.draw();
     }
@@ -93,6 +135,7 @@ public class FirstScreen implements Screen {
   public void resize(int width, int height) {
 
     stage.getViewport().update(width, height, true);
+    itemStage.getViewport().update(width, height, true);
 
     if (frame.getWidth() > width || frame.getHeight() > height) {
       isVisible = false;
@@ -100,8 +143,8 @@ public class FirstScreen implements Screen {
       isVisible = true;
     }
     frame.setPosition(
-        Gdx.graphics.getWidth() / 2f - frame.getWidth() / 2f,
-        Gdx.graphics.getHeight() / 2f - frame.getHeight() / 2f);
+        stage.getWidth() / 2f - frame.getWidth() / 2f,
+        stage.getHeight() / 2f - frame.getHeight() / 2f);
 
     score.setPosition(
         stage.getWidth() / 2f - score.getWidth() / 2f, stage.getHeight() - score.getHeight());
