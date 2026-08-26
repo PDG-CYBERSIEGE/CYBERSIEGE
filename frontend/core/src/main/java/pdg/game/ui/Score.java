@@ -42,7 +42,7 @@ public class Score extends Table {
     // =========================
 
     if (p1 == null || p2 == null || nbManches <= 0) return;
-    
+
     // =========================
     // SKIN
     // =========================
@@ -61,7 +61,7 @@ public class Score extends Table {
     // =========================
 
     Texture frameTexture =
-        new Texture(Gdx.files.internal("gui/frame_background/border_frame.9.png"));
+        new Texture(Gdx.files.internal("futuristic_ui/frame_background/border_frame.9.png"));
 
     NinePatch ninePatch = new NinePatch(frameTexture, 10, 10, 10, 10);
 
@@ -93,9 +93,9 @@ public class Score extends Table {
     // SCORE IMAGES
     // =========================
 
-    Texture emptyScoreTexture = new Texture(Gdx.files.internal("gui/bars/empty_bar.png"));
+    Texture emptyScoreTexture = new Texture(Gdx.files.internal("futuristic_ui/bars/empty_bar.png"));
 
-    scoreTexture = new Texture(Gdx.files.internal("gui/bars/full_bar.png"));
+    scoreTexture = new Texture(Gdx.files.internal("futuristic_ui/bars/full_bar.png"));
 
     scoreDisplay1 = new Image[nbManches];
     scoreDisplay2 = new Image[nbManches];

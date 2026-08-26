@@ -37,7 +37,6 @@ public class FirstScreen implements Screen {
 
     stage = new Stage(new FitViewport(1920, 1080));
     itemStage = new Stage(new FitViewport(32, 18));
-    
 
     for (int i = 1; i <= 5; i++) {
 
@@ -77,7 +76,7 @@ public class FirstScreen implements Screen {
     Block block1 = new MediumBlock(5);
     block1.setPosition(10, 2);
     block1.resize(2);
-    //block1.setRotation(45);
+    // block1.setRotation(45);
     itemStage.addActor(block1);
 
     Block block2 = new LightBlock(3);
@@ -90,25 +89,23 @@ public class FirstScreen implements Screen {
     block3.resize(2);
     itemStage.addActor(block3);
 
-    //Actor child = block1.getChild(0);
+    // Actor child = block1.getChild(0);
     /*child.remove();
     stage.addActor(child);
     child.setSize(100, 100);
     child.setPosition(19, 2);*/
 
+    Texture texture = new Texture("throwables/base.png");
 
-         Texture texture = new Texture("throwables/base.png");
+    // Image Scene2D
+    Image image = new Image(texture);
 
-        // Image Scene2D
-        Image image = new Image(texture);
+    // Position et taille dans le monde 8 x 5
+    image.setPosition(2, 1);
+    image.setSize(1, 1);
 
-        // Position et taille dans le monde 8 x 5
-        image.setPosition(2, 1);
-        image.setSize(1, 1);
-
-        // Ajout au Stage
-        itemStage.addActor(image);
-    
+    // Ajout au Stage
+    itemStage.addActor(image);
   }
 
   @Override

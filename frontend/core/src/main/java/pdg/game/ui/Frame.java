@@ -26,8 +26,7 @@ public class Frame extends Table {
     // TEST PARAMETERS
     // =========================
 
-    if (width <= 0 || height <= 0 || title == null
-        || buttons == null || buttons.length <= 0) {
+    if (width <= 0 || height <= 0 || title == null || buttons == null || buttons.length <= 0) {
       return;
     }
 
@@ -53,27 +52,19 @@ public class Frame extends Table {
     // it is set as the background of a Table, which is added to the window.
     // =========================
 
-    TiledDrawable backgroundTexture = new TiledDrawable(
-        new TextureRegion(
-            new Texture(Gdx.files.internal(
-                "gui/frame_background/base_frame.png"
-            ))
-        )
-    );
+    TiledDrawable backgroundTexture =
+        new TiledDrawable(
+            new TextureRegion(
+                new Texture(Gdx.files.internal("futuristic_ui/frame_background/base_frame.png"))));
 
     content = new Table();
     Table windowContent = new Table();
 
     windowContent.setBackground(backgroundTexture);
 
-    windowContent.add(content)
-        .fill()
-        .expand()
-        .top();
+    windowContent.add(content).fill().expand().top();
 
-    window.add(windowContent)
-        .fill()
-        .expand();
+    window.add(windowContent).fill().expand();
 
     // =========================
     // BOUTONS
@@ -91,21 +82,14 @@ public class Frame extends Table {
     buttonRow.padLeft(pad);
 
     for (Button button : buttons) {
-      buttonRow.add(button)
-          .size(button.getWidth(), button.getHeight())
-          .padRight(pad);
+      buttonRow.add(button).size(button.getWidth(), button.getHeight()).padRight(pad);
     }
 
     windowContent.row();
 
-    windowContent.add(buttonRow)
-        .expand()
-        .bottom()
-        .padBottom(10);
+    windowContent.add(buttonRow).expand().bottom().padBottom(10);
 
-    add(window)
-        .fill()
-        .expand();
+    add(window).fill().expand();
 
     // =========================
     // set internal variables
