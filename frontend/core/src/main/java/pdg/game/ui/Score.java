@@ -10,31 +10,60 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 
+/** Displays the players, timer and round scores in a Scene2D window. */
 public class Score extends Table {
 
+  /** Window containing the score display. */
   private Window window;
+
+  /** Table exposing the score content to callers. */
   private Table content;
 
+  /** Visual indicators for player one's completed rounds. */
   private Image[] scoreDisplay1;
+
+  /** Visual indicators for player two's completed rounds. */
   private Image[] scoreDisplay2;
 
+  /** Number of rounds currently displayed for player one. */
   private int scoreValue1 = 0;
+
+  /** Number of rounds currently displayed for player two. */
   private int scoreValue2 = 0;
 
+  /** Texture used when a round is completed. */
   private Texture scoreTexture;
 
+  /** Horizontal space reserved around the score content. */
   private final int padding = 40;
 
+  /** Creates a score display with default player names and two rounds. */
   public Score() {
     this("Player1", "Player2", 2);
   }
 
+  /**
+   * Creates a score display with optional explicit dimensions.
+   *
+   * @param p1 first player name
+   * @param p2 second player name
+   * @param width requested width
+   * @param height requested height
+   * @param nbManches number of rounds
+   */
   public Score(String p1, String p2, int width, int height, int nbManches) {
     this(p1, p2, nbManches);
     if (width <= 0 || height <= 0) return;
     setSize(width, height);
   }
 
+  /**
+   * Creates and sizes the complete score window from its content.
+   *
+   * @param p1 first player name
+   * @param p2 second player name
+   * @param nbManches number of rounds
+   */
   public Score(String p1, String p2, int nbManches) {
 
     // =========================
@@ -179,14 +208,7 @@ public class Score extends Table {
     add(window);
   }
 
-  public Window getWindow() {
-    return window;
-  }
-
-  public Table getContent() {
-    return content;
-  }
-
+  /** Marks the next available round as won by player one. */
   public void addScoreP1() {
     if (scoreValue1 >= scoreDisplay1.length) {
       return;
@@ -197,6 +219,7 @@ public class Score extends Table {
     scoreValue1++;
   }
 
+  /** Marks the next available round as won by player two. */
   public void addScoreP2() {
     if (scoreValue2 >= scoreDisplay2.length) {
       return;

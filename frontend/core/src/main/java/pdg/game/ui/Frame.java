@@ -10,16 +10,31 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.badlogic.gdx.utils.Align;
 
+/** Reusable window frame containing custom content and action buttons. */
 public class Frame extends Table {
 
+  /** Buttons displayed at the bottom of the frame. */
   private Button[] buttons;
+
+  /** Window providing the frame border and title. */
   private Window window;
+
+  /** Table that callers can populate with custom controls. */
   private Table content;
 
+  /** Creates a default 400 by 300 frame. */
   public Frame(Button... buttons) {
     this(400, 300, "Frame Title", buttons);
   }
 
+  /**
+   * Creates a frame with the requested size, title and buttons.
+   *
+   * @param width frame width
+   * @param height frame height
+   * @param title title displayed in the window border
+   * @param buttons buttons displayed at the bottom
+   */
   public Frame(float width, float height, String title, Button... buttons) {
 
     // =========================
@@ -61,11 +76,8 @@ public class Frame extends Table {
     Table windowContent = new Table();
 
     windowContent.setBackground(backgroundTexture);
-
-    windowContent.add(content).fill().expand().top();
-
+    windowContent.add(content).fill().expand().top().left().pad(2);
     window.add(windowContent).fill().expand();
-
     // =========================
     // BOUTONS
     // =========================
@@ -86,8 +98,7 @@ public class Frame extends Table {
     }
 
     windowContent.row();
-
-    windowContent.add(buttonRow).expand().bottom().padBottom(10);
+    windowContent.add(buttonRow).expand().bottom().padBottom(15);
 
     add(window).fill().expand();
 
@@ -98,14 +109,12 @@ public class Frame extends Table {
     this.buttons = buttons;
   }
 
+  /** Returns a button by its position in the button row. */
   public Button getButton(int i) {
     return buttons[i];
   }
 
-  public Window getWindow() {
-    return window;
-  }
-
+  /** Returns the table where custom controls can be added. */
   public Table getContent() {
     return content;
   }
