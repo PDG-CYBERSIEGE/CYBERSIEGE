@@ -1,4 +1,4 @@
-package pdg.game;
+package pdg.game.blocks;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
