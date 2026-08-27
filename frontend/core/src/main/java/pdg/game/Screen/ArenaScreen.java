@@ -85,6 +85,12 @@ public class ArenaScreen implements Screen{
 
         //crée les équipes
 
+        onwTeam.blocks()
+
+
+    }
+
+    private Team extractTeam(TeamDTO team){
 
     }
 
