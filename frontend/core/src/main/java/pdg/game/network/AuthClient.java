@@ -3,8 +3,8 @@ package pdg.game.network;
 /**
  * Provides the client-side authentication API.
  *
- * <p>This class handles authentication requests and delegates their results
- * to a {@link ResponseListener}.
+ * <p>This class handles authentication requests and delegates their results to a {@link
+ * ResponseListener}.
  */
 public class AuthClient {
 
@@ -13,7 +13,6 @@ public class AuthClient {
   public AuthClient(HttpClient httpClient) {
     this.httpClient = httpClient;
   }
-
 
   /**
    * Registers a new user.
@@ -60,8 +59,8 @@ public class AuthClient {
   /**
    * Retrieves the username of the currently authenticated user.
    *
-   * <p>The authentication token previously set with {@link #setToken(String)}
-   * is automatically used for this request.
+   * <p>The authentication token previously set with {@link #setToken(String)} is automatically used
+   * for this request.
    *
    * @param responseListener listener receiving the request result
    */

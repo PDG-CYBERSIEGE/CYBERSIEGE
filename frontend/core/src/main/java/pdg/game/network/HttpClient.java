@@ -7,8 +7,8 @@ import com.badlogic.gdx.net.HttpRequestBuilder;
 /**
  * Provides low-level HTTP communication with the game server.
  *
- * <p>If an authentication token is set, it is automatically included in
- * requests using the {@code Authorization: Bearer <token>} header.
+ * <p>If an authentication token is set, it is automatically included in requests using the {@code
+ * Authorization: Bearer <token>} header.
  */
 public class HttpClient {
 
@@ -27,7 +27,6 @@ public class HttpClient {
   public void setToken(String token) {
     this.token = token;
   }
-
 
   /**
    * Sends an asynchronous GET request.
