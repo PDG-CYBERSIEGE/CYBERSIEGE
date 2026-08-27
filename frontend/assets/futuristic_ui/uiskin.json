@@ -80,6 +80,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 		font: CyberpunkCraftpixPixel
 		fontColor: white
 		up: red_button_up
+		down: red_button_down
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {

@@ -1556,7 +1556,7 @@ jsonData: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: down
 						optional: true
-						value: null
+						value: red_button_down
 					}
 					over: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable

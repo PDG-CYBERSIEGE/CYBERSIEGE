@@ -76,3 +76,11 @@ subprojects {
 
 eclipse.project.name = 'frontend' + '-parent'
 
+project(':html') {
+  tasks.named('javadoc') {
+    enabled = false
+  }
+  tasks.named('spotlessJava'){
+    enabled = false
+  }
+}
