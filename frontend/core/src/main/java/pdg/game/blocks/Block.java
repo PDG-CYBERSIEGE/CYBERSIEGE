@@ -25,6 +25,7 @@ public class Block extends Table {
     if (maxHealth < 0) maxHealth = 0;
 
     this.maxHealth = maxHealth;
+    currentHealth = maxHealth;
   }
 
   /**

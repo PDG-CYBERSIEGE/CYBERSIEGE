@@ -16,6 +16,7 @@ import pdg.game.blocks.Block;
 import pdg.game.blocks.HeavyBlock;
 import pdg.game.blocks.LightBlock;
 import pdg.game.blocks.MediumBlock;
+import pdg.game.scene.Background;
 import pdg.game.ui.Frame;
 import pdg.game.ui.Score;
 
@@ -27,6 +28,7 @@ public class FirstScreen implements Screen {
   /** Scene2D stage for the interface and game-world layers. */
   private Stage stage, itemStage;
 
+  private Background background;
   private Skin skin;
 
   /** Connection dialog displayed in the centre of the screen. */
@@ -70,17 +72,8 @@ public class FirstScreen implements Screen {
     // fitViewPort pour que les coordonnées soient indépendant sde la taille de la fenêtre, et pour
     // pas étirer l'affichage.
 
-    // affichage du background
-    for (int i = 1; i <= 5; i++) {
-
-      Texture backgroundTexture = new Texture(Gdx.files.internal("background/1/Day/" + i + ".png"));
-
-      Image background = new Image(backgroundTexture);
-      background.setFillParent(true);
-
-      itemStage.addActor(
-          background); // l'ui est par dessus le niveau, on peut donc pas mettre sur stage ui
-    }
+    background = new Background();
+    background.apply(itemStage);
 
     Gdx.input.setInputProcessor(stage);
 
@@ -89,7 +82,7 @@ public class FirstScreen implements Screen {
     // =========================
 
     skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
-
+    Image t = new Image(skin.getDrawable("frame2"));
     // ui central avec boutons
     TextButton button1 = new TextButton("cancel", skin, "red");
     TextButton button2 = new TextButton("accept", skin, "green");
@@ -111,17 +104,16 @@ public class FirstScreen implements Screen {
     score.addScoreP1();
 
     // Affichage du nom du jeu
-    Label title = new Label("CYBERSIEGE", skin, "tittle");
-    title.setPosition(50, 50);
+    Label title = new Label("CYBERSIEGE", skin, "big_title");
+    title.setPosition(10, 750);
     stage.addActor(title);
 
     // Création de chaque type de block
     Block block1 = new MediumBlock(5);
-    block1.setPosition(10, 2);
+    block1.setPosition(10, 0);
     block1.resize(2);
     // block1.setRotation(45);
     itemStage.addActor(block1);
-
     Block block2 = new LightBlock(3);
     block2.setPosition(10, 2);
     block2.resize(2);
@@ -142,7 +134,7 @@ public class FirstScreen implements Screen {
     // loading wheel
     loading = new Image(new Texture("futuristic_ui/loading/wheel.png"));
     loading.setSize(200, 200);
-    loading.setPosition(stage.getWidth() - 300, stage.getHeight() - 300);
+    loading.setPosition(stage.getWidth() - 300, stage.getHeight() - 600);
     loading.setOrigin(loading.getWidth() / 2f, loading.getHeight() / 2f);
     stage.addActor(loading);
   }
@@ -161,6 +153,7 @@ public class FirstScreen implements Screen {
     if (timer >= 1f) {
       score.addScoreP1();
       score.addScoreP2();
+      background.change();
       timer = 0;
     }
     ScreenUtils.clear(0, 0, 0, 1); // clear l'écran pour ne rien garder de la derniere frame

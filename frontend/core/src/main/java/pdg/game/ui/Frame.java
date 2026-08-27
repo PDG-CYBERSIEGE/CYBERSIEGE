@@ -71,7 +71,6 @@ public class Frame extends Table {
         new TiledDrawable(
             new TextureRegion(
                 new Texture(Gdx.files.internal("futuristic_ui/frame_background/base_frame.png"))));
-
     content = new Table();
     Table windowContent = new Table();
 

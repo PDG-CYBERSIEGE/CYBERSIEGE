@@ -3,7 +3,7 @@ atlasData: {
 	atlasCurrent: true
 	drawables: [
 		{
-			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/skin_composer/textures_data/frame.9.png
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/gui/frame/frame2.9.png
 			bgColor: {
 				r: 1
 				g: 1
@@ -23,47 +23,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/skin_composer/textures_data/green_button_up.9.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: green_button_up
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: NINE_PATCH
-			hidden: false
-		}
-		{
-			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/skin_composer/textures_data/red_button_up.9.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: red_button_up
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: NINE_PATCH
-			hidden: false
-		}
-		{
-			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/skin_composer/textures_data/light_textbox.9.png
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/gui/textbox/light_textbox.9.png
 			bgColor: {
 				r: 1
 				g: 1
@@ -83,7 +43,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/skin_composer/textures_data/textbox.9.png
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/gui/textbox/textbox.9.png
 			bgColor: {
 				r: 1
 				g: 1
@@ -93,26 +53,6 @@ atlasData: {
 			tint: null
 			tintName: null
 			name: textbox
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: NINE_PATCH
-			hidden: false
-		}
-		{
-			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/skin_composer/textures_data/red_button_down.9.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: red_button_down
 			tiled: false
 			minWidth: -1
 			minHeight: -1
@@ -143,6 +83,26 @@ atlasData: {
 			hidden: false
 		}
 		{
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/gui/frame/frame2.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: frame2
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: NINE_PATCH
+			hidden: false
+		}
+		{
 			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/gui/green_button/green_button_down.9.png
 			bgColor: {
 				r: 1
@@ -163,7 +123,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/gui/frame/frame2.9.png
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/gui/green_button/green_button_up.9.png
 			bgColor: {
 				r: 1
 				g: 1
@@ -172,7 +132,47 @@ atlasData: {
 			}
 			tint: null
 			tintName: null
-			name: frame2
+			name: green_button_up
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: NINE_PATCH
+			hidden: false
+		}
+		{
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/gui/red_button/red_button_down.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: red_button_down
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: NINE_PATCH
+			hidden: false
+		}
+		{
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/gui/red_button/red_button_up.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: red_button_up
 			tiled: false
 			minWidth: -1
 			minHeight: -1
@@ -484,6 +484,226 @@ atlasData: {
 			type: FONT
 			hidden: false
 		}
+		{
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/font/CyberpunkCraftpixPixel_big_title_0.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: CyberpunkCraftpixPixel_big_title_0
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
+		{
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/font/CyberpunkCraftpixPixel_big_title_1.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: CyberpunkCraftpixPixel_big_title_1
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
+		{
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/font/CyberpunkCraftpixPixel_big_title_2.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: CyberpunkCraftpixPixel_big_title_2
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
+		{
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/font/CyberpunkCraftpixPixel_big_title_3.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: CyberpunkCraftpixPixel_big_title_3
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
+		{
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/font/CyberpunkCraftpixPixel_big_title_4.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: CyberpunkCraftpixPixel_big_title_4
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
+		{
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/font/CyberpunkCraftpixPixel_big_title_5.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: CyberpunkCraftpixPixel_big_title_5
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
+		{
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/font/CyberpunkCraftpixPixel_big_title_6.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: CyberpunkCraftpixPixel_big_title_6
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
+		{
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/font/CyberpunkCraftpixPixel_big_title_7.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: CyberpunkCraftpixPixel_big_title_7
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
+		{
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/font/CyberpunkCraftpixPixel_big_title_8.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: CyberpunkCraftpixPixel_big_title_8
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
+		{
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/font/CyberpunkCraftpixPixel_big_title_9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: CyberpunkCraftpixPixel_big_title_9
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
+		{
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/font/CyberpunkCraftpixPixel_big_title_10.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: CyberpunkCraftpixPixel_big_title_10
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
 	]
 }
 jsonData: {
@@ -507,6 +727,14 @@ jsonData: {
 			markupEnabled: false
 			scaling: -1
 			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/font/CyberpunkCraftpixPixel.fnt
+		}
+		{
+			class: com.ray3k.skincomposer.data.FontData
+			name: CyberpunkCraftpixPixel_big_title
+			flip: false
+			markupEnabled: false
+			scaling: -1
+			file: C:/Users/jonat/Documents/CYBERSIEGE/frontend/assets/source/font/CyberpunkCraftpixPixel_big_title.fnt
 		}
 		{
 			class: com.ray3k.skincomposer.data.FontData
@@ -1328,7 +1556,7 @@ jsonData: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: down
 						optional: true
-						value: red_button_down
+						value: null
 					}
 					over: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
@@ -2205,7 +2433,7 @@ jsonData: {
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
-				name: tittle
+				name: title
 				clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
 				properties: {
 					font: {
@@ -2213,6 +2441,33 @@ jsonData: {
 						name: font
 						optional: false
 						value: CyberpunkCraftpixPixel_title
+					}
+					fontColor: {
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColor
+						optional: true
+						value: null
+					}
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: big_title
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+				properties: {
+					font: {
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: CyberpunkCraftpixPixel_big_title
 					}
 					fontColor: {
 						type: com.badlogic.gdx.graphics.Color
