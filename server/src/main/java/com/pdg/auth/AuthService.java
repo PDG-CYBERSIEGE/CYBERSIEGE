@@ -16,14 +16,14 @@ public class AuthService {
   @Inject UserRepository userRepository;
 
   /**
-   * Registers a new user.
+   * Registers a new user and generates an authentication token.
    *
    * <p>The password is hashed before being stored.
    *
    * @param email the user's email address
    * @param username the user's username
    * @param password the user's plain-text password
-   * @return an HTTP response indicating the result of the registration
+   * @return an HTTP response containing the token
    */
   @Transactional
   public Response register(String email, String username, String password) {
@@ -43,7 +43,10 @@ public class AuthService {
     user.passwordHash = BcryptUtil.bcryptHash(password);
     userRepository.persist(user);
 
-    return Response.ok().build();
+    // Generate token
+    String token = Jwt.subject(String.valueOf(user.id)).sign();
+
+    return Response.ok(token).build();
   }
 
   /**
