@@ -1,7 +1,6 @@
 package pdg.game;
 
 import com.badlogic.gdx.Game;
-
 import pdg.game.scene.Background;
 import pdg.game.screens.MainMenuScreen;
 

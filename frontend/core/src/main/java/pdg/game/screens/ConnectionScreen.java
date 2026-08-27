@@ -1,59 +1,57 @@
-
 package pdg.game.screens;
-
-import java.util.function.Consumer;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
+import java.util.function.Consumer;
 import pdg.game.scene.Background;
 
-public class ConnectionScreen implements Screen{
-    MainMenuScreen mainMenu;
-    Background background;
-    Stage stage;
-    boolean isConnected = false;
-    TextButton button;
-    Consumer<Boolean> callback;
+public class ConnectionScreen implements Screen {
+  MainMenuScreen mainMenu;
+  Background background;
+  Stage stage;
+  boolean isConnected = false;
+  TextButton button;
+  Consumer<Boolean> callback;
 
-    public ConnectionScreen(Background background, Consumer<Boolean> callback){
+  public ConnectionScreen(Background background, Consumer<Boolean> callback) {
 
-        this.background = background;
-        this.callback = callback;
+    this.background = background;
+    this.callback = callback;
 
-        stage = new Stage(new FitViewport(1920, 1080));
-        
-    }
+    stage = new Stage(new FitViewport(1920, 1080));
+  }
 
-    public void show() {
+  public void show() {
 
-        callback.accept(true);
-    }
-    public void render(float delta) {
+    callback.accept(true);
+  }
 
-        ScreenUtils.clear(0, 0, 0, 1);
+  public void render(float delta) {
 
-        stage.getViewport().apply();
-        stage.act(delta);
-        stage.draw();
-    }
-    @Override
-    public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
-    }
-    @Override
-    public void pause() {}
+    ScreenUtils.clear(0, 0, 0, 1);
 
-    @Override
-    public void resume() {}
+    stage.getViewport().apply();
+    stage.act(delta);
+    stage.draw();
+  }
 
-    @Override
-    public void hide() {}
-    @Override
-    public void dispose(){
+  @Override
+  public void resize(int width, int height) {
+    stage.getViewport().update(width, height, true);
+  }
 
-    }
+  @Override
+  public void pause() {}
+
+  @Override
+  public void resume() {}
+
+  @Override
+  public void hide() {}
+
+  @Override
+  public void dispose() {}
 }

@@ -13,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
 import pdg.game.Main;
 import pdg.game.blocks.Block;
 import pdg.game.blocks.HeavyBlock;
@@ -22,7 +21,7 @@ import pdg.game.blocks.MediumBlock;
 import pdg.game.scene.Background;
 import pdg.game.ui.Frame;
 import pdg.game.ui.Score;
- 
+
 /** First screen of the application. */
 public class FirstScreen implements Screen {
 
@@ -48,7 +47,6 @@ public class FirstScreen implements Screen {
 
   /** Rotating loading image displayed on the interface stage. */
   Image loading = new Image();
-
 
   /** Creates the first screen for the supplied game instance. */
   public FirstScreen(final Main game) {
@@ -167,7 +165,7 @@ public class FirstScreen implements Screen {
       background.change();
       timer = 0;
     }
-    
+
     ScreenUtils.clear(0, 0, 0, 1); // clear l'écran pour ne rien garder de la derniere frame
     if (isVisible) { // désactive ecran si fenetre pas assez grand, pas obliger de garder.$
       // affiche le niveau, puis l'ui par dessus.

@@ -1,4 +1,3 @@
-
 package pdg.game.screens;
 
 import com.badlogic.gdx.Gdx;
@@ -12,103 +11,104 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
 import pdg.game.Main;
 import pdg.game.scene.Background;
 
 /** Main menu screen that displays the title and connection or play action. */
-public class MainMenuScreen implements Screen{
-    Main game;
-    Background background;
-    Stage stage;
-    boolean isConnected = false;
-    TextButton button;
-    Skin skin;
+public class MainMenuScreen implements Screen {
+  Main game;
+  Background background;
+  Stage stage;
+  boolean isConnected = false;
+  TextButton button;
+  Skin skin;
 
+  /** Creates the main menu and adds its background, title, and action button. */
+  public MainMenuScreen(final Main game, Background background) {
+    this.game = game;
+    this.background = background;
 
-    /** Creates the main menu and adds its background, title, and action button. */
-    public MainMenuScreen(final Main game, Background background){
-        this.game = game;
-        this.background = background;
+    stage = new Stage(new FitViewport(1920, 1080));
 
-        stage = new Stage(new FitViewport(1920, 1080));
-        
-        skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
+    skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
 
-        button = new TextButton("Connect", skin, "red_large");
-        button.setSize(450, 150);
-        button.getLabel().setFontScale(0.5f);
-        button.setPosition((stage.getWidth() - button.getWidth()) / 2f, 200);
-        button.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){
+    button = new TextButton("Connect", skin, "red_large");
+    button.setSize(450, 150);
+    button.getLabel().setFontScale(0.5f);
+    button.setPosition((stage.getWidth() - button.getWidth()) / 2f, 200);
+    button.addListener(
+        new ClickListener() {
+          @Override
+          public void clicked(InputEvent event, float x, float y) {
 
-                // Open the connection screen until the player has connected.
-                if (!isConnected){
-                    game.setScreen(new ConnectionScreen(background, success -> {
-
+            // Open the connection screen until the player has connected.
+            if (!isConnected) {
+              game.setScreen(
+                  new ConnectionScreen(
+                      background,
+                      success -> {
                         isConnected = success;
 
                         game.setScreen(MainMenuScreen.this);
-                    }));
-                }
-                else{
-                    // The play-screen transition will be added here.
-                    //setScreen(new LoadingScreen(this, background));
-                }
+                      }));
+            } else {
+              // The play-screen transition will be added here.
+              // setScreen(new LoadingScreen(this, background));
             }
+          }
         });
 
-        Label title = new Label("CYBERSIEGE", skin, "big_title_tick");
-        title.pack();
-        title.setSize(title.getWidth() + 50, title.getHeight() + 50);
-        title.setAlignment(Align.center);
-        title.setPosition((stage.getWidth() - title.getWidth()) / 2f, 500);
-        
-        background.apply(stage);
-        stage.addActor(title);
-        stage.addActor(button);
+    Label title = new Label("CYBERSIEGE", skin, "big_title_tick");
+    title.pack();
+    title.setSize(title.getWidth() + 50, title.getHeight() + 50);
+    title.setAlignment(Align.center);
+    title.setPosition((stage.getWidth() - title.getWidth()) / 2f, 500);
+
+    background.apply(stage);
+    stage.addActor(title);
+    stage.addActor(button);
+  }
+
+  /** Activates input and refreshes the button appearance for the connection state. */
+  @Override
+  public void show() {
+
+    Gdx.input.setInputProcessor(stage);
+
+    if (isConnected) {
+      button.getLabel().setText("Play");
+      button.setStyle(skin.get("green_large", TextButton.TextButtonStyle.class));
+    } else {
+      button.getLabel().setText("Connect");
+      button.setStyle(skin.get("red_large", TextButton.TextButtonStyle.class));
     }
+  }
 
-    /** Activates input and refreshes the button appearance for the connection state. */
-    @Override
-    public void show() {
+  /** Updates and draws the menu using the fixed 1920x1080 viewport. */
+  @Override
+  public void render(float delta) {
 
-        Gdx.input.setInputProcessor(stage);
+    ScreenUtils.clear(0, 0, 0, 1);
 
-        if (isConnected){
-            button.getLabel().setText("Play");
-            button.setStyle(skin.get("green_large", TextButton.TextButtonStyle.class));
-        }
-        else{
-            button.getLabel().setText("Connect");
-            button.setStyle(skin.get("red_large", TextButton.TextButtonStyle.class));
-        }
-    }
-    /** Updates and draws the menu using the fixed 1920x1080 viewport. */
-    @Override
-    public void render(float delta) {
+    stage.getViewport().apply();
+    stage.act(delta);
+    stage.draw();
+  }
 
-        ScreenUtils.clear(0, 0, 0, 1);
+  @Override
+  public void resize(int width, int height) {
+    stage.getViewport().update(width, height, true);
+  }
 
-        stage.getViewport().apply();
-        stage.act(delta);
-        stage.draw();
-    }
-    @Override
-    public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
-    }
-    @Override
-    public void pause() {}
+  @Override
+  public void pause() {}
 
-    @Override
-    public void resume() {}
+  @Override
+  public void resume() {}
 
-    @Override
-    public void hide() {}
-    @Override
-    public void dispose(){
+  @Override
+  public void hide() {}
 
-    }
+  @Override
+  public void dispose() {}
 }
