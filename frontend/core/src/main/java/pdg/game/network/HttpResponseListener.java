@@ -2,6 +2,13 @@ package pdg.game.network;
 
 import com.badlogic.gdx.Net;
 
+/**
+ * Adapts LibGDX HTTP responses to the application's {@link ResponseListener}.
+ *
+ * <p>Successful HTTP responses (2xx) are forwarded to {@link ResponseListener#success(String)}.
+ * HTTP error responses are forwarded to {@link ResponseListener#failure(int, String)}.
+ * Network errors and cancelled requests are forwarded to {@link ResponseListener#error(String)}.
+ */
 public class HttpResponseListener implements Net.HttpResponseListener {
 
   private final ResponseListener responseListener;

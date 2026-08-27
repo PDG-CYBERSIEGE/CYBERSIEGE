@@ -7,9 +7,22 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Response;
 
+/**
+ * Provides the logic for user authentication and registration.
+ */
 @ApplicationScoped
 public class AuthService {
 
+  /**
+   * Registers a new user.
+   *
+   * <p>The password is hashed before being stored.
+   *
+   * @param email the user's email address
+   * @param username the user's username
+   * @param password the user's plain-text password
+   * @return an HTTP response indicating the result of the registration
+   */
   @Transactional
   public Response register(String email, String username, String password) {
 
@@ -31,6 +44,13 @@ public class AuthService {
     return Response.ok().build();
   }
 
+  /**
+   * Authenticates a user and generates an authentication token.
+   *
+   * @param username the user's username
+   * @param password the user's plain-text password
+   * @return an HTTP response containing the token if authentication succeeds
+   */
   public Response login(String username, String password) {
 
     User user = User.find("username", username).firstResult();
