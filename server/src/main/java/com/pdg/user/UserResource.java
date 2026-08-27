@@ -13,6 +13,8 @@ public class UserResource {
 
   @Inject JsonWebToken jwt;
 
+  @Inject UserRepository userRepository;
+
   /**
    * Returns the username of the currently authenticated user.
    *
@@ -24,7 +26,7 @@ public class UserResource {
   @Path("/me")
   @Authenticated
   public Response me() {
-    User user = User.findById(Long.valueOf(jwt.getSubject()));
+    User user = userRepository.findById(Long.valueOf(jwt.getSubject()));
     if (user == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }

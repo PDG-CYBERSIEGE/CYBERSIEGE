@@ -2,8 +2,11 @@ package com.pdg.auth;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.pdg.user.User;
+import com.pdg.user.UserRepository;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.test.junit.QuarkusTest;
@@ -20,10 +23,12 @@ public class AuthResourceTest {
 
   @Inject JWTParser parser;
 
+  @Inject UserRepository userRepository;
+
   @BeforeEach
   @Transactional
   void cleanDatabase() {
-    User.deleteAll();
+    userRepository.deleteAll();
   }
 
   private User createUser() {
@@ -32,27 +37,63 @@ public class AuthResourceTest {
     user.email = "test@test.com";
     user.username = "usr";
     user.passwordHash = BcryptUtil.bcryptHash("psw12345");
-    user.persist();
+    userRepository.persist(user);
     QuarkusTransaction.commit();
     return user;
   }
 
   @Test
   void registerOk() {
-    given()
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(
-            """
-              {
-                  "email": "test@test.com",
-                  "username": "usr",
-                  "password": "psw12345"
-              }
-            """)
-        .when()
-        .post("/auth/register")
-        .then()
-        .statusCode(200);
+    String token =
+        given()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(
+                """
+                {
+                    "email": "test@test.com",
+                    "username": "usr",
+                    "password": "psw12345"
+                }
+              """)
+            .when()
+            .post("/auth/register")
+            .then()
+            .statusCode(200)
+            .extract()
+            .asString();
+
+    assertNotNull(token);
+    assertFalse(token.isBlank());
+
+    User user = userRepository.findByUsername("usr");
+
+    assertNotNull(user);
+    assertEquals("test@test.com", user.email);
+  }
+
+  @Test
+  void registerReturnsValidToken() throws Exception {
+    String token =
+        given()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(
+                """
+                  {
+                      "email": "test@test.com",
+                      "username": "usr",
+                      "password": "psw12345"
+                  }
+                """)
+            .when()
+            .post("/auth/register")
+            .then()
+            .statusCode(200)
+            .extract()
+            .asString();
+
+    User user = userRepository.findByUsername("usr");
+    JsonWebToken jwt = parser.parse(token);
+    assertEquals(String.valueOf(user.id), jwt.getSubject());
   }
 
   @Test

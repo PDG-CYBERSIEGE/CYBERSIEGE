@@ -73,13 +73,13 @@ public class AuthClientTest {
 
     wireMockServer.stubFor(
         post(urlEqualTo("/auth/register"))
-            .willReturn(aResponse().withStatus(200).withBody("Registration successful")));
+            .willReturn(aResponse().withStatus(200).withBody("blabla_jwt")));
 
     authClient.register("usr@test.com", "usr", "psw12345", listener);
 
     assertTrue(listener.latch.await(5, TimeUnit.SECONDS));
     assertEquals(1, listener.successCalls);
-    assertEquals("Registration successful", listener.result);
+    assertEquals("blabla_jwt", listener.result);
 
     wireMockServer.verify(
         postRequestedFor(urlEqualTo("/auth/register"))

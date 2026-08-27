@@ -1,9 +1,11 @@
 package com.pdg.auth;
 
 import com.pdg.user.User;
+import com.pdg.user.UserRepository;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Response;
 
@@ -11,24 +13,26 @@ import jakarta.ws.rs.core.Response;
 @ApplicationScoped
 public class AuthService {
 
+  @Inject UserRepository userRepository;
+
   /**
-   * Registers a new user.
+   * Registers a new user and generates an authentication token.
    *
    * <p>The password is hashed before being stored.
    *
    * @param email the user's email address
    * @param username the user's username
    * @param password the user's plain-text password
-   * @return an HTTP response indicating the result of the registration
+   * @return an HTTP response containing the token
    */
   @Transactional
   public Response register(String email, String username, String password) {
 
     // Do not add user if mail or name already exist
-    if (User.count("email", email) != 0) {
+    if (userRepository.findByEmail(email) != null) {
       return Response.status(Response.Status.CONFLICT).entity("Email already in use").build();
     }
-    if (User.count("username", username) != 0) {
+    if (userRepository.findByUsername(username) != null) {
       return Response.status(Response.Status.CONFLICT).entity("Username already in use").build();
     }
 
@@ -37,9 +41,12 @@ public class AuthService {
     user.email = email;
     user.username = username;
     user.passwordHash = BcryptUtil.bcryptHash(password);
-    user.persist();
+    userRepository.persist(user);
 
-    return Response.ok().build();
+    // Generate token
+    String token = Jwt.subject(String.valueOf(user.id)).sign();
+
+    return Response.ok(token).build();
   }
 
   /**
@@ -51,7 +58,7 @@ public class AuthService {
    */
   public Response login(String username, String password) {
 
-    User user = User.find("username", username).firstResult();
+    User user = userRepository.findByUsername(username);
 
     // Invalid username
     if (user == null) {
