@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.pdg.user.User;
+import com.pdg.user.UserRepository;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.test.junit.QuarkusTest;
@@ -20,10 +21,12 @@ public class AuthResourceTest {
 
   @Inject JWTParser parser;
 
+  @Inject UserRepository userRepository;
+
   @BeforeEach
   @Transactional
   void cleanDatabase() {
-    User.deleteAll();
+    userRepository.deleteAll();
   }
 
   private User createUser() {
@@ -32,7 +35,7 @@ public class AuthResourceTest {
     user.email = "test@test.com";
     user.username = "usr";
     user.passwordHash = BcryptUtil.bcryptHash("psw12345");
-    user.persist();
+    userRepository.persist(user);
     QuarkusTransaction.commit();
     return user;
   }

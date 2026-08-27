@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.is;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,10 +15,12 @@ import org.junit.jupiter.api.Test;
 @QuarkusTest
 public class UserResourceTest {
 
+  @Inject UserRepository userRepository;
+
   @BeforeEach
   @Transactional
   void cleanDatabase() {
-    User.deleteAll();
+    userRepository.deleteAll();
   }
 
   private void createUser() {
@@ -26,7 +29,7 @@ public class UserResourceTest {
     user.email = "test@test.com";
     user.username = "usr";
     user.passwordHash = BcryptUtil.bcryptHash("psw12345");
-    user.persist();
+    userRepository.persist(user);
     QuarkusTransaction.commit();
   }
 
