@@ -7,9 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Response;
 
-/**
- * Provides the logic for user authentication and registration.
- */
+/** Provides the logic for user authentication and registration. */
 @ApplicationScoped
 public class AuthService {
 

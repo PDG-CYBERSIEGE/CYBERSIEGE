@@ -7,9 +7,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-/**
- * REST resource providing operations for the currently authenticated user.
- */
+/** REST resource providing operations for the currently authenticated user. */
 @Path("/users")
 public class UserResource {
 
@@ -20,8 +18,7 @@ public class UserResource {
    *
    * <p>The user is identified using the subject ({@code sub}) claim of the JWT.
    *
-   * @return an HTTP 200 response containing the username, or HTTP 404 if the
-   *         user does not exist
+   * @return an HTTP 200 response containing the username, or HTTP 404 if the user does not exist
    */
   @GET
   @Path("/me")
