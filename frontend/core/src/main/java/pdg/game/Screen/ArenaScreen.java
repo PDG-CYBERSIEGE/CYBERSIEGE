@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import pdg.game.Canon;
+import pdg.game.DTO.TeamDTO;
 import pdg.game.Entity.Entity;
 import pdg.game.Entity.Robot;
 import pdg.game.Entity.Team;
@@ -67,7 +68,7 @@ public class ArenaScreen implements Screen{
         // create a robot using the DTO
     }
 
-    public ArenaScreen(Game game, ArrayList<Block> blocks) {
+    public ArenaScreen(Game game, TeamDTO onwTeam, TeamDTO ennemyTeam) {
         this.game = game;
 
         // Initialize camera and viewport
@@ -83,6 +84,8 @@ public class ArenaScreen implements Screen{
         assetManager.loadSprites();
 
         //crée les équipes
+
+
     }
 
     private void initializeBodies() {
