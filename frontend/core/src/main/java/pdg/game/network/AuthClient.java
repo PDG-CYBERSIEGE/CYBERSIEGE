@@ -29,4 +29,8 @@ public class AuthClient {
   public void setToken(String token) {
     httpClient.setToken(token);
   }
+
+  public void getUsername(ResponseListener responseListener) {
+    httpClient.get("/users/me", new HttpResponseListener(responseListener));
+  }
 }

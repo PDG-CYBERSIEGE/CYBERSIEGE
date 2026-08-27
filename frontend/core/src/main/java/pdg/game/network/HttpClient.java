@@ -6,9 +6,12 @@ import com.badlogic.gdx.net.HttpRequestBuilder;
 
 public class HttpClient {
 
-  private static final String BASE_URL = "http://localhost:8080";
-
+  private final String BASE_URL;
   private String token;
+
+  public HttpClient(String base_url) {
+    BASE_URL = base_url;
+  }
 
   public void setToken(String token) {
     this.token = token;
