@@ -2,6 +2,7 @@
 FROM eclipse-temurin:21-jdk AS client-build
 WORKDIR /frontend
 COPY frontend/ .
+RUN ./gradlew clean
 RUN ./gradlew html:dist --no-daemon
 
 # ---- Stage 2 : copie du client dans les resources avant packaging final ----

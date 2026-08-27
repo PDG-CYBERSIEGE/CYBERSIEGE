@@ -24,3 +24,19 @@ cd présentation/reveal.js
 npm install
 npm start
 ```
+
+## pour avoir la version en production
+```yml
+     server:
+     image : ghcr.io/pdg-cybersiege/cybersiege:latest
+     container_name: PDG_backend
+```
+
+## pour avoir la version sur votre pc 
+```yml
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: PDG_backend
+```
