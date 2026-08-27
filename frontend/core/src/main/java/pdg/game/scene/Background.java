@@ -1,10 +1,11 @@
 package pdg.game.scene;
 
+import java.util.Random;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import java.util.Random;
 
 /** Manages the five layered images used for a randomly selected background. */
 public class Background {
