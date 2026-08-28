@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
 import pdg.game.Main;
 import pdg.game.scene.Background;
 
@@ -68,7 +67,6 @@ public class MainMenuScreen implements Screen {
     title.setAlignment(Align.center);
     title.setPosition((stage.getWidth() - title.getWidth()) / 2f, 500);
 
-
     stage.addActor(title);
     stage.addActor(button);
   }
@@ -86,7 +84,6 @@ public class MainMenuScreen implements Screen {
       button.getLabel().setText("Connect");
       button.setStyle(skin.get("red_large", TextButton.TextButtonStyle.class));
     }
-
   }
 
   /** Updates and draws the menu using the fixed 1920x1080 viewport. */
