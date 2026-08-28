@@ -2,12 +2,12 @@ plugins {
     id 'java'
     id 'io.quarkus'
     id 'jacoco'
-    id 'com.diffplug.spotless' version '6.25.0'
+    id 'com.diffplug.spotless' version '7.0.0'
 }
 
 spotless {
     java {
-        googleJavaFormat()
+        googleJavaFormat('1.29.0')
     }
 }
 
@@ -17,6 +17,10 @@ repositories {
 }
 
 dependencies {
+    implementation 'io.quarkus:quarkus-smallrye-jwt'
+    implementation 'io.quarkus:quarkus-smallrye-jwt-build'
+    implementation 'io.quarkus:quarkus-hibernate-validator'
+    implementation 'io.quarkus:quarkus-elytron-security-common'
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-hibernate-orm-panache'
     implementation 'io.quarkus:quarkus-rest'
