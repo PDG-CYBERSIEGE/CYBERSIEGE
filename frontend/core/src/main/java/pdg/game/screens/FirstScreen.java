@@ -19,6 +19,7 @@ import pdg.game.blocks.HeavyBlock;
 import pdg.game.blocks.LightBlock;
 import pdg.game.blocks.MediumBlock;
 import pdg.game.scene.Background;
+import pdg.game.scene.Cannon;
 import pdg.game.ui.Frame;
 import pdg.game.ui.Score;
 
@@ -47,6 +48,8 @@ public class FirstScreen implements Screen {
 
   /** Rotating loading image displayed on the interface stage. */
   Image loading = new Image();
+
+  Cannon cannon;
 
   /** Creates the first screen for the supplied game instance. */
   public FirstScreen(final Main game) {
@@ -93,6 +96,7 @@ public class FirstScreen implements Screen {
           @Override
           public void clicked(InputEvent event, float x, float y) {
             background.change();
+            cannon.setLoadingStage(1);
           }
         });
     button1.setSize(100, 30);
@@ -146,6 +150,10 @@ public class FirstScreen implements Screen {
     loading.setPosition(stage.getWidth() - 300, stage.getHeight() - 600);
     loading.setOrigin(loading.getWidth() / 2f, loading.getHeight() / 2f);
     stage.addActor(loading);
+
+    cannon = new Cannon();
+    cannon.setPosition(23, 1);
+    itemStage.addActor(cannon);
   }
 
   @Override
@@ -157,12 +165,13 @@ public class FirstScreen implements Screen {
     rotation += delta * 360;
     if (rotation >= 360) rotation -= 360; // 1 tour par seconde
     loading.setRotation(rotation);
-
+    cannon.animate(delta);
     // augmenter le score des joueurs toutes les secondes
-    if (timer >= 1f) {
+    if (timer >= 2f) {
       score.addScoreP1();
       score.addScoreP2();
-      background.change();
+      cannon.shoot();
+
       timer = 0;
     }
     ScreenUtils.clear(0, 0, 0, 1); // clear l'écran pour ne rien garder de la derniere frame
