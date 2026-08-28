@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+
 import pdg.game.Main;
 import pdg.game.scene.Background;
 
@@ -18,15 +19,18 @@ import pdg.game.scene.Background;
 public class MainMenuScreen implements Screen {
   Main game;
   Background background;
+  Stage backgroundStage;
   Stage stage;
   boolean isConnected = false;
   TextButton button;
+  Label title;
   Skin skin;
 
   /** Creates the main menu and adds its background, title, and action button. */
-  public MainMenuScreen(final Main game, Background background) {
+  public MainMenuScreen(final Main game, Background background, Stage backgroundStage) {
     this.game = game;
     this.background = background;
+    this.backgroundStage = backgroundStage;
 
     stage = new Stage(new FitViewport(1920, 1080));
 
@@ -45,7 +49,7 @@ public class MainMenuScreen implements Screen {
             if (!isConnected) {
               game.setScreen(
                   new ConnectionScreen(
-                      background,
+                      backgroundStage,
                       success -> {
                         isConnected = success;
 
@@ -58,13 +62,13 @@ public class MainMenuScreen implements Screen {
           }
         });
 
-    Label title = new Label("CYBERSIEGE", skin, "big_title_tick");
+    title = new Label("CYBERSIEGE", skin, "big_title_tick");
     title.pack();
     title.setSize(title.getWidth() + 50, title.getHeight() + 50);
     title.setAlignment(Align.center);
     title.setPosition((stage.getWidth() - title.getWidth()) / 2f, 500);
 
-    background.apply(stage);
+
     stage.addActor(title);
     stage.addActor(button);
   }
@@ -82,6 +86,7 @@ public class MainMenuScreen implements Screen {
       button.getLabel().setText("Connect");
       button.setStyle(skin.get("red_large", TextButton.TextButtonStyle.class));
     }
+
   }
 
   /** Updates and draws the menu using the fixed 1920x1080 viewport. */
@@ -89,6 +94,10 @@ public class MainMenuScreen implements Screen {
   public void render(float delta) {
 
     ScreenUtils.clear(0, 0, 0, 1);
+
+    backgroundStage.getViewport().apply();
+    backgroundStage.act(delta);
+    backgroundStage.draw();
 
     stage.getViewport().apply();
     stage.act(delta);

@@ -1,24 +1,24 @@
 package pdg.game.screens;
 
+import java.util.function.Consumer;
+
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import java.util.function.Consumer;
-import pdg.game.scene.Background;
 
 public class ConnectionScreen implements Screen {
   MainMenuScreen mainMenu;
-  Background background;
+  Stage backgroundStage;
   Stage stage;
   boolean isConnected = false;
   TextButton button;
   Consumer<Boolean> callback;
 
-  public ConnectionScreen(Background background, Consumer<Boolean> callback) {
+  public ConnectionScreen(Stage backgroundStage, Consumer<Boolean> callback) {
 
-    this.background = background;
+    this.backgroundStage = backgroundStage;
     this.callback = callback;
 
     stage = new Stage(new FitViewport(1920, 1080));
@@ -27,6 +27,7 @@ public class ConnectionScreen implements Screen {
   public void show() {
 
     callback.accept(true);
+
   }
 
   public void render(float delta) {
