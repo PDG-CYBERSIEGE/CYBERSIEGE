@@ -33,7 +33,8 @@ public class Cannon extends Group {
 
     Texture barrier_left = new Texture(Gdx.files.internal("launcher/barrier_left.png"));
     Texture barrier_straight = new Texture(Gdx.files.internal("launcher/barrier_straight.png"));
-    Texture barrier_left_double = new Texture(Gdx.files.internal("launcher/barrier_left_double.png"));
+    Texture barrier_left_double =
+        new Texture(Gdx.files.internal("launcher/barrier_left_double.png"));
 
     Texture core_left = new Texture(Gdx.files.internal("launcher/core_left.png"));
     Texture core_right = new Texture(Gdx.files.internal("launcher/core_right.png"));
