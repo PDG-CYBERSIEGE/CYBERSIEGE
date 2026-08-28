@@ -1,4 +1,4 @@
 package pdg.game.DTO;
 
-public class KingDTO {
+public record KingDTO(String sprite, int x, int y, int health, int mass) {
 }

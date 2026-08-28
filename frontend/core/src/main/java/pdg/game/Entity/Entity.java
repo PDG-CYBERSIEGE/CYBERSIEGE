@@ -1,15 +1,15 @@
 package pdg.game.Entity;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import jdk.internal.net.http.common.Pair;
 
 import static pdg.game.utils.StaticValues.DAMAGETRESHOLD;
 
 public class Entity {
     protected int health;
     protected Texture sprite;
-    protected Pair<Integer, Integer> pos;
+    protected Vector2 pos;
     protected Body body;
     protected int mass;
 
@@ -21,7 +21,7 @@ public class Entity {
         this.mass = mass;
     }
 
-    public void setPos(Pair<Integer, Integer> pos){
+    public void setPos(Vector2 pos){
         this.pos = pos;
     }
 
