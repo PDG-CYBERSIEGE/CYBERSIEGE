@@ -84,12 +84,12 @@ public class MatchWebSocketIntegrationTest {
     TestClient client = new TestClient();
 
     WebSocketClientConnection connection =
-            connector
-                    .get()
-                    .baseUri(matchUri)
-                    .addHeader("Authorization", "Bearer " + token)
-                    .onTextMessage((c, message) -> client.receive(message))
-                    .connectAndAwait();
+        connector
+            .get()
+            .baseUri(matchUri)
+            .addHeader("Authorization", "Bearer " + token)
+            .onTextMessage((c, message) -> client.receive(message))
+            .connectAndAwait();
 
     client.setConnection(connection);
 

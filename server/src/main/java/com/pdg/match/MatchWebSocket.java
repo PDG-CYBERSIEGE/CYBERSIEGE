@@ -14,7 +14,6 @@ public class MatchWebSocket {
 
   @Inject JsonWebToken jwt;
 
-
   @Inject MatchmakingService matchmakingService;
 
   @OnOpen
