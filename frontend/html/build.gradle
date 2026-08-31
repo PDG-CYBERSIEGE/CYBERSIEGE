@@ -35,8 +35,8 @@ gwt {
   sourceLevel = '1.11'
 
   devMode {
-    port = 8080
-    startupUrl = "http://127.0.0.1:8080/index.html"
+    port = 8081
+    startupUrl = "http://127.0.0.1:8081/index.html"
   }
   superDev {
     modules = ["pdg.game.GdxDefinitionSuperdev"]
