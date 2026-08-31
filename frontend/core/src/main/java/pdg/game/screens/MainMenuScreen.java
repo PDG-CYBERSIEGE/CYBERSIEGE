@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
 import pdg.game.Main;
 import pdg.game.scene.Background;
 
@@ -45,16 +44,17 @@ public class MainMenuScreen implements Screen {
 
             // Open the connection screen until the player has connected.
             if (!isConnected) {
-              if(connectionScreen == null) {
-                connectionScreen = new ConnectionScreen(
-                    game,
-                    background,
-                    success -> {
-                      isConnected = success;
+              if (connectionScreen == null) {
+                connectionScreen =
+                    new ConnectionScreen(
+                        game,
+                        background,
+                        success -> {
+                          isConnected = success;
 
-                      game.setScreen(MainMenuScreen.this);
-                    });
-                  }
+                          game.setScreen(MainMenuScreen.this);
+                        });
+              }
               game.setScreen(connectionScreen);
             } else {
               // The play-screen transition will be added here.

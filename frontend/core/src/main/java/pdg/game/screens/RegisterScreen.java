@@ -1,7 +1,5 @@
 package pdg.game.screens;
 
-import java.util.function.Consumer;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -18,7 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
+import java.util.function.Consumer;
 import pdg.game.network.AuthClient;
 import pdg.game.network.ResponseListener;
 import pdg.game.scene.Background;
@@ -26,17 +24,15 @@ import pdg.game.ui.Frame;
 
 /**
  * RegisterScreen - Handles new user registration.
- * 
- * This screen displays a registration form where new users can create an account
- * by providing username, email, password, and password confirmation. It validates
- * user input and communicates with the server for account creation.
- * 
- * Features:
- * - Username, email, and password input fields with placeholder text
- * - Password confirmation validation
- * - Error message display for failed registrations
- * - Server-side registration via AuthClient
- * - Callback mechanism to notify parent screen of registration success/failure
+ *
+ * <p>This screen displays a registration form where new users can create an account by providing
+ * username, email, password, and password confirmation. It validates user input and communicates
+ * with the server for account creation.
+ *
+ * <p>Features: - Username, email, and password input fields with placeholder text - Password
+ * confirmation validation - Error message display for failed registrations - Server-side
+ * registration via AuthClient - Callback mechanism to notify parent screen of registration
+ * success/failure
  */
 public class RegisterScreen implements Screen {
   // Background and stage for rendering
@@ -58,7 +54,10 @@ public class RegisterScreen implements Screen {
   // Error message label
   private Label errorMessage;
 
-  ImageButton showPassword, showPasswordConfirm;
+  // Password visibility toggle buttons
+  private ImageButton showPassword;
+  private ImageButton showPasswordConfirm;
+
   // UI styling constants
   private static final Color BASE_COLOR = Color.GRAY;
   private static final Color EDIT_COLOR = Color.WHITE;
@@ -66,10 +65,10 @@ public class RegisterScreen implements Screen {
 
   /**
    * Constructor for RegisterScreen.
-   * 
-   * Initializes the registration screen with UI components including username, email,
-   * password, and password confirmation fields, along with register and cancel buttons.
-   * 
+   *
+   * <p>Initializes the registration screen with UI components including username, email, password,
+   * and password confirmation fields, along with register and cancel buttons.
+   *
    * @param background The background to display behind the UI
    * @param authClient The authentication client for server communication
    * @param callback Callback to handle screen transition results
@@ -94,77 +93,80 @@ public class RegisterScreen implements Screen {
     // Create and configure username input field
     Label usernameLabel = new Label("username:", skin);
     username = new TextField(BASE_TEXT, skin);
-    username.setStyle(new TextField.TextFieldStyle(username.getStyle()) {{ fontColor = BASE_COLOR; }});
-    username.addListener(createInputFocusListener(username, false));
+    username.setStyle(
+        new TextField.TextFieldStyle(username.getStyle()) {
+          {
+            fontColor = BASE_COLOR;
+          }
+        });
+    username.addListener(createInputFocusListener(username));
 
     // Create and configure email input field
     Label mailLabel = new Label("mail:", skin);
     mail = new TextField(BASE_TEXT, skin);
-    mail.setStyle(new TextField.TextFieldStyle(mail.getStyle()) {{ fontColor = BASE_COLOR; }});
-    mail.addListener(createInputFocusListener(mail, false));
+    mail.setStyle(
+        new TextField.TextFieldStyle(mail.getStyle()) {
+          {
+            fontColor = BASE_COLOR;
+          }
+        });
+    mail.addListener(createInputFocusListener(mail));
 
     // Create and configure password input field
     showPassword = new ImageButton(skin, "eye");
     showPassword.setVisible(false);
-    showPassword.addListener(new ClickListener() {
-        @Override
-        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-            password.setPasswordMode(false);
-            return true;
-        }
 
-        @Override
-        public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-            password.setPasswordMode(true);
-        }
-    });
     Label passwordLabel = new Label("password:", skin);
     password = new TextField(BASE_TEXT, skin);
-    password.setStyle(new TextField.TextFieldStyle(password.getStyle()) {{ fontColor = BASE_COLOR; }});
-    password.addListener(createInputFocusListener(password, true, showPassword));
+    password.setStyle(
+        new TextField.TextFieldStyle(password.getStyle()) {
+          {
+            fontColor = BASE_COLOR;
+          }
+        });
+
+    // set listeners
+    showPassword.addListener(createPasswordRevealListener(password));
+    password.addListener(createInputFocusListener(password, showPassword));
 
     // Create and configure password confirmation field
     showPasswordConfirm = new ImageButton(skin, "eye");
     showPasswordConfirm.setVisible(false);
-    showPasswordConfirm.addListener(new ClickListener() {
-        @Override
-        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-            confirmPassword.setPasswordMode(false);
-            return true;
-        }
 
-        @Override
-        public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-            confirmPassword.setPasswordMode(true);
-        }
-    });
     Label confirmPasswordLabel = new Label("confirm password:", skin);
     confirmPassword = new TextField(BASE_TEXT, skin);
-    confirmPassword.setStyle(new TextField.TextFieldStyle(confirmPassword.getStyle()) {{ fontColor = BASE_COLOR; }});
-    confirmPassword.addListener(createInputFocusListener(confirmPassword, true, showPasswordConfirm));
+    confirmPassword.setStyle(
+        new TextField.TextFieldStyle(confirmPassword.getStyle()) {
+          {
+            fontColor = BASE_COLOR;
+          }
+        });
 
-    
-
+    // set listeners
+    showPasswordConfirm.addListener(createPasswordRevealListener(confirmPassword));
+    confirmPassword.addListener(createInputFocusListener(confirmPassword, showPasswordConfirm));
 
     // Create cancel button
     TextButton cancel = new TextButton("cancel", skin, "red");
     cancel.setSize(200, 75);
-    cancel.addListener(new ClickListener() {
-      @Override
-      public void clicked(InputEvent event, float x, float y) {
-        callback.accept(false);
-      }
-    });
+    cancel.addListener(
+        new ClickListener() {
+          @Override
+          public void clicked(InputEvent event, float x, float y) {
+            callback.accept(false);
+          }
+        });
 
     // Create registration button
     TextButton create = new TextButton("create", skin, "green");
     create.setSize(200, 75);
-    create.addListener(new ClickListener() {
-      @Override
-      public void clicked(InputEvent event, float x, float y) {
-        handleRegistration();
-      }
-    });
+    create.addListener(
+        new ClickListener() {
+          @Override
+          public void clicked(InputEvent event, float x, float y) {
+            handleRegistration();
+          }
+        });
 
     // Build UI frame with labels and input fields
     Frame frame = new Frame(600, 600, "register", cancel, create);
@@ -196,7 +198,13 @@ public class RegisterScreen implements Screen {
     frame.getContent().add(showPassword).size(40, 40).padRight(10);
     frame.getContent().row();
 
-    frame.getContent().add(confirmPasswordLabel).align(Align.left).expandX().padLeft(10).padRight(60);
+    frame
+        .getContent()
+        .add(confirmPasswordLabel)
+        .align(Align.left)
+        .expandX()
+        .padLeft(10)
+        .padRight(60);
     frame.getContent().add().size(40, 40).padRight(10);
     frame.getContent().row();
 
@@ -208,21 +216,23 @@ public class RegisterScreen implements Screen {
     frame.getContent().row();
     errorMessage.setWrap(true);
 
-
     stage.addActor(frame);
   }
 
   /**
-   * Creates a focus listener for input fields that clears placeholder text when focused.
-   * 
+   * Creates a focus listener for input fields that clears placeholder text when focused. Configures
+   * password field masking and controls visibility toggle button.
+   *
    * @param field The input field to listen to
    * @param isPasswordField Whether this field should be masked as a password
+   * @param revealButton Optional button to control password visibility
    * @return A FocusListener configured for the field
    */
-  private FocusListener createInputFocusListener(TextField field, boolean isPasswordField){
-    return createInputFocusListener(field, isPasswordField, null);
+  private FocusListener createInputFocusListener(TextField field) {
+    return createInputFocusListener(field, null);
   }
-  private FocusListener createInputFocusListener(TextField field, boolean isPasswordField, Actor revealButton) {
+
+  private FocusListener createInputFocusListener(TextField field, Actor revealButton) {
     return new FocusListener() {
       @Override
       public void keyboardFocusChanged(FocusEvent event, Actor actor, boolean focused) {
@@ -230,13 +240,35 @@ public class RegisterScreen implements Screen {
           field.setText("");
           field.getStyle().fontColor = EDIT_COLOR;
 
-          // Apply password masking if needed
-          if (isPasswordField) {
+          // Configure password field with masking
+          if (revealButton != null) {
             field.setPasswordMode(true);
-            field.setPasswordCharacter('o');
+            field.setPasswordCharacter('•');
             revealButton.setVisible(true);
           }
         }
+      }
+    };
+  }
+
+  /**
+   * Creates a click listener for password visibility toggle button. Shows password on touch down,
+   * hides on touch up.
+   *
+   * @param passwordField The password field to control
+   * @return A ClickListener for password visibility toggle
+   */
+  private ClickListener createPasswordRevealListener(TextField passwordField) {
+    return new ClickListener() {
+      @Override
+      public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+        passwordField.setPasswordMode(false);
+        return true;
+      }
+
+      @Override
+      public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+        passwordField.setPasswordMode(true);
       }
     };
   }
@@ -254,79 +286,107 @@ public class RegisterScreen implements Screen {
     // Clear previous error message
     errorMessage.setText("");
 
-    // Validate passwords match
+    // Validate that passwords match
     if (!passwordValue.equals(confirmPasswordValue)) {
       errorMessage.setText("Passwords do not match");
       return;
     }
 
     // Send registration request to server
-    authClient.register(mailValue, usernameValue, passwordValue, new ResponseListener() {
-      @Override
-      public void success(String token) {
-        System.out.println("Registration successful!");
-        System.out.println("Token: " + token);
-        authClient.setToken(token);
-        Gdx.app.postRunnable(() -> callback.accept(true));
-      }
+    authClient.register(
+        mailValue,
+        usernameValue,
+        passwordValue,
+        new ResponseListener() {
+          @Override
+          public void success(String token) {
+            System.out.println("Registration successful!");
+            System.out.println("Token: " + token);
+            authClient.setToken(token);
+            Gdx.app.postRunnable(() -> callback.accept(true));
+          }
 
-      @Override
-      public void failure(int status, String result) {
-        System.out.println("Registration failed: " + status + " - " + result);
-        errorMessage.setText(result);
-      }
+          @Override
+          public void failure(int status, String result) {
+            System.out.println("Registration failed: " + status + " - " + result);
+            errorMessage.setText(result);
+          }
 
-      @Override
-      public void error(String message) {
-        System.out.println("Network error: " + message);
-        errorMessage.setText("Network error: " + message);
-      }
-    });
+          @Override
+          public void error(String message) {
+            System.out.println("Network error: " + message);
+            errorMessage.setText("Network error: " + message);
+          }
+        });
   }
 
+  /**
+   * Called when the screen becomes active. Resets all input fields and buttons to initial state.
+   */
+  @Override
   public void show() {
     Gdx.input.setInputProcessor(stage);
     stage.setKeyboardFocus(null);
-
-    username.getStyle().fontColor = BASE_COLOR;
-    username.setText(BASE_TEXT);
-
-    mail.getStyle().fontColor = BASE_COLOR;
-    mail.setText(BASE_TEXT);
-
-    password.getStyle().fontColor = BASE_COLOR;
-    password.setText(BASE_TEXT);
+    resetInputFields();
     showPassword.setVisible(false);
-
-    confirmPassword.getStyle().fontColor = BASE_COLOR;
-    confirmPassword.setText(BASE_TEXT);
     showPasswordConfirm.setVisible(false);
-    
+    errorMessage.setText("");
   }
 
-  public void render(float delta) {
+  /** Resets all input fields to their placeholder state with base styling. */
+  private void resetInputFields() {
+    username.getStyle().fontColor = BASE_COLOR;
+    username.setText(BASE_TEXT);
+    mail.getStyle().fontColor = BASE_COLOR;
+    mail.setText(BASE_TEXT);
+    password.getStyle().fontColor = BASE_COLOR;
+    password.setText(BASE_TEXT);
+    confirmPassword.getStyle().fontColor = BASE_COLOR;
+    confirmPassword.setText(BASE_TEXT);
+  }
 
+  /**
+   * Renders the screen each frame. Clears screen and updates stage with delta time.
+   *
+   * @param delta Time in seconds since last frame
+   */
+  @Override
+  public void render(float delta) {
+    // Clear screen with black color
     ScreenUtils.clear(0, 0, 0, 1);
 
+    // Update and render stage
     stage.getViewport().apply();
     stage.act(delta);
     stage.draw();
   }
 
+  /**
+   * Called when screen is resized. Updates viewport to match new dimensions.
+   *
+   * @param width New screen width in pixels
+   * @param height New screen height in pixels
+   */
   @Override
   public void resize(int width, int height) {
     stage.getViewport().update(width, height, true);
   }
 
+  /** Called when application is paused. */
   @Override
   public void pause() {}
 
+  /** Called when application is resumed. */
   @Override
   public void resume() {}
 
+  /** Called when screen is hidden or replaced. */
   @Override
   public void hide() {}
 
+  /** Called when screen is disposed. Cleans up resources including stage and input processor. */
   @Override
-  public void dispose() {}
+  public void dispose() {
+    stage.dispose();
+  }
 }

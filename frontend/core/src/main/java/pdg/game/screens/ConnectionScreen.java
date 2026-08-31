@@ -1,7 +1,5 @@
 package pdg.game.screens;
 
-import java.util.function.Consumer;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -18,7 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
+import java.util.function.Consumer;
 import pdg.game.Main;
 import pdg.game.network.AuthClient;
 import pdg.game.network.HttpClient;
@@ -28,34 +26,32 @@ import pdg.game.ui.Frame;
 
 /**
  * ConnectionScreen - Handles user login functionality.
- * 
- * This screen displays a login interface where users can enter their username and password
- * to authenticate with the server. It also provides navigation to the registration screen
- * for new users.
- * 
- * Features:
- * - Username and password input fields with placeholder text
- * - Login validation and authentication via AuthClient
- * - Navigation to RegisterScreen for new user registration
- * - Callback mechanism to notify parent screen of authentication success/failure
+ *
+ * <p>This screen displays a login interface where users can enter their username and password to
+ * authenticate with the server. It also provides navigation to the registration screen for new
+ * users.
+ *
+ * <p>Features: - Username and password input fields with placeholder text - Login validation and
+ * authentication via AuthClient - Navigation to RegisterScreen for new user registration - Callback
+ * mechanism to notify parent screen of authentication success/failure
  */
 public class ConnectionScreen implements Screen {
   // Game reference for screen management
   private Main game;
-  
+
   // Background and stage for rendering
   private Background background;
   private Stage stage;
-  
+
   // Authentication client for server communication
   private AuthClient authClient;
-  
+
   // Register screen reference (lazy-loaded)
   private Screen registerScreen;
-  
+
   // Callback for screen transitions
   private Consumer<Boolean> callback;
-  
+
   // Input fields
   private TextField username;
   private TextField password;
@@ -71,10 +67,10 @@ public class ConnectionScreen implements Screen {
 
   /**
    * Constructor for ConnectionScreen.
-   * 
-   * Initializes the login screen with UI components including username/password fields
-   * and login/register/cancel buttons.
-   * 
+   *
+   * <p>Initializes the login screen with UI components including username/password fields and
+   * login/register/cancel buttons.
+   *
    * @param game The main game instance for screen transitions
    * @param background The background to display behind the UI
    * @param callback Callback to handle screen transition results
@@ -103,63 +99,62 @@ public class ConnectionScreen implements Screen {
     // Create and configure username input field
     Label usernameLabel = new Label("username:", skin);
     username = new TextField(BASE_TEXT, skin);
-    username.setStyle(new TextField.TextFieldStyle(username.getStyle()) {{ fontColor = BASE_COLOR; }});
+    username.setStyle(
+        new TextField.TextFieldStyle(username.getStyle()) {
+          {
+            fontColor = BASE_COLOR;
+          }
+        });
     username.addListener(createInputFocusListener(username, false));
 
     // Create and configure password input field
     Label passwordLabel = new Label("password:", skin);
     password = new TextField(BASE_TEXT, skin);
-    password.setStyle(new TextField.TextFieldStyle(password.getStyle()) {{ fontColor = BASE_COLOR; }});
+    password.setStyle(
+        new TextField.TextFieldStyle(password.getStyle()) {
+          {
+            fontColor = BASE_COLOR;
+          }
+        });
+
+    showPassword = new ImageButton(skin, "eye");
+    showPassword.setVisible(false);
+
     password.addListener(createInputFocusListener(password, true));
+    showPassword.addListener(createPasswordRevealListener(password));
 
     // Create cancel button
     TextButton cancel = new TextButton("cancel", skin, "red");
     cancel.setSize(150, 75);
-    cancel.addListener(new ClickListener() {
-      @Override
-      public void clicked(InputEvent event, float x, float y) {
-        callback.accept(false);
-      }
-    });
+    cancel.addListener(
+        new ClickListener() {
+          @Override
+          public void clicked(InputEvent event, float x, float y) {
+            callback.accept(false);
+          }
+        });
 
     // Create register button (navigates to RegisterScreen)
     TextButton register = new TextButton("register", skin, "red");
     register.setSize(150, 75);
-    register.addListener(new ClickListener() {
-      @Override
-      public void clicked(InputEvent event, float x, float y) {
-        // Lazy-load register screen
-        if (registerScreen == null) {
-          registerScreen = new RegisterScreen(background, authClient, callback);
-        }
-        game.setScreen(registerScreen);
-      }
-    });
+    register.addListener(
+        new ClickListener() {
+          @Override
+          public void clicked(InputEvent event, float x, float y) {
+            navigateToRegisterScreen();
+          }
+        });
 
     // Create login button
     TextButton connect = new TextButton("connect", skin, "green");
     connect.setSize(150, 75);
-    connect.addListener(new ClickListener() {
-      @Override
-      public void clicked(InputEvent event, float x, float y) {
-        handleLogin();
-      }
-    });
-
-    showPassword = new ImageButton(skin, "eye");
-    showPassword.setVisible(false);
-    showPassword.addListener(new ClickListener() {
-    @Override
-    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-        password.setPasswordMode(false);
-        return true;
-    }
-
-    @Override
-    public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-        password.setPasswordMode(true);
-    }
-});
+    connect.addListener(
+        new ClickListener() {
+          @Override
+          public void clicked(InputEvent event, float x, float y) {
+            handleLogin();
+          }
+        });
 
     // Build UI frame with labels and input fields
     Frame frame = new Frame(600, 600, "Connection", cancel, register, connect);
@@ -191,8 +186,9 @@ public class ConnectionScreen implements Screen {
   }
 
   /**
-   * Creates a focus listener for input fields that clears placeholder text when focused.
-   * 
+   * Creates a focus listener for input fields that clears placeholder text when focused. Handles
+   * password field initialization with masking and character display.
+   *
    * @param field The input field to listen to
    * @param isPasswordField Whether this field should be masked as a password
    * @return A FocusListener configured for the field
@@ -204,12 +200,12 @@ public class ConnectionScreen implements Screen {
         if (focused && field.getStyle().fontColor == BASE_COLOR) {
           field.setText("");
           field.getStyle().fontColor = EDIT_COLOR;
-          
-          // Apply password masking if needed
+
+          // Configure password field with masking
           if (isPasswordField) {
             field.setPasswordMode(true);
+            field.setPasswordCharacter('•');
             showPassword.setVisible(true);
-            field.setPasswordCharacter('o');
           }
         }
       }
@@ -217,75 +213,136 @@ public class ConnectionScreen implements Screen {
   }
 
   /**
-   * Handles the login process by validating input and sending authentication request.
+   * Creates a click listener for password visibility toggle button. Shows password on touch down,
+   * hides on touch up.
+   *
+   * @param passwordField The password field to control
+   * @return A ClickListener for password visibility toggle
+   */
+  private ClickListener createPasswordRevealListener(TextField passwordField) {
+    return new ClickListener() {
+      @Override
+      public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+        passwordField.setPasswordMode(false);
+        return true;
+      }
+
+      @Override
+      public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+        passwordField.setPasswordMode(true);
+      }
+    };
+  }
+
+  /** Navigates to the registration screen. Lazily initializes RegisterScreen on first access. */
+  private void navigateToRegisterScreen() {
+    if (registerScreen == null) {
+      registerScreen = new RegisterScreen(background, authClient, callback);
+    }
+    game.setScreen(registerScreen);
+  }
+
+  /**
+   * Handles the login process. Validates input fields and sends authentication request to server.
+   * Displays error messages on failure and navigates to main game on success.
    */
   private void handleLogin() {
     String usernameValue = username.getText();
     String passwordValue = password.getText();
-    
-    // Clear previous error message
+
+    // Clear any previous error messages
     errorMessage.setText("");
 
-    authClient.login(usernameValue, passwordValue, new ResponseListener() {
+    // Send login request to authentication service
+    authClient.login(
+        usernameValue,
+        passwordValue,
+        new ResponseListener() {
+          @Override
+          public void success(String token) {
+            System.out.println("Login successful!");
+            System.out.println("Token: " + token);
+            authClient.setToken(token);
+            Gdx.app.postRunnable(() -> callback.accept(true));
+          }
 
-      @Override
-      public void success(String token) {
-        System.out.println("Connexion réussie !");
-        System.out.println("Token : " + token);
-        authClient.setToken(token);
-        Gdx.app.postRunnable(() -> callback.accept(true));
-      }
+          @Override
+          public void failure(int status, String result) {
+            System.out.println("Login failed: " + status + " - " + result);
+            errorMessage.setText(result);
+          }
 
-      @Override
-      public void failure(int status, String result) {
-        System.out.println("Connexion refusée : " + status + " - " + result);
-        errorMessage.setText(result);
-      }
-
-      @Override
-      public void error(String message) {
-        System.out.println("Erreur réseau : " + message);
-      }
-    });
+          @Override
+          public void error(String message) {
+            System.out.println("Network error: " + message);
+            errorMessage.setText("Network error: " + message);
+          }
+        });
   }
 
+  /**
+   * Called when the screen becomes active. Resets UI elements to initial state and configures input
+   * processor.
+   */
+  @Override
   public void show() {
     Gdx.input.setInputProcessor(stage);
     stage.setKeyboardFocus(null);
-
-    username.getStyle().fontColor = BASE_COLOR;
-    username.setText(BASE_TEXT);
-
-    password.getStyle().fontColor = BASE_COLOR;
-    password.setText(BASE_TEXT);
-
-     showPassword.setVisible(false);
-    
+    resetInputFields();
+    showPassword.setVisible(false);
+    errorMessage.setText("");
   }
 
-  public void render(float delta) {
+  /** Resets all input fields to their placeholder state. */
+  private void resetInputFields() {
+    username.getStyle().fontColor = BASE_COLOR;
+    username.setText(BASE_TEXT);
+    password.getStyle().fontColor = BASE_COLOR;
+    password.setText(BASE_TEXT);
+  }
 
+  /**
+   * Renders the screen each frame. Clears screen and updates stage with delta time.
+   *
+   * @param delta Time in seconds since last frame
+   */
+  @Override
+  public void render(float delta) {
+    // Clear screen with black color
     ScreenUtils.clear(0, 0, 0, 1);
 
+    // Update and render stage
     stage.getViewport().apply();
     stage.act(delta);
     stage.draw();
   }
 
+  /**
+   * Called when screen is resized. Updates viewport to match new dimensions.
+   *
+   * @param width New screen width in pixels
+   * @param height New screen height in pixels
+   */
   @Override
   public void resize(int width, int height) {
     stage.getViewport().update(width, height, true);
   }
 
+  /** Called when application is paused. */
   @Override
   public void pause() {}
 
+  /** Called when application is resumed. */
   @Override
   public void resume() {}
 
+  /** Called when screen is hidden or replaced. */
   @Override
   public void hide() {}
 
+  /** Called when screen is disposed. Cleans up resources including stage and input processor. */
   @Override
-  public void dispose() {}
+  public void dispose() {
+    stage.dispose();
+  }
 }
