@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+
 import pdg.game.Main;
 import pdg.game.scene.Background;
 
@@ -22,6 +23,7 @@ public class MainMenuScreen implements Screen {
   boolean isConnected = false;
   TextButton button;
   Skin skin;
+  ConnectionScreen connectionScreen;
 
   /** Creates the main menu and adds its background, title, and action button. */
   public MainMenuScreen(final Main game, Background background) {
@@ -43,14 +45,17 @@ public class MainMenuScreen implements Screen {
 
             // Open the connection screen until the player has connected.
             if (!isConnected) {
-              game.setScreen(
-                  new ConnectionScreen(
-                      background,
-                      success -> {
-                        isConnected = success;
+              if(connectionScreen == null) {
+                connectionScreen = new ConnectionScreen(
+                    game,
+                    background,
+                    success -> {
+                      isConnected = success;
 
-                        game.setScreen(MainMenuScreen.this);
-                      }));
+                      game.setScreen(MainMenuScreen.this);
+                    });
+                  }
+              game.setScreen(connectionScreen);
             } else {
               // The play-screen transition will be added here.
               // setScreen(new LoadingScreen(this, background));
