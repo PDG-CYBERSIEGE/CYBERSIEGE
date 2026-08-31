@@ -29,8 +29,8 @@ import pdg.game.Entity.Entity;
 import pdg.game.Entity.King;
 import pdg.game.Entity.Robot;
 import pdg.game.Entity.Team;
-import pdg.game.Game;
 import pdg.game.GameContactListener;
+import pdg.game.Main;
 import pdg.game.utils.Asset;
 
 /**
@@ -60,7 +60,7 @@ public class ArenaScreen implements Screen {
     private static final float ARENA_HEIGHT_PX = 608f;
     private static final float BORDER_THICKNESS_PX = 20f;
 
-    private final Game game;
+    private final Main game;
 
     private boolean gameOver = false;
     private boolean youWon;
@@ -89,7 +89,7 @@ public class ArenaScreen implements Screen {
     private final TeamDTO ownTeamDTO;
     private final TeamDTO ennemyTeamDTO;
 
-    public ArenaScreen(Game game, TeamDTO ownTeamDTO, TeamDTO ennemyTeamDTO) {
+    public ArenaScreen(Main game, TeamDTO ownTeamDTO, TeamDTO ennemyTeamDTO) {
         this.game = game;
         this.ownTeamDTO = ownTeamDTO;
         this.ennemyTeamDTO = ennemyTeamDTO;
@@ -120,14 +120,17 @@ public class ArenaScreen implements Screen {
 
         // Le canon du joueur local tire les robots de sa propre équipe.
         // Position à ajuster selon votre disposition de map (ici: coin bas-gauche).
-        canon = new Canon(world, ownTeam, new Vector2(80, 80), trajectoryDotTexture);
+        //canon = new Canon(world, ownTeam, new Vector2(80, 80), trajectoryDotTexture);
     }
 
     /** Construit les corps Box2D + entités des deux équipes, et les bordures statiques de l'arène. */
     private void initializeBodies() {
+      /*
         createWorldBorders();
         ownTeam = createTeam(ownTeamDTO);
         ennemyTeam = createTeam(ennemyTeamDTO);
+
+       */
     }
 
     /**
@@ -144,8 +147,8 @@ public class ArenaScreen implements Screen {
         // Mur droit
         createStaticBody(new Rectangle(ARENA_WIDTH_PX, 0, BORDER_THICKNESS_PX, ARENA_HEIGHT_PX));
     }
-
-    /** Construit une Team (roi + blocs de tour + file de robots) à partir de son DTO. */
+/*
+    /** Construit une Team (roi + blocs de tour + file de robots) à partir de son DTO.
     private Team createTeam(TeamDTO teamDTO) {
         Team team = new Team();
 
@@ -179,6 +182,7 @@ public class ArenaScreen implements Screen {
 
         return team;
     }
+    */
 
     private void createStaticBody(Rectangle rect) {
         BodyDef bdef = new BodyDef();

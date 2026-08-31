@@ -8,18 +8,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
  * Medium block. It is stronger than a light block and is composed of three textures: left, middle
  * and right, to form a homogeneous bar.
  */
-public class MediumBlock extends Block {
-
-  /** Maximum health of a medium block. */
-  private static final float MAX_HEALTH = 100;
+public class MediumBlockSprite extends BlockSprite {
 
   /**
    * Constructor for a medium block.
    *
    * @param length number of block segments
    */
-  public MediumBlock(int length) {
-    super(MAX_HEALTH);
+  public MediumBlockSprite(int length) {
 
     if (length < 2) length = 2;
 

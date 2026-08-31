@@ -4,14 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import pdg.game.Entity.Robot;
-import pdg.game.Entity.Team;
-import pdg.game.Screen.ArenaScreen;
+import pdg.game.ui.RobotChoiceButton;
 
 /**
  * Gère la visée (drag), la prévisualisation de trajectoire et le lancement
@@ -40,16 +42,36 @@ import pdg.game.Screen.ArenaScreen;
  */
 public class Canon {
 
-    private static final float MAX_DRAG_DISTANCE = 50f; // px écran
-    private static final float POWER_MULTIPLIER = 3f;
-    private static final float VELOCITY_SCALE = 1f / ArenaScreen.PPM;
-    private static final int TRAJECTORY_POINT_COUNT = 30;
+    private static final float MAX_DRAG_DISTANCE = 40f; // px écran
+    private static final float POWER_MULTIPLIER = 4f;
+
+    private static final int TRAJECTORY_POINT_COUNT = 8;
     private static final float TRAJECTORY_TIME_STEP = 0.1f;
 
+    // Taille d'affichage du sprite du canon, en mètres (world units).
+    private static final float CANON_WIDTH = 1.5f;
+    private static final float CANON_HEIGHT = 1.5f;
+
+    // Rayon de la zone cliquable autour du canon, en mètres.
+    private static final float TOUCH_RADIUS = 1.5f;
+
+    // Animation de tir : bande de 8 frames côte à côte dans un seul fichier.
+    private static final int FIRE_FRAME_COUNT = 8;
+    private static final float FIRE_FRAME_DURATION = 0.05f; // 8 frames * 0.05s = 0.4s d'animation totale
+    private static final float SPRITE_BASE_ANGLE_OFFSET = 90f; // le sprite pointe vers le haut à 0° de rotation
+
+
     private final World world;
-    private final Team team;
+    private final Stage itemStage; // uniquement pour unproject() les touch input
     private final Vector2 canonPosition; // en pixels, comme le reste des positions "brutes" d'ArenaScreen
     private final Texture trajectoryDotTexture;
+
+
+
+    private final TextureRegion idleFrame;           // première frame, affichée hors tir
+    private final Animation<TextureRegion> fireAnimation;
+    private float fireStateTime = 0f;
+    private boolean isFiring = false;
 
     private final Vector2 dragStart = new Vector2();
     private boolean isDragging = false;
@@ -57,33 +79,40 @@ public class Canon {
     private float power = 0f;
     private float angle = 0f;
 
-    private int nextRobotIndex = 0;
     private Robot loadedRobot;
+    private RobotChoiceButton btn;
+
 
     private InputProcessor cachedInputProcessor;
 
-    public Canon(World world, Team team, Vector2 canonPosition, Texture trajectoryDotTexture) {
-        this.world = world;
-        this.team = team;
-        this.canonPosition = canonPosition;
-        this.trajectoryDotTexture = trajectoryDotTexture;
-        loadNextRobot();
+    public Canon(World world, Stage itemStage, Vector2 canonPosition, Texture fireSpriteSheet, Texture trajectoryDotTexture) {
+
+      this.world = world;
+      this.itemStage = itemStage;
+      this.canonPosition = canonPosition;
+      this.trajectoryDotTexture = trajectoryDotTexture;
+
+      // Découpe la bande horizontale en FIRE_FRAME_COUNT frames égales.
+      int frameWidth = fireSpriteSheet.getWidth() / FIRE_FRAME_COUNT;
+      int frameHeight = fireSpriteSheet.getHeight();
+      TextureRegion[][] tmp = TextureRegion.split(fireSpriteSheet, frameWidth, frameHeight);
+      TextureRegion[] frames = tmp[0]; // une seule ligne
+
+      this.idleFrame = frames[0];
+      this.fireAnimation = new Animation<>(FIRE_FRAME_DURATION, frames);
+      this.fireAnimation.setPlayMode(Animation.PlayMode.NORMAL); // joue une fois, pas de boucle
+
     }
 
     /** Positionne le prochain robot de la file sur le canon, prêt à être tiré. */
-    private void loadNextRobot() {
-        if (nextRobotIndex >= team.robots.size()) {
-            loadedRobot = null; // plus aucun robot disponible pour cette manche
-            return;
-        }
-        loadedRobot = team.robots.get(nextRobotIndex);
-        // Kinematic plutôt que Dynamic tant qu'il attend : évite qu'il tombe
-        // sous l'effet de la gravité avant même d'être tiré (bug présent
-        // dans l'ancienne version Catapult, où le body restait Dynamic).
-        loadedRobot.getBody().setType(BodyDef.BodyType.KinematicBody);
-        loadedRobot.getBody().setLinearVelocity(0, 0);
-        loadedRobot.getBody().setTransform(
-            canonPosition.x / ArenaScreen.PPM, canonPosition.y / ArenaScreen.PPM, 0);
+    public void loadNextRobot(RobotChoiceButton btn) {
+      if (this.btn != null) {
+        this.btn.unload();
+      }
+
+      loadedRobot = btn.robot;
+      this.btn = btn;
+      this.btn.load();
     }
 
     public boolean hasRobotLoaded() {
@@ -93,32 +122,31 @@ public class Canon {
     public InputProcessor getInputProcessor() {
         if (cachedInputProcessor != null) return cachedInputProcessor;
 
-        final Rectangle inputArea = new Rectangle(
-            canonPosition.x - 50, canonPosition.y - 50, 150, 150);
-
         cachedInputProcessor = new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 if (loadedRobot == null || !loadedRobot.isReady()) return false;
 
-                Vector2 pos = new Vector2(screenX, Gdx.graphics.getHeight() - screenY);
-                if (!inputArea.contains(pos.x, pos.y)) return false;
+              // Convertit les pixels écran bruts en unités itemStage (mètres).
+              Vector2 worldPos = itemStage.getViewport().unproject(new Vector2(screenX, screenY));
 
-                dragStart.set(screenX, Gdx.graphics.getHeight() - screenY);
-                isDragging = true;
-                isAiming = true;
-                return true;
+              if (worldPos.dst(canonPosition) > TOUCH_RADIUS) return false;
+
+              dragStart.set(worldPos);
+              isDragging = true;
+              isAiming = true;
+              return true;
             }
 
             @Override
             public boolean touchDragged(int screenX, int screenY, int pointer) {
                 if (!isDragging) return false;
 
-                Vector2 dragEnd = new Vector2(screenX, Gdx.graphics.getHeight() - screenY);
-                float distance = dragStart.dst(dragEnd);
-                if (distance > MAX_DRAG_DISTANCE) {
-                    dragEnd = dragStart.cpy().lerp(dragEnd, MAX_DRAG_DISTANCE / distance);
-                }
+              Vector2 dragEnd = itemStage.getViewport().unproject(new Vector2(screenX, screenY));
+              float distance = dragStart.dst(dragEnd);
+              if (distance > MAX_DRAG_DISTANCE) {
+                dragEnd = dragStart.cpy().lerp(dragEnd, MAX_DRAG_DISTANCE / distance);
+              }
 
                 power = dragStart.dst(dragEnd) * POWER_MULTIPLIER;
                 angle = dragEnd.sub(dragStart).angleDeg() - 180;
@@ -138,46 +166,66 @@ public class Canon {
         return cachedInputProcessor;
     }
 
-    private void fire() {
-        if (loadedRobot == null) return;
+  private void fire() {
+    if (loadedRobot == null) return;
 
-        Vector2 launchVelocity = new Vector2(power, 0f)
-            .setAngleDeg(angle)
-            .scl(VELOCITY_SCALE);
+    loadedRobot.getBody().setTransform(canonPosition.x, canonPosition.y, 0);
 
-        loadedRobot.getBody().setType(BodyDef.BodyType.DynamicBody);
-        loadedRobot.getBody().setLinearVelocity(launchVelocity);
-        loadedRobot.startCooldown();
+    Vector2 launchVelocity = new Vector2(power, 0f)
+      .setAngleDeg(angle);
 
-        nextRobotIndex++;
-        loadNextRobot();
+    loadedRobot.getBody().setLinearVelocity(launchVelocity);
+    loadedRobot.startCooldown();
+
+    // déclenche l'animation de tir
+    isFiring = true;
+    fireStateTime = 0f;
+
+    btn.unload();
+    btn = null;
+    loadedRobot = null;
+  }
+
+  /** Fait avancer l'animation de tir. world.step() reste géré par ArenaScreen. */
+  public void update(float delta) {
+    if (isFiring) {
+      fireStateTime += delta;
+      if (fireAnimation.isAnimationFinished(fireStateTime)) {
+        isFiring = false;
+      }
     }
+  }
 
-    /**
-     * Rien à mettre à jour physiquement ici (world.step() est géré par
-     * ArenaScreen). Gardé pour une éventuelle logique future (ex: micro
-     * animation de visée) plutôt que d'ajouter une méthode plus tard.
-     */
-    public void update(float delta) {
+  /** A appeler ENTRE batch.begin() et batch.end() dans ArenaScreen.render(). */
+  public void draw(SpriteBatch batch) {
+    TextureRegion currentFrame = isFiring
+      ? fireAnimation.getKeyFrame(fireStateTime, false)
+      : idleFrame;
+
+    batch.draw(
+      currentFrame,
+      canonPosition.x - CANON_WIDTH / 2f, canonPosition.y - CANON_HEIGHT / 2f,
+      CANON_WIDTH / 2f, CANON_HEIGHT / 2f,
+      CANON_WIDTH, CANON_HEIGHT,
+      1f, 1f,
+      isAiming ? angle - SPRITE_BASE_ANGLE_OFFSET : 0f
+    );
+
+    if (!isAiming) return;
+
+    Vector2 v = new Vector2(power, 0f).setAngleDeg(angle);
+    float gravity = world.getGravity().y;
+
+    float t = 0f;
+    for (int i = 0; i < TRAJECTORY_POINT_COUNT; i++) {
+      float px = canonPosition.x + v.x * t;
+      float py = canonPosition.y + v.y * t + 0.5f * gravity * t * t;
+      if (py < 0) break;
+
+      batch.draw(trajectoryDotTexture, px - 0.05f, py - 0.05f, 0.1f, 0.1f);
+      t += TRAJECTORY_TIME_STEP;
     }
-
-    /** A appeler ENTRE batch.begin() et batch.end() dans ArenaScreen.render(). */
-    public void draw(SpriteBatch batch) {
-        if (!isAiming) return;
-
-        Vector2 v = new Vector2(power * VELOCITY_SCALE, 0f).setAngleDeg(angle);
-        float gravity = world.getGravity().y; // même gravité que la simulation réelle
-
-        float t = 0f;
-        for (int i = 0; i < TRAJECTORY_POINT_COUNT; i++) {
-            float x = canonPosition.x / ArenaScreen.PPM + v.x * t;
-            float y = canonPosition.y / ArenaScreen.PPM + v.y * t + 0.5f * gravity * t * t;
-            if (y < 0) break;
-
-            batch.draw(trajectoryDotTexture, x, y, 10 / ArenaScreen.PPM, 10 / ArenaScreen.PPM);
-            t += TRAJECTORY_TIME_STEP;
-        }
-    }
+  }
 
     /**
      * trajectoryDotTexture est géré par l'Asset manager d'ArenaScreen
