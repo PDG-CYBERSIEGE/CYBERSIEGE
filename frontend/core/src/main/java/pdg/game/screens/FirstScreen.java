@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+
 import pdg.game.Main;
 import pdg.game.blocks.Block;
 import pdg.game.blocks.HeavyBlock;
@@ -152,8 +153,24 @@ public class FirstScreen implements Screen {
     stage.addActor(loading);
 
     cannon = new Cannon();
-    cannon.setPosition(23, 1);
+    cannon.setPosition(0, 1);
+    cannon.setMirrored(false);
+    cannon.getLauncher().setRotation(100);
+    Gdx.app.log("CANNON", "Launcher center: " + cannon.getLauncherCenter());
+    Gdx.app.log("CANNON", "relative center: " + cannon.getLauncher().getX() + ", " + cannon.getLauncher().getY());
+    Gdx.app.log("CANNON", "rotation: " + cannon.getLauncher().getRotation());
     itemStage.addActor(cannon);
+    itemStage.addActor(cannon);
+
+    Cannon cannon2 = new Cannon();
+    cannon2.setPosition(25, 1);
+    cannon2.setMirrored(true);
+    cannon2.getLauncher().setRotation(100);
+    Gdx.app.log("CANNON2", "Launcher center: " + cannon2.getLauncherCenter());
+    Gdx.app.log("CANNON2", "relative center: " + cannon2.getLauncher().getX() + ", " + cannon2.getLauncher().getY());
+    Gdx.app.log("CANNON2", "rotation: " + cannon2.getLauncher().getRotation());
+    Gdx.app.log("CANNON2", "size: " + cannon2.getWidth() + ", " + cannon2.getHeight());
+    itemStage.addActor(cannon2);
   }
 
   @Override

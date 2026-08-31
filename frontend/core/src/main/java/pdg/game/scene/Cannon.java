@@ -4,29 +4,35 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
-/** Scene2D group representing the cannon, tower, barriers, and animations. */
+/** Scene2D group that renders the cannon structure and its animations. */
 public class Cannon extends Group {
 
-  boolean animateCannon = false;
+  private static final float LAUNCHER_FRAME_DURATION = .1f;
+  private static final float SAW_FRAME_DURATION = .2f;
 
-  Animation<TextureRegion> launcherAnimation;
-  Image launcherImage;
-  TextureRegionDrawable launcherDrawable;
+  // The launcher sprite sheet starts with a few non-firing frames before the actual
+  // firing sequence, so the first real shot starts on frame 6.
+  private static final int FIRST_ANIMATION_FRAME = 6;
 
-  float launcherFrameDuration = .1f;
+  private boolean animateCannon = false;
+  private boolean mirrored = false;
 
-  Animation<TextureRegion> sawAnimation;
-  Image sawImage;
-  TextureRegionDrawable sawDrawable;
+  private final Animation<TextureRegion> launcherAnimation;
+  private final Animation<TextureRegion> sawAnimation;
 
-  float stateTimeLauncher = 0;
-  float stateTimeSaw = 0;
+  private final Image launcherImage;
+  private final Image sawImage;
 
-  static final int FIRST_ANIMATION_FRAME = 6;
+  private final TextureRegionDrawable launcherDrawable;
+  private final TextureRegionDrawable sawDrawable;
+
+  private float stateTimeLauncher = 0f;
+  private float stateTimeSaw = 0f;
 
   /** Creates the cannon layout and loads its textures and animations. */
   public Cannon() {
@@ -53,38 +59,39 @@ public class Cannon extends Group {
     // LAUNCHER ANIMATION
     // =========================================================
 
-    Texture texture = new Texture(Gdx.files.internal("launcher/launcher.png"));
+    Texture launcherTexture = new Texture(Gdx.files.internal("launcher/launcher.png"));
 
-    TextureRegion[][] tmp = TextureRegion.split(texture, 64, 64);
+    TextureRegion[][] launcherGrid = TextureRegion.split(launcherTexture, 64, 64);
 
-    TextureRegion[] launcher_frames = new TextureRegion[tmp[0].length];
+    TextureRegion[] launcherFrames = new TextureRegion[launcherGrid[0].length];
 
-    System.arraycopy(tmp[0], 0, launcher_frames, 0, launcher_frames.length);
+    System.arraycopy(launcherGrid[0], 0, launcherFrames, 0, launcherFrames.length);
 
-    launcherAnimation = new Animation<>(launcherFrameDuration, launcher_frames);
+    launcherAnimation = new Animation<>(LAUNCHER_FRAME_DURATION, launcherFrames);
 
     // Create the drawable once and update its region during animation.
-    launcherDrawable = new TextureRegionDrawable(launcherAnimation.getKeyFrame(0));
+    launcherDrawable = new TextureRegionDrawable(launcherAnimation.getKeyFrame(0f));
 
     // =========================================================
     // SAW ANIMATION
     // =========================================================
 
-    texture = new Texture(Gdx.files.internal("launcher/saw.png"));
+    // The saw sprite sheet contains a few static frames at the beginning; they are
+    // ignored so the blade starts spinning only when it is meant to turn.
+    Texture sawTexture = new Texture(Gdx.files.internal("launcher/saw.png"));
 
-    tmp = TextureRegion.split(texture, 32, 32);
+    TextureRegion[][] sawGrid = TextureRegion.split(sawTexture, 32, 32);
 
-    TextureRegion[] saw_frames = new TextureRegion[tmp[0].length - 2];
+    TextureRegion[] sawFrames = new TextureRegion[sawGrid[0].length - 2];
 
-    // Ignore the first two frames cause saw is not turning on them.
-    System.arraycopy(tmp[0], 2, saw_frames, 0, saw_frames.length);
+    System.arraycopy(sawGrid[0], 2, sawFrames, 0, sawFrames.length);
 
-    sawAnimation = new Animation<>(.2f, saw_frames);
+    sawAnimation = new Animation<>(SAW_FRAME_DURATION, sawFrames);
 
     sawAnimation.setPlayMode(Animation.PlayMode.LOOP);
 
     // Create the drawable once and update its region during animation.
-    sawDrawable = new TextureRegionDrawable(sawAnimation.getKeyFrame(0));
+    sawDrawable = new TextureRegionDrawable(sawAnimation.getKeyFrame(0f));
 
     Image image;
 
@@ -96,24 +103,10 @@ public class Cannon extends Group {
     image.setSize(1, 1);
     image.setOrigin(.5f, .5f);
     image.setScaleX(-1);
-    image.setPosition(0, 0);
+    image.setPosition(0, 1);
     addActor(image);
 
-    image = new Image(barrier_left);
-    image.setSize(1, 1);
-    image.setOrigin(.5f, .5f);
-    image.setScaleX(-1);
-    image.setPosition(1, 1);
-    addActor(image);
-
-    image = new Image(barrier_left_double);
-    image.setSize(1, 1);
-    image.setOrigin(.5f, .5f);
-    image.setScaleX(-1);
-    image.setPosition(1, 0);
-    addActor(image);
-
-    for (int i = 2; i <= 6; i++) {
+    for (int i = 0; i <= 4; i++) {
       image = new Image(floor);
       image.setSize(1, 1);
       image.setPosition(i, 0);
@@ -122,24 +115,24 @@ public class Cannon extends Group {
 
     image = new Image(barrier_left_double);
     image.setSize(1, 1);
-    image.setPosition(7, 0);
+    image.setPosition(5, 0);
     addActor(image);
 
     image = new Image(barrier_left);
     image.setSize(1, 1);
-    image.setPosition(8, 0);
+    image.setPosition(6, 0);
     addActor(image);
 
     image = new Image(barrier_left);
     image.setSize(1, 1);
-    image.setPosition(7, 1);
+    image.setPosition(5, 1);
     addActor(image);
 
     // =========================================================
     // SECOND FLOOR BARRIER
     // =========================================================
 
-    for (int i : new int[] {2, 3, 5, 6}) {
+    for (int i : new int[] {1, 3, 4}) {
       image = new Image(barrier_straight);
       image.setSize(1, 1);
       image.setPosition(i, 1);
@@ -152,14 +145,14 @@ public class Cannon extends Group {
 
     sawImage = new Image(sawDrawable);
     sawImage.setSize(1, 1);
-    sawImage.setPosition(3.5f, 4.5f);
+    sawImage.setPosition(1.5f, 4.5f);
     addActor(sawImage);
 
     image = new Image(holder);
     image.setSize(2, 2);
     image.setOrigin(1, 1);
     image.rotateBy(-90);
-    image.setPosition(3, 3);
+    image.setPosition(1, 3);
     addActor(image);
 
     // =========================================================
@@ -169,24 +162,24 @@ public class Cannon extends Group {
     for (int i = 1; i <= 3; i++) {
       image = new Image(core_left);
       image.setSize(1, 1);
-      image.setPosition(3, i);
+      image.setPosition(1, i);
       addActor(image);
     }
 
     image = new Image(core_top);
     image.setSize(1, 1);
-    image.setPosition(3, 4);
+    image.setPosition(1, 4);
     addActor(image);
 
     image = new Image(core_middle);
     image.setSize(1, 1);
-    image.setPosition(4, 1);
+    image.setPosition(2, 1);
     addActor(image);
 
     for (int i = 2; i <= 4; i++) {
       image = new Image(core_right);
       image.setSize(1, 1);
-      image.setPosition(4, i);
+      image.setPosition(2, i);
       addActor(image);
     }
 
@@ -194,38 +187,35 @@ public class Cannon extends Group {
     image.setSize(1, 1);
     image.setOrigin(.5f, .5f);
     image.setScaleX(-1);
-    image.setPosition(4, 5);
+    image.setPosition(2, 5);
     addActor(image);
 
     image = new Image(core_top);
     image.setSize(1, 1);
     image.setOrigin(.5f, .5f);
     image.setScaleX(-1);
-    image.setPosition(5, 1);
+    image.setPosition(3, 1);
     addActor(image);
 
     // =========================================================
     // PIPE
     // =========================================================
 
-    image = new Image(pipe_up);
-    image.setSize(1, 1);
-    image.setPosition(5, 2);
-    addActor(image);
-
-    image = new Image(pipe_up);
-    image.setSize(1, 1);
-    image.setPosition(5, 5);
-    addActor(image);
+    for(int i = 2; i <= 5; i++){
+      image = new Image(pipe_up);
+      image.setSize(1, 1);
+      image.setPosition(3, i);
+      addActor(image);
+    }
 
     image = new Image(pipe_left);
     image.setSize(1, 1);
-    image.setPosition(5, 6);
+    image.setPosition(3, 6);
     addActor(image);
 
     image = new Image(pipe_right);
     image.setSize(1, 1);
-    image.setPosition(4, 6);
+    image.setPosition(2, 6);
     addActor(image);
 
     // =========================================================
@@ -236,8 +226,12 @@ public class Cannon extends Group {
     launcherImage.setSize(2, 2);
     launcherImage.setOrigin(1, 1);
     launcherImage.rotateBy(90);
-    launcherImage.setPosition(4, 3);
+    launcherImage.setPosition(2, 3);
     addActor(launcherImage);
+
+    // group does not auto update size based on childrens
+    setSize(7, 7);
+    setOrigin(0, 0);
   }
 
   // =============================================================
@@ -246,13 +240,14 @@ public class Cannon extends Group {
 
   /** Starts the launcher firing animation if it is not already running. */
   public void shoot() {
-
-    if (animateCannon) return;
+    if (animateCannon) {
+      return;
+    }
 
     animateCannon = true;
 
-    // Start at frame 6.
-    stateTimeLauncher = launcherFrameDuration * FIRST_ANIMATION_FRAME;
+    // Start the firing animation on the first active firing frame.
+    stateTimeLauncher = FIRST_ANIMATION_FRAME * LAUNCHER_FRAME_DURATION;
   }
 
   // =============================================================
@@ -260,21 +255,21 @@ public class Cannon extends Group {
   // =============================================================
 
   /**
-   * Updates the launcher preview to match the loading progress.
+   * Updates the launcher preview to match the current loading progress.
    *
-   * @param loadingRatio loading progress from {@code 0} to {@code 1}
+   * @param loadingRatio normalized loading value between 0 and 1
    */
   public void setLoadingStage(float loadingRatio) {
+    if (animateCannon) {
+      return;
+    }
 
-    if (animateCannon) return;
+    float clampedRatio = Math.max(0f, Math.min(loadingRatio, 1f));
 
-    // 0 -> frame 0
-    // 1 -> frame 5
-    int frame = (int) (loadingRatio * (FIRST_ANIMATION_FRAME - 1));
+    // The loading preview only covers the first 5 frames of the firing sequence.
+    int frame = (int) (clampedRatio * (FIRST_ANIMATION_FRAME - 1));
+    stateTimeLauncher = frame * LAUNCHER_FRAME_DURATION;
 
-    stateTimeLauncher = frame * launcherFrameDuration;
-
-    // Only change the drawable region.
     launcherDrawable.setRegion(launcherAnimation.getKeyFrame(stateTimeLauncher));
   }
 
@@ -288,34 +283,57 @@ public class Cannon extends Group {
    * @param delta elapsed time since the previous frame, in seconds
    */
   public void animate(float delta) {
-
-    // ---------------------------------------------------------
-    // SAW: always rotating
-    // ---------------------------------------------------------
-
+    // The saw is constantly spinning while the cannon is visible.
     stateTimeSaw += delta;
-
     sawDrawable.setRegion(sawAnimation.getKeyFrame(stateTimeSaw));
 
-    // ---------------------------------------------------------
-    // LAUNCHER
-    // ---------------------------------------------------------
-
-    if (!animateCannon) return;
+    // annimate the cannon if user activated it
+    if (!animateCannon) {
+      return;
+    }
 
     stateTimeLauncher += delta;
-
     launcherDrawable.setRegion(launcherAnimation.getKeyFrame(stateTimeLauncher));
 
-    // Animation finished.
     if (launcherAnimation.isAnimationFinished(stateTimeLauncher)) {
-
       animateCannon = false;
-
-      stateTimeLauncher = 0;
-
-      // Reset the launcher to frame 0.
-      launcherDrawable.setRegion(launcherAnimation.getKeyFrame(0));
+      stateTimeLauncher = 0f;
+      launcherDrawable.setRegion(launcherAnimation.getKeyFrame(0f));
     }
+  }
+
+  /** Mirrors the cannon horizontally and keeps its world position coherent. */
+  public void setMirrored(boolean mirrored) {
+    if (this.mirrored == mirrored) {
+      return;
+    }
+
+    float x = getX();
+
+    if (mirrored) {
+      setScaleX(-1);
+      setX(x + getWidth());
+    } else {
+      setScaleX(1);
+      setX(x - getWidth());
+    }
+
+    this.mirrored = mirrored;
+  }
+
+  /** Returns the center of the launcher in stage coordinates. */
+  public Vector2 getLauncherCenter() {
+    Vector2 position = new Vector2(
+        launcherImage.getWidth() / 2f,
+        launcherImage.getHeight() / 2f
+    );
+
+    launcherImage.localToStageCoordinates(position);
+    return position;
+  }
+
+  /** Returns the launcher image node. */
+  public Image getLauncher() {
+    return launcherImage;
   }
 }
