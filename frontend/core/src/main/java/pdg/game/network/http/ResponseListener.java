@@ -1,4 +1,4 @@
-package pdg.game.network;
+package pdg.game.network.http;
 
 /**
  * Receives the result of an asynchronous HTTP request.
