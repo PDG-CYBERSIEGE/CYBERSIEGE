@@ -201,7 +201,7 @@ public class Cannon extends Group {
     // PIPE
     // =========================================================
 
-    for(int i = 2; i <= 5; i++){
+    for (int i = 2; i <= 5; i++) {
       image = new Image(pipe_up);
       image.setSize(1, 1);
       image.setPosition(3, i);
@@ -323,10 +323,7 @@ public class Cannon extends Group {
 
   /** Returns the center of the launcher in stage coordinates. */
   public Vector2 getLauncherCenter() {
-    Vector2 position = new Vector2(
-        launcherImage.getWidth() / 2f,
-        launcherImage.getHeight() / 2f
-    );
+    Vector2 position = new Vector2(launcherImage.getWidth() / 2f, launcherImage.getHeight() / 2f);
 
     launcherImage.localToStageCoordinates(position);
     return position;
