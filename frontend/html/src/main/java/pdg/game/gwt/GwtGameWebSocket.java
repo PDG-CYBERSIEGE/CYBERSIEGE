@@ -5,10 +5,33 @@ import com.google.gwt.core.client.JavaScriptObject;
 import pdg.game.network.websocket.GameListener;
 import pdg.game.network.websocket.GameWebSocket;
 
+/**
+ * GWT implementation of the {@link GameWebSocket} interface.
+ *
+ * <p>This implementation uses the browser's native WebSocket API through
+ * GWT JavaScript Native Interface (JSNI).</p>
+ *
+ * <p>The JWT is transmitted during the WebSocket handshake using the
+ * {@code bearer-token-carrier} subprotocol expected by the server.</p>
+ */
 public class GwtGameWebSocket implements GameWebSocket {
 
+  /**
+   * Reference to the browser's native WebSocket object.
+   */
   private JavaScriptObject socket;
 
+  /**
+   * Establishes a WebSocket connection to the matchmaking endpoint.
+   *
+   * <p>The HTTP(S) base URL is converted to a WebSocket URL using
+   * {@code ws://} or {@code wss://}, and the {@code /match} endpoint
+   * is appended.</p>
+   *
+   * @param baseUrl the HTTP(S) base URL of the server
+   * @param jwt the JWT used to authenticate the WebSocket connection
+   * @param gameListener the listener that receives WebSocket events
+   */
   @Override
   public void connect(String baseUrl, String jwt, GameListener gameListener) {
     String url = baseUrl.replace("http://", "ws://")
@@ -18,11 +41,19 @@ public class GwtGameWebSocket implements GameWebSocket {
     setHandlers(socket, gameListener);
   }
 
+  /**
+   * Sends a text message through the WebSocket connection.
+   *
+   * @param message the message to send
+   */
   @Override
   public void send(String message) {
     sendMessage(socket, message);
   }
 
+  /**
+   * Closes the WebSocket connection.
+   */
   @Override
   public void disconnect() {
     closeSocket(socket);

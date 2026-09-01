@@ -1,12 +1,6 @@
 package pdg.game;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import pdg.game.network.http.AuthClient;
-import pdg.game.network.http.HttpClient;
-import pdg.game.network.http.ResponseListener;
-import pdg.game.network.websocket.GameListener;
 import pdg.game.network.websocket.GameWebSocket;
 import pdg.game.screens.FirstScreen;
 
