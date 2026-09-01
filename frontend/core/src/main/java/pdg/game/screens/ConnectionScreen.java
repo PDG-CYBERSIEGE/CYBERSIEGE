@@ -1,7 +1,5 @@
 package pdg.game.screens;
 
-import java.util.function.Consumer;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -18,7 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
+import java.util.function.Consumer;
 import pdg.game.Main;
 import pdg.game.network.AuthClient;
 import pdg.game.network.HttpClient;
@@ -92,8 +90,8 @@ public class ConnectionScreen implements Screen {
     this.callback = callback;
 
     // Initialize HTTP and authentication clients
-    httpClient = new HttpClient("http://10.190.132.71:8080"); // for local testing
-    //httpClient = new HttpClient("http://labo-iot5.iict-heig-vd.ch:8080"); // for release
+    httpClient = new HttpClient("http://localhost:8080"); // for local testing
+    // httpClient = new HttpClient("http://labo-iot5.iict-heig-vd.ch:8080"); // for release
 
     authClient = new AuthClient(httpClient);
 
