@@ -2,7 +2,6 @@ package com.pdg.auth;
 
 import com.pdg.user.User;
 import com.pdg.user.UserRepository;
-
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
