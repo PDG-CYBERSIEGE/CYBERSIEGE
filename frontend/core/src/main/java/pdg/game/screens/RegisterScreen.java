@@ -1,7 +1,5 @@
 package pdg.game.screens;
 
-import java.util.function.Consumer;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -18,7 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
+import java.util.function.Consumer;
 import pdg.game.network.AuthClient;
 import pdg.game.network.ResponseListener;
 import pdg.game.scene.Background;
@@ -285,10 +283,14 @@ public class RegisterScreen implements Screen {
     String passwordValue = password.getText();
     String confirmPasswordValue = confirmPassword.getText();
 
-    if (mailValue.equals(BASE_TEXT) || mailValue.isEmpty() ||
-        usernameValue.equals(BASE_TEXT) || usernameValue.isEmpty() || 
-        passwordValue.equals(BASE_TEXT) || passwordValue.isEmpty() || 
-        confirmPasswordValue.equals(BASE_TEXT)  || confirmPasswordValue.isEmpty()) {
+    if (mailValue.equals(BASE_TEXT)
+        || mailValue.isEmpty()
+        || usernameValue.equals(BASE_TEXT)
+        || usernameValue.isEmpty()
+        || passwordValue.equals(BASE_TEXT)
+        || passwordValue.isEmpty()
+        || confirmPasswordValue.equals(BASE_TEXT)
+        || confirmPasswordValue.isEmpty()) {
       errorMessage.setText("All fields are required");
       return;
     }
