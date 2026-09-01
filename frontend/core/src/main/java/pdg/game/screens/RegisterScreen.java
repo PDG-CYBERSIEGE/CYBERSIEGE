@@ -1,5 +1,7 @@
 package pdg.game.screens;
 
+import java.util.function.Consumer;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -16,7 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import java.util.function.Consumer;
+
 import pdg.game.network.AuthClient;
 import pdg.game.network.ResponseListener;
 import pdg.game.scene.Background;
@@ -35,9 +37,15 @@ import pdg.game.ui.Frame;
  * success/failure
  */
 public class RegisterScreen implements Screen {
+  // Logging tag
+  private static final String TAG = "RegisterScreen";
+
   // Background and stage for rendering
   private Background background;
   private Stage stage;
+
+  // UI resources
+  private Skin skin;
 
   // Authentication client for server communication
   private AuthClient authClient;
@@ -83,7 +91,7 @@ public class RegisterScreen implements Screen {
     background.apply(stage);
 
     // Load UI skin
-    Skin skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
+    skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
 
     // Create error message label
     errorMessage = new Label("", skin);
@@ -312,22 +320,20 @@ public class RegisterScreen implements Screen {
         new ResponseListener() {
           @Override
           public void success(String token) {
-            System.out.println("Registration successful!");
-            System.out.println("Token: " + token);
             authClient.setToken(token);
             Gdx.app.postRunnable(() -> callback.accept(true));
           }
 
           @Override
           public void failure(int status, String result) {
-            System.out.println("Registration failed: " + status + " - " + result);
+            Gdx.app.error(TAG, "Registration failed with status " + status + ": " + result);
             errorMessage.setText(result);
           }
 
           @Override
           public void error(String message) {
-            System.out.println("Network error: " + message);
-            errorMessage.setText("Network error: " + message);
+            Gdx.app.error(TAG, "Registration network error: " + message);
+            errorMessage.setText("Network error");
           }
         });
   }
@@ -396,9 +402,16 @@ public class RegisterScreen implements Screen {
   @Override
   public void hide() {}
 
-  /** Called when screen is disposed. Cleans up resources including stage and input processor. */
+  /**
+   * Called when screen is disposed. Cleans up resources including stage, skin, and input processor.
+   */
   @Override
   public void dispose() {
-    stage.dispose();
+    if (stage != null) {
+      stage.dispose();
+    }
+    if (skin != null) {
+      skin.dispose();
+    }
   }
 }

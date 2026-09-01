@@ -16,6 +16,8 @@ import pdg.game.scene.Background;
 
 /** Main menu screen that displays the title and connection or play action. */
 public class MainMenuScreen implements Screen {
+  private static final String TAG = "MainMenuScreen";
+
   Main game;
   Background background;
   Stage stage;
@@ -28,10 +30,12 @@ public class MainMenuScreen implements Screen {
   public MainMenuScreen(final Main game, Background background) {
     this.game = game;
     this.background = background;
+    Gdx.app.log(TAG, "Initializing MainMenuScreen");
 
     stage = new Stage(new FitViewport(1920, 1080));
 
     skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
+    Gdx.app.log(TAG, "UI skin loaded successfully");
 
     button = new TextButton("Connect", skin, "red");
     button.setSize(450, 150);
@@ -115,5 +119,17 @@ public class MainMenuScreen implements Screen {
   public void hide() {}
 
   @Override
-  public void dispose() {}
+  public void dispose() {
+    Gdx.app.log(TAG, "Disposing MainMenuScreen resources");
+    if (connectionScreen != null) {
+      connectionScreen.dispose();
+      Gdx.app.log(TAG, "Disposed ConnectionScreen");
+    }
+    if (stage != null) {
+      stage.dispose();
+    }
+    if (skin != null) {
+      skin.dispose();
+    }
+  }
 }

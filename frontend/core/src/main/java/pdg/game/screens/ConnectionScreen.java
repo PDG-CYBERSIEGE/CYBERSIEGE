@@ -1,5 +1,7 @@
 package pdg.game.screens;
 
+import java.util.function.Consumer;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -16,7 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import java.util.function.Consumer;
+
 import pdg.game.Main;
 import pdg.game.network.AuthClient;
 import pdg.game.network.HttpClient;
@@ -36,12 +38,21 @@ import pdg.game.ui.Frame;
  * mechanism to notify parent screen of authentication success/failure
  */
 public class ConnectionScreen implements Screen {
+  // Logging tag
+  private static final String TAG = "ConnectionScreen";
+
   // Game reference for screen management
   private Main game;
 
   // Background and stage for rendering
   private Background background;
   private Stage stage;
+
+  // UI resources
+  private Skin skin;
+
+  // HTTP client for server communication
+  private HttpClient httpClient;
 
   // Authentication client for server communication
   private AuthClient authClient;
@@ -81,9 +92,9 @@ public class ConnectionScreen implements Screen {
     this.callback = callback;
 
     // Initialize HTTP and authentication clients
-    HttpClient httpClient = new HttpClient("http://10.190.132.71:8080"); // for local testing
-    // HttpClient httpClient = new HttpClient("http://labo-iot5.iict-heig-vd.ch:8080"); // for
-    // release
+    httpClient = new HttpClient("http://10.190.132.71:8080"); // for local testing
+    //httpClient = new HttpClient("http://labo-iot5.iict-heig-vd.ch:8080"); // for release
+
     authClient = new AuthClient(httpClient);
 
     // Setup stage with viewport and background
@@ -91,7 +102,7 @@ public class ConnectionScreen implements Screen {
     background.apply(stage);
 
     // Load UI skin
-    Skin skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
+    skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
 
     // Create error message label
     errorMessage = new Label("", skin);
@@ -269,22 +280,20 @@ public class ConnectionScreen implements Screen {
         new ResponseListener() {
           @Override
           public void success(String token) {
-            System.out.println("Login successful!");
-            System.out.println("Token: " + token);
             authClient.setToken(token);
             Gdx.app.postRunnable(() -> callback.accept(true));
           }
 
           @Override
           public void failure(int status, String result) {
-            System.out.println("Login failed: " + status + " - " + result);
+            Gdx.app.error(TAG, "Login failed with status " + status + ": " + result);
             errorMessage.setText(result);
           }
 
           @Override
           public void error(String message) {
-            System.out.println("Network error: " + message);
-            errorMessage.setText("Network error: " + message);
+            Gdx.app.error(TAG, "Login network error: " + message);
+            errorMessage.setText("Network error");
           }
         });
   }
@@ -349,9 +358,19 @@ public class ConnectionScreen implements Screen {
   @Override
   public void hide() {}
 
-  /** Called when screen is disposed. Cleans up resources including stage and input processor. */
+  /**
+   * Called when screen is disposed. Cleans up resources including stage, skin, and input processor.
+   */
   @Override
   public void dispose() {
-    stage.dispose();
+    if (registerScreen != null) {
+      registerScreen.dispose();
+    }
+    if (stage != null) {
+      stage.dispose();
+    }
+    if (skin != null) {
+      skin.dispose();
+    }
   }
 }
