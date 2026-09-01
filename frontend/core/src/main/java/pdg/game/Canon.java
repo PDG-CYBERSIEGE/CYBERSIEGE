@@ -3,6 +3,8 @@ package pdg.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -85,12 +87,12 @@ public class Canon {
 
     private InputProcessor cachedInputProcessor;
 
-    public Canon(World world, Stage itemStage, Vector2 canonPosition, Texture fireSpriteSheet, Texture trajectoryDotTexture) {
+    public Canon(World world, Stage itemStage, Vector2 canonPosition, Texture fireSpriteSheet) {
 
       this.world = world;
       this.itemStage = itemStage;
       this.canonPosition = canonPosition;
-      this.trajectoryDotTexture = trajectoryDotTexture;
+      this.trajectoryDotTexture = createWhiteDotTexture(16);
 
       // Découpe la bande horizontale en FIRE_FRAME_COUNT frames égales.
       int frameWidth = fireSpriteSheet.getWidth() / FIRE_FRAME_COUNT;
@@ -233,4 +235,14 @@ public class Canon {
      */
     public void dispose() {
     }
+
+  private Texture createWhiteDotTexture(int diameterPx) {
+    Pixmap pixmap = new Pixmap(diameterPx, diameterPx, Pixmap.Format.RGBA8888);
+    pixmap.setColor(Color.WHITE);
+    pixmap.fillCircle(diameterPx / 2, diameterPx / 2, diameterPx / 2);
+    Texture texture = new Texture(pixmap);
+    pixmap.dispose();
+    texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+    return texture;
+  }
 }

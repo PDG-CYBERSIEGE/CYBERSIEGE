@@ -34,11 +34,11 @@ public class Main extends Game {
     robots.add(robot2);
     robots.add(robot3);
 
-    KingDTO ennemyKing = new KingDTO("kings/timothee.png", 26,6,100, 100);
-    KingDTO onwKing = new KingDTO("kings/geraud.png", 0,0,100, 100);
+    KingDTO ennemyKing = new KingDTO("kings/timothee.png", 26,6,10000, 100);
+    KingDTO onwKing = new KingDTO("kings/geraud.png", 0,0,10000, 100);
 
-    TeamDTO ennemyTeam = new TeamDTO(1, blocks, robots, ennemyKing);
-    TeamDTO ownTeam = new TeamDTO(2, blocks, robots, onwKing);
+    TeamDTO ennemyTeam = new TeamDTO("player1", blocks, robots, ennemyKing);
+    TeamDTO ownTeam = new TeamDTO("player2", blocks, robots, onwKing);
 
     setScreen(new FightScreen(this, ownTeam, ennemyTeam));
   }
