@@ -2,6 +2,7 @@ package com.pdg.auth;
 
 import com.pdg.user.User;
 import com.pdg.user.UserRepository;
+
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -44,7 +45,7 @@ public class AuthService {
     userRepository.persist(user);
 
     // Generate token
-    String token = Jwt.subject(String.valueOf(user.id)).sign();
+    String token = Jwt.issuer("https://cybersiege.com").subject(String.valueOf(user.id)).sign();
 
     return Response.ok(token).build();
   }
@@ -73,7 +74,7 @@ public class AuthService {
     }
 
     // Generate token
-    String token = Jwt.subject(String.valueOf(user.id)).sign();
+    String token = Jwt.issuer("https://cybersiege.com").subject(String.valueOf(user.id)).sign();
 
     return Response.ok(token).build();
   }
