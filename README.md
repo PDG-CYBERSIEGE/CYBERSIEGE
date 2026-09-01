@@ -10,7 +10,7 @@ si vous avez ca alors vous pourrez vous connecter avec
 docker login ghcr.io
 ```
 
-une fois connecter avec votre username et votre clé vous pouvez
+une fois connecté avec votre username et votre clé vous pouvez
 
 ```cmd
 docker compose pull
@@ -39,4 +39,11 @@ npm start
       context: .
       dockerfile: Dockerfile
     container_name: PDG_backend
+```
+
+## crée clé pour envoi JWT
+a run dans server/src/main/ressources avec un terminal git bash (openssl déja installé) ou autre si openssl installé
+```git bash
+openssl genrsa -out privateKey.pem 2048
+openssl rsa -in privateKey.pem -pubout -out publicKey.pem
 ```

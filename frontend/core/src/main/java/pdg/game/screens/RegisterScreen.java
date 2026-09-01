@@ -1,5 +1,7 @@
 package pdg.game.screens;
 
+import java.util.function.Consumer;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -16,7 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import java.util.function.Consumer;
+
 import pdg.game.network.AuthClient;
 import pdg.game.network.ResponseListener;
 import pdg.game.scene.Background;
@@ -56,7 +58,7 @@ public class RegisterScreen implements Screen {
 
   // Password visibility toggle buttons
   private ImageButton showPassword;
-  private ImageButton showPasswordConfirm;
+  private ImageButton showConfirmPassword;
 
   // UI styling constants
   private static final Color BASE_COLOR = Color.GRAY;
@@ -130,8 +132,8 @@ public class RegisterScreen implements Screen {
     password.addListener(createInputFocusListener(password, showPassword));
 
     // Create and configure password confirmation field
-    showPasswordConfirm = new ImageButton(skin, "eye");
-    showPasswordConfirm.setVisible(false);
+    showConfirmPassword = new ImageButton(skin, "eye");
+    showConfirmPassword.setVisible(false);
 
     Label confirmPasswordLabel = new Label("confirm password:", skin);
     confirmPassword = new TextField(BASE_TEXT, skin);
@@ -143,8 +145,8 @@ public class RegisterScreen implements Screen {
         });
 
     // set listeners
-    showPasswordConfirm.addListener(createPasswordRevealListener(confirmPassword));
-    confirmPassword.addListener(createInputFocusListener(confirmPassword, showPasswordConfirm));
+    showConfirmPassword.addListener(createPasswordRevealListener(confirmPassword));
+    confirmPassword.addListener(createInputFocusListener(confirmPassword, showConfirmPassword));
 
     // Create cancel button
     TextButton cancel = new TextButton("cancel", skin, "red");
@@ -209,7 +211,7 @@ public class RegisterScreen implements Screen {
     frame.getContent().row();
 
     frame.getContent().add(confirmPassword).align(Align.left).fillX().expandX().pad(10);
-    frame.getContent().add(showPasswordConfirm).size(40, 40).padRight(10);
+    frame.getContent().add(showConfirmPassword).size(40, 40).padRight(10);
     frame.getContent().row();
 
     frame.getContent().add(errorMessage).align(Align.left).fillX().expandX().colspan(2).pad(10);
@@ -283,6 +285,14 @@ public class RegisterScreen implements Screen {
     String passwordValue = password.getText();
     String confirmPasswordValue = confirmPassword.getText();
 
+    if (mailValue.equals(BASE_TEXT) || mailValue.isEmpty() ||
+        usernameValue.equals(BASE_TEXT) || usernameValue.isEmpty() || 
+        passwordValue.equals(BASE_TEXT) || passwordValue.isEmpty() || 
+        confirmPasswordValue.equals(BASE_TEXT)  || confirmPasswordValue.isEmpty()) {
+      errorMessage.setText("All fields are required");
+      return;
+    }
+
     // Clear previous error message
     errorMessage.setText("");
 
@@ -329,7 +339,7 @@ public class RegisterScreen implements Screen {
     stage.setKeyboardFocus(null);
     resetInputFields();
     showPassword.setVisible(false);
-    showPasswordConfirm.setVisible(false);
+    showConfirmPassword.setVisible(false);
     errorMessage.setText("");
   }
 
