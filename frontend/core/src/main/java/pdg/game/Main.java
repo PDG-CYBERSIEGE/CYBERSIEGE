@@ -14,6 +14,6 @@ public class Main extends Game {
     Stage backgroundStage = new Stage(new FitViewport(1920, 1080));
     background.apply(backgroundStage);
 
-    setScreen(new MainMenuScreen(this, background, backgroundStage));
+    setScreen(new MainMenuScreen(this, backgroundStage));
   }
 }

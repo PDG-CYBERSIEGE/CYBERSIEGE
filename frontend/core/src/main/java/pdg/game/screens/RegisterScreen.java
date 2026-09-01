@@ -17,28 +17,25 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.function.Consumer;
-import pdg.game.Main;
 import pdg.game.network.AuthClient;
 import pdg.game.network.ResponseListener;
 import pdg.game.ui.Frame;
 
 /**
- * ConnectionScreen - Handles user login functionality.
+ * RegisterScreen - Handles new user registration.
  *
- * <p>This screen displays a login interface where users can enter their username and password to
- * authenticate with the server. It also provides navigation to the registration screen for new
- * users.
+ * <p>This screen displays a registration form where new users can create an account by providing
+ * username, email, password, and password confirmation. It validates user input and communicates
+ * with the server for account creation.
  *
- * <p>Features: - Username and password input fields with placeholder text - Login validation and
- * authentication via AuthClient - Navigation to RegisterScreen for new user registration - Callback
- * mechanism to notify parent screen of authentication success/failure
+ * <p>Features: - Username, email, and password input fields with placeholder text - Password
+ * confirmation validation - Error message display for failed registrations - Server-side
+ * registration via AuthClient - Callback mechanism to notify parent screen of registration
+ * success/failure
  */
-public class ConnectionScreen implements Screen {
+public class RegisterScreen implements Screen {
   // Logging tag
-  private static final String TAG = "ConnectionScreen";
-
-  // Game reference for screen management
-  private final Main game;
+  private static final String TAG = "RegisterScreen";
 
   // Background and stage for rendering
   private final Stage backgroundStage;
@@ -50,19 +47,21 @@ public class ConnectionScreen implements Screen {
   // Authentication client for server communication
   private final AuthClient authClient;
 
-  // Register screen reference (lazy-loaded)
-  private Screen registerScreen;
-
   // Callback for screen transitions
   private final Consumer<Boolean> callback;
 
   // Input fields
   private final TextField username;
+  private final TextField mail;
   private final TextField password;
+  private final TextField confirmPassword;
 
+  // Error message label
   private final Label errorMessage;
 
+  // Password visibility toggle buttons
   private final ImageButton showPassword;
+  private final ImageButton showConfirmPassword;
 
   // UI styling constants
   private static final Color BASE_COLOR = Color.GRAY;
@@ -70,21 +69,19 @@ public class ConnectionScreen implements Screen {
   private static final String BASE_TEXT = " type here";
 
   /**
-   * Constructor for ConnectionScreen.
+   * Constructor for RegisterScreen.
    *
-   * <p>Initializes the login screen with UI components including username/password fields and
-   * login/register/cancel buttons.
+   * <p>Initializes the registration screen with UI components including username, email, password,
+   * and password confirmation fields, along with register and cancel buttons.
    *
-   * @param game The main game instance for screen transitions
    * @param background The background to display behind the UI
+   * @param authClient The authentication client for server communication
    * @param callback Callback to handle screen transition results
    */
-  public ConnectionScreen(
-      final Main game, Stage backgroundStage, AuthClient authClient, Consumer<Boolean> callback) {
-    this.game = game;
+  public RegisterScreen(Stage backgroundStage, AuthClient authClient, Consumer<Boolean> callback) {
     this.backgroundStage = backgroundStage;
-    this.authClient = authClient;
     this.callback = callback;
+    this.authClient = authClient;
 
     // Setup stage with viewport and background
     stage = new Stage(new FitViewport(1920, 1080));
@@ -106,9 +103,23 @@ public class ConnectionScreen implements Screen {
             fontColor = BASE_COLOR;
           }
         });
-    username.addListener(createInputFocusListener(username, false));
+    username.addListener(createInputFocusListener(username));
+
+    // Create and configure email input field
+    Label mailLabel = new Label("mail:", skin);
+    mail = new TextField(BASE_TEXT, skin);
+    mail.setStyle(
+        new TextField.TextFieldStyle(mail.getStyle()) {
+          {
+            fontColor = BASE_COLOR;
+          }
+        });
+    mail.addListener(createInputFocusListener(mail));
 
     // Create and configure password input field
+    showPassword = new ImageButton(skin, "eye");
+    showPassword.setVisible(false);
+
     Label passwordLabel = new Label("password:", skin);
     password = new TextField(BASE_TEXT, skin);
     password.setStyle(
@@ -118,15 +129,30 @@ public class ConnectionScreen implements Screen {
           }
         });
 
-    showPassword = new ImageButton(skin, "eye");
-    showPassword.setVisible(false);
-
-    password.addListener(createInputFocusListener(password, true));
+    // set listeners
     showPassword.addListener(createPasswordRevealListener(password));
+    password.addListener(createInputFocusListener(password, showPassword));
+
+    // Create and configure password confirmation field
+    showConfirmPassword = new ImageButton(skin, "eye");
+    showConfirmPassword.setVisible(false);
+
+    Label confirmPasswordLabel = new Label("confirm password:", skin);
+    confirmPassword = new TextField(BASE_TEXT, skin);
+    confirmPassword.setStyle(
+        new TextField.TextFieldStyle(confirmPassword.getStyle()) {
+          {
+            fontColor = BASE_COLOR;
+          }
+        });
+
+    // set listeners
+    showConfirmPassword.addListener(createPasswordRevealListener(confirmPassword));
+    confirmPassword.addListener(createInputFocusListener(confirmPassword, showConfirmPassword));
 
     // Create cancel button
     TextButton cancel = new TextButton("cancel", skin, "red");
-    cancel.setSize(150, 75);
+    cancel.setSize(200, 75);
     cancel.addListener(
         new ClickListener() {
           @Override
@@ -135,30 +161,19 @@ public class ConnectionScreen implements Screen {
           }
         });
 
-    // Create register button (navigates to RegisterScreen)
-    TextButton register = new TextButton("register", skin, "yellow");
-    register.setSize(150, 75);
-    register.addListener(
+    // Create registration button
+    TextButton create = new TextButton("create", skin, "green");
+    create.setSize(200, 75);
+    create.addListener(
         new ClickListener() {
           @Override
           public void clicked(InputEvent event, float x, float y) {
-            navigateToRegisterScreen();
-          }
-        });
-
-    // Create login button
-    TextButton connect = new TextButton("connect", skin, "green");
-    connect.setSize(150, 75);
-    connect.addListener(
-        new ClickListener() {
-          @Override
-          public void clicked(InputEvent event, float x, float y) {
-            handleLogin();
+            handleRegistration();
           }
         });
 
     // Build UI frame with labels and input fields
-    Frame frame = new Frame(600, 600, "Connection", cancel, register, connect);
+    Frame frame = new Frame(600, 600, "register", cancel, create);
     frame.setPosition(
         stage.getWidth() / 2f - frame.getWidth() / 2f,
         stage.getHeight() / 2f - frame.getHeight() / 2f);
@@ -171,12 +186,34 @@ public class ConnectionScreen implements Screen {
     frame.getContent().add().size(40, 40).padRight(10);
     frame.getContent().row();
 
+    frame.getContent().add(mailLabel).align(Align.left).expandX().padLeft(10).padRight(60);
+    frame.getContent().add().size(40, 40).padRight(10);
+    frame.getContent().row();
+
+    frame.getContent().add(mail).align(Align.left).fillX().expandX().pad(10);
+    frame.getContent().add().size(40, 40).padRight(10);
+    frame.getContent().row();
+
     frame.getContent().add(passwordLabel).align(Align.left).expandX().padLeft(10).padRight(60);
     frame.getContent().add().size(40, 40).padRight(10);
     frame.getContent().row();
 
     frame.getContent().add(password).align(Align.left).fillX().expandX().pad(10);
     frame.getContent().add(showPassword).size(40, 40).padRight(10);
+    frame.getContent().row();
+
+    frame
+        .getContent()
+        .add(confirmPasswordLabel)
+        .align(Align.left)
+        .expandX()
+        .padLeft(10)
+        .padRight(60);
+    frame.getContent().add().size(40, 40).padRight(10);
+    frame.getContent().row();
+
+    frame.getContent().add(confirmPassword).align(Align.left).fillX().expandX().pad(10);
+    frame.getContent().add(showConfirmPassword).size(40, 40).padRight(10);
     frame.getContent().row();
 
     frame.getContent().add(errorMessage).align(Align.left).fillX().expandX().colspan(2).pad(10);
@@ -187,14 +224,19 @@ public class ConnectionScreen implements Screen {
   }
 
   /**
-   * Creates a focus listener for input fields that clears placeholder text when focused. Handles
-   * password field initialization with masking and character display.
+   * Creates a focus listener for input fields that clears placeholder text when focused. Configures
+   * password field masking and controls visibility toggle button.
    *
    * @param field The input field to listen to
    * @param isPasswordField Whether this field should be masked as a password
+   * @param revealButton Optional button to control password visibility
    * @return A FocusListener configured for the field
    */
-  private FocusListener createInputFocusListener(TextField field, boolean isPasswordField) {
+  private FocusListener createInputFocusListener(TextField field) {
+    return createInputFocusListener(field, null);
+  }
+
+  private FocusListener createInputFocusListener(TextField field, Actor revealButton) {
     return new FocusListener() {
       @Override
       public void keyboardFocusChanged(FocusEvent event, Actor actor, boolean focused) {
@@ -203,10 +245,10 @@ public class ConnectionScreen implements Screen {
           field.getStyle().fontColor = EDIT_COLOR;
 
           // Configure password field with masking
-          if (isPasswordField) {
+          if (revealButton != null) {
             field.setPasswordMode(true);
             field.setPasswordCharacter('•');
-            showPassword.setVisible(true);
+            revealButton.setVisible(true);
           }
         }
       }
@@ -235,61 +277,66 @@ public class ConnectionScreen implements Screen {
     };
   }
 
-  /** Navigates to the registration screen. Lazily initializes RegisterScreen on first access. */
-  private void navigateToRegisterScreen() {
-    if (registerScreen == null) {
-      registerScreen = new RegisterScreen(backgroundStage, authClient, callback);
-    }
-    game.setScreen(registerScreen);
-  }
-
   /**
-   * Handles the login process. Validates input fields and sends authentication request to server.
-   * Displays error messages on failure and navigates to main game on success.
+   * Handles the registration process by validating input and sending registration request.
+   * Validates that passwords match before submitting to server.
    */
-  private void handleLogin() {
+  private void handleRegistration() {
+    String mailValue = mail.getText();
     String usernameValue = username.getText();
     String passwordValue = password.getText();
+    String confirmPasswordValue = confirmPassword.getText();
 
-    if (usernameValue.equals(BASE_TEXT)
+    if (mailValue.equals(BASE_TEXT)
+        || mailValue.isEmpty()
+        || usernameValue.equals(BASE_TEXT)
         || usernameValue.isEmpty()
         || passwordValue.equals(BASE_TEXT)
-        || passwordValue.isEmpty()) {
+        || passwordValue.isEmpty()
+        || confirmPasswordValue.equals(BASE_TEXT)
+        || confirmPasswordValue.isEmpty()) {
       errorMessage.setText("All fields are required");
       return;
     }
-    // Clear any previous error messages
+
+    // Clear previous error message
     errorMessage.setText("");
 
-    // Send login request to authentication service
-    authClient.login(
+    // Validate that passwords match
+    if (!passwordValue.equals(confirmPasswordValue)) {
+      errorMessage.setText("Passwords do not match");
+      return;
+    }
+
+    // Send registration request to server
+    authClient.register(
+        mailValue,
         usernameValue,
         passwordValue,
         new ResponseListener() {
           @Override
           public void success(String token) {
             authClient.setToken(token);
-            Gdx.app.log(TAG, "Login successful, token: " + token);
+            Gdx.app.log(TAG, "Registration successful, token: " + token);
             Gdx.app.postRunnable(() -> callback.accept(true));
           }
 
           @Override
           public void failure(int status, String result) {
-            Gdx.app.error(TAG, "Login failed with status " + status + ": " + result);
+            Gdx.app.error(TAG, "Registration failed with status " + status + ": " + result);
             errorMessage.setText(result);
           }
 
           @Override
           public void error(String message) {
-            Gdx.app.error(TAG, "Login network error: " + message);
+            Gdx.app.error(TAG, "Registration network error: " + message);
             errorMessage.setText("Network error");
           }
         });
   }
 
   /**
-   * Called when the screen becomes active. Resets UI elements to initial state and configures input
-   * processor.
+   * Called when the screen becomes active. Resets all input fields and buttons to initial state.
    */
   @Override
   public void show() {
@@ -297,15 +344,20 @@ public class ConnectionScreen implements Screen {
     stage.setKeyboardFocus(null);
     resetInputFields();
     showPassword.setVisible(false);
+    showConfirmPassword.setVisible(false);
     errorMessage.setText("");
   }
 
-  /** Resets all input fields to their placeholder state. */
+  /** Resets all input fields to their placeholder state with base styling. */
   private void resetInputFields() {
     username.getStyle().fontColor = BASE_COLOR;
     username.setText(BASE_TEXT);
+    mail.getStyle().fontColor = BASE_COLOR;
+    mail.setText(BASE_TEXT);
     password.getStyle().fontColor = BASE_COLOR;
     password.setText(BASE_TEXT);
+    confirmPassword.getStyle().fontColor = BASE_COLOR;
+    confirmPassword.setText(BASE_TEXT);
   }
 
   /**
@@ -357,9 +409,6 @@ public class ConnectionScreen implements Screen {
    */
   @Override
   public void dispose() {
-    if (registerScreen != null) {
-      registerScreen.dispose();
-    }
     if (stage != null) {
       stage.dispose();
     }
