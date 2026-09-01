@@ -200,6 +200,13 @@ red_button_up
   orig: 96, 64
   offset: 0, 0
   index: -1
+cursor
+  rotate: false
+  xy: 1641, 1680
+  size: 1, 16
+  orig: 1, 16
+  offset: 0, 0
+  index: -1
 light_textbox
   rotate: false
   xy: 509, 188

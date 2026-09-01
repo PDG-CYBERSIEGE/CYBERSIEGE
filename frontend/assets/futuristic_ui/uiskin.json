@@ -49,8 +49,8 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	eye: {
-		imageUp: eye_white
-		imageDown: hidden_white
+		imageUp: hidden_white
+		imageDown: eye_white
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
@@ -100,6 +100,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 		font: Orbitron-Regular1
 		fontColor: white
 		background: light_textbox
+		cursor: cursor
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
