@@ -1,10 +1,14 @@
 package pdg.game.screens;
 
+import java.util.function.Consumer;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -16,7 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import java.util.function.Consumer;
+
 import pdg.game.Main;
 import pdg.game.network.AuthClient;
 import pdg.game.network.ResponseListener;
@@ -100,6 +104,7 @@ public class ConnectionScreen implements Screen {
     // Create and configure username input field
     Label usernameLabel = new Label("username:", skin);
     username = new TextField(BASE_TEXT, skin);
+    createEnterListener(username);
     username.setStyle(
         new TextField.TextFieldStyle(username.getStyle()) {
           {
@@ -111,6 +116,7 @@ public class ConnectionScreen implements Screen {
     // Create and configure password input field
     Label passwordLabel = new Label("password:", skin);
     password = new TextField(BASE_TEXT, skin);
+    createEnterListener(password);
     password.setStyle(
         new TextField.TextFieldStyle(password.getStyle()) {
           {
@@ -285,6 +291,24 @@ public class ConnectionScreen implements Screen {
             errorMessage.setText("Network error");
           }
         });
+  }
+
+  /**
+   * Creates an input listener for handling the Enter key press event, while try to connect.
+   *
+   * @param field The text field to attach the listener to
+   */
+  private void createEnterListener(TextField field){
+    field.addListener(new InputListener() {
+      @Override
+      public boolean keyDown(InputEvent event, int keycode) {
+        if (keycode == Input.Keys.ENTER) {
+          handleLogin();
+          return true;
+        }
+        return false;
+      }
+    });
   }
 
   /**

@@ -18,7 +18,7 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: {
 		markupEnabled: false
 		flip: false
 	}
-	Orbitron-Regular1: {
+	Orbitron-Regular: {
 		file: Orbitron-Regular(1).fnt
 		scaledSize: -1
 		markupEnabled: false
@@ -119,7 +119,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: {
-		font: Orbitron-Regular1
+		font: Orbitron-Regular
 		fontColor: white
 		background: light_textbox
 		cursor: cursor
