@@ -22,6 +22,11 @@ public class Frame extends Table {
   /** Table that callers can populate with custom controls. */
   private Table content;
 
+  /**
+   * Creates a frame with the requested size, title and buttons.
+   *
+   * @param buttons buttons displayed at the bottom
+   */
   /** Creates a default 400 by 300 frame. */
   public Frame(Button... buttons) {
     this(400, 300, "Frame Title", buttons);
@@ -108,12 +113,21 @@ public class Frame extends Table {
     this.buttons = buttons;
   }
 
-  /** Returns a button by its position in the button row. */
+  /**
+   * Returns a button by its position in the button row.
+   *
+   * @param i the index of the button to return
+   * @return the button at the specified index
+   */
   public Button getButton(int i) {
     return buttons[i];
   }
 
-  /** Returns the table where custom controls can be added. */
+  /**
+   * Returns the table where content can be added.
+   *
+   * @return the content table
+   */
   public Table getContent() {
     return content;
   }
