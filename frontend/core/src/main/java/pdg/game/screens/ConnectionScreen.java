@@ -76,7 +76,7 @@ public class ConnectionScreen implements Screen {
    * login/register/cancel buttons.
    *
    * @param game The main game instance for screen transitions
-   * @param background The background to display behind the UI
+   * @param backgroundStage The background stage to display behind the UI
    * @param callback Callback to handle screen transition results
    */
   public ConnectionScreen(
