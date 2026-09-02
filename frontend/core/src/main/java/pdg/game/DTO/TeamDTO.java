@@ -2,9 +2,7 @@ package pdg.game.DTO;
 
 import java.util.ArrayList;
 
-/**
- * Represents a team.
- */
+/** Represents a team. */
 public class TeamDTO {
 
   private final String name;
@@ -12,7 +10,8 @@ public class TeamDTO {
   private final ArrayList<RobotDTO> robots;
   private final KingDTO king;
 
-  public TeamDTO(String name, ArrayList<BlockDTO> blocks, ArrayList<RobotDTO> robots, KingDTO king) {
+  public TeamDTO(
+      String name, ArrayList<BlockDTO> blocks, ArrayList<RobotDTO> robots, KingDTO king) {
     this.name = name;
     this.blocks = blocks;
     this.robots = robots;
@@ -34,5 +33,4 @@ public class TeamDTO {
   public KingDTO king() {
     return king;
   }
-
 }

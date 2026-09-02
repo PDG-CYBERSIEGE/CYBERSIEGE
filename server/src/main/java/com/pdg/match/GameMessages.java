@@ -6,6 +6,7 @@ import com.pdg.game.DTO.BlockDTO;
 import com.pdg.game.DTO.KingDTO;
 import com.pdg.game.DTO.RobotDTO;
 
+/** Utility class for creating and parsing game WebSocket messages. */
 public final class GameMessages {
 
   private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -28,6 +29,12 @@ public final class GameMessages {
 
   // Incoming ////////////////////////////////////////////////////
 
+  /**
+   * Extracts the type from a JSON message.
+   *
+   * @param message JSON message
+   * @return message type, or an empty string if it is invalid
+   */
   public static String type(String message) {
     try {
       return MAPPER.readTree(message).get("type").asText();
@@ -36,44 +43,101 @@ public final class GameMessages {
     }
   }
 
+  /**
+   * Parses a fire message.
+   *
+   * @param message JSON message
+   * @return parsed fire message
+   */
   public static Fire parseFire(String message) {
     return read(message, Fire.class);
   }
 
+  /**
+   * Parses a build validation message.
+   *
+   * @param message JSON message
+   * @return parsed build validation message
+   */
   public static BuildValidate parseBuildValidate(String message) {
     return read(message, BuildValidate.class);
   }
 
+  /** Represents a fire action. */
   public record Fire(String type, int power, float angle, int robot) {}
 
+  /** Represents a build validation action. */
   public record BuildValidate(String type, BlockDTO[] blocks, KingDTO king) {}
 
   // Outcoming ////////////////////////////////////////////////////
 
+  /**
+   * Creates a match start message.
+   *
+   * @param matchId match identifier
+   * @param opponentName opponent's name
+   * @return JSON message
+   */
   public static String start(String matchId, String opponentName) {
     return json(new StartMessage("START", matchId, opponentName));
   }
 
+  /**
+   * Creates a message containing the components available to a player.
+   *
+   * @param blocks available blocks
+   * @param king player's king
+   * @param robots available robots
+   * @return JSON message
+   */
   public static String availableComponents(BlockDTO[] blocks, KingDTO king, RobotDTO[] robots) {
     return json(new AvailableComponentsMessage("AVAILABLE_COMPONENTS", blocks, king, robots));
   }
 
+  /**
+   * Creates a timer update message.
+   *
+   * @param timeInSecRemaining remaining time in seconds
+   * @return JSON message
+   */
   public static String timer(int timeInSecRemaining) {
     return json(new TimerMessage("TIMER", timeInSecRemaining));
   }
 
+  /**
+   * Creates an opponent structure message.
+   *
+   * @param blocks opponent structure blocks
+   * @param king opponent's king
+   * @return JSON message
+   */
   public static String opponentStructure(BlockDTO[] blocks, KingDTO king) {
     return json(new OpponentStructureMessage("OPPONENT_STRUCTURE", blocks, king));
   }
 
+  /**
+   * Creates a winner message.
+   *
+   * @return JSON message
+   */
   public static String winner() {
     return json(new ResultMessage("WINNER"));
   }
 
+  /**
+   * Creates a loser message.
+   *
+   * @return JSON message
+   */
   public static String loser() {
     return json(new ResultMessage("LOSER"));
   }
 
+  /**
+   * Creates an invalid message.
+   *
+   * @return JSON message
+   */
   public static String invalid() {
     return json(new ResultMessage("INVALID"));
   }

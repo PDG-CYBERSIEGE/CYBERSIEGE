@@ -1,8 +1,6 @@
 package pdg.game.DTO;
 
-/**
- * Represents a block.
- */
+/** Represents a block. */
 public class BlockDTO {
 
   private final String type;

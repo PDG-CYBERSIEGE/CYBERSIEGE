@@ -1,8 +1,6 @@
 package pdg.game.DTO;
 
-/**
- * Represents a king.
- */
+/** Represents a king. */
 public class KingDTO {
 
   private final String sprite;

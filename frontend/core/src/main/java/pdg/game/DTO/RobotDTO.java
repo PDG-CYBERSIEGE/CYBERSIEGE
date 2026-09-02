@@ -1,8 +1,6 @@
 package pdg.game.DTO;
 
-/**
- * Represents a robot.
- */
+/** Represents a robot. */
 public class RobotDTO {
 
   private final String sprite;
