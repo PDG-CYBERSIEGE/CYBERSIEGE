@@ -1,10 +1,9 @@
 package pdg.game;
 
 import com.badlogic.gdx.Game;
-import pdg.game.network.websocket.GameWebSocket;
-import pdg.game.screens.FirstScreen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import pdg.game.network.websocket.GameWebSocket;
 import pdg.game.scene.Background;
 import pdg.game.screens.MainMenuScreen;
 
