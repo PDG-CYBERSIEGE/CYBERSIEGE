@@ -30,6 +30,8 @@ dependencies {
     implementation 'io.quarkus:quarkus-hibernate-orm'
     testImplementation 'io.quarkus:quarkus-junit'
     testImplementation 'io.rest-assured:rest-assured'
+    implementation 'com.badlogicgames.gdx:gdx:1.13.1'
+    implementation 'com.badlogicgames.gdx:gdx-box2d:1.13.1'
 }
 
 group = 'com.pdg'
