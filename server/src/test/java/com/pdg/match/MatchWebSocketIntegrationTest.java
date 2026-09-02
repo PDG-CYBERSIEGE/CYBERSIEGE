@@ -51,7 +51,7 @@ public class MatchWebSocketIntegrationTest {
   }
 
   private String createToken(User user) {
-    return Jwt.subject(String.valueOf(user.id)).sign();
+    return Jwt.subject(String.valueOf(user.id)).issuer("https://cybersiege.com").sign();
   }
 
   private static class TestClient {

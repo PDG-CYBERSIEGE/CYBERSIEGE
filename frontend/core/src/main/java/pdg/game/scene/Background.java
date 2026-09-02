@@ -4,20 +4,31 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /** Manages the five layered images used for a randomly selected background. */
 public class Background {
 
+  private static final String TAG = "Background";
+  private static final int NUM_LAYERS = 5;
+
   String path;
   Random random;
-  Image[] images = new Image[5];
+  Image[] images = new Image[NUM_LAYERS];
+  List<Texture> textures = new ArrayList<>();
 
   /** Loads a random background and its five image layers. */
   public Background() {
 
     random = new Random();
+    loadRandomBackground();
+    Gdx.app.log(TAG, "Background initialized with path: " + path);
+  }
 
+  /** Loads a random background configuration and creates image layers. */
+  private void loadRandomBackground() {
     // Background 0 has no day/night variant; the other backgrounds do.
     int randomBackground = random.nextInt(10);
     path = "background/" + randomBackground + "/";
@@ -27,8 +38,9 @@ public class Background {
       path += randomBackground == 1 ? "Day/" : "Night/";
     }
     // Load each layer separately so Scene2D can render them in order.
-    for (int i = 1; i <= 5; i++) {
+    for (int i = 1; i <= NUM_LAYERS; i++) {
       Texture backgroundTexture = new Texture(Gdx.files.internal(path + i + ".png"));
+      textures.add(backgroundTexture);
       images[i - 1] = new Image(backgroundTexture);
       images[i - 1].setFillParent(true);
     }
@@ -44,18 +56,26 @@ public class Background {
 
   /** Replaces the current layers with a newly selected random background. */
   public void change() {
+    Gdx.app.log(TAG, "Changing background");
+    // Dispose old textures to prevent memory leaks
+    disposeTextures();
+    textures.clear();
+    loadRandomBackground();
+    Gdx.app.log(TAG, "Background changed to path: " + path);
+  }
 
-    int randomBackground = random.nextInt(10);
-    path = "background/" + randomBackground + "/";
+  /** Disposes all loaded textures. */
+  public void dispose() {
+    Gdx.app.log(TAG, "Disposing Background resources");
+    disposeTextures();
+  }
 
-    if (randomBackground != 0) {
-      randomBackground = random.nextInt(2);
-      path += randomBackground == 1 ? "Day/" : "Night/";
-    }
-    // Update existing actors so callers do not need to reapply the background.
-    for (int i = 1; i <= 5; i++) {
-      Texture backgroundTexture = new Texture(Gdx.files.internal(path + i + ".png"));
-      images[i - 1].setDrawable(new Image(backgroundTexture).getDrawable());
+  /** Helper method to dispose all textures in the textures list. */
+  private void disposeTextures() {
+    for (Texture texture : textures) {
+      if (texture != null) {
+        texture.dispose();
+      }
     }
   }
 }
