@@ -78,7 +78,7 @@ public class Cannon extends Group {
 
     // The saw sprite sheet contains a few static frames at the beginning; they are
     // ignored so the blade starts spinning only when it is meant to turn.
-    Texture sawTexture = new Texture(Gdx.files.internal("launcher/saw.png"));
+    Texture sawTexture = new Texture(Gdx.files.internal("launcher/Saw.png"));
 
     TextureRegion[][] sawGrid = TextureRegion.split(sawTexture, 32, 32);
 
