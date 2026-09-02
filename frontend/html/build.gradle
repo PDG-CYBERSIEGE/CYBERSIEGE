@@ -35,8 +35,8 @@ gwt {
   sourceLevel = '1.11'
 
   devMode {
-    port = 8080
-    startupUrl = "http://127.0.0.1:8080/index.html"
+    port = 8081
+    startupUrl = "http://127.0.0.1:8081/index.html"
   }
   superDev {
     modules = ["pdg.game.GdxDefinitionSuperdev"]
@@ -62,6 +62,9 @@ dependencies {
   implementation "com.google.jsinterop:jsinterop-annotations:2.1.0:sources"
   implementation project(':core')
   implementation("com.badlogicgames.gdx:gdx-box2d-gwt:$gdxVersion:sources") {exclude group: "com.google.gwt", module: "gwt-user"}
+
+  testImplementation "org.java-websocket:Java-WebSocket:1.5.7"
+  testImplementation "junit:junit:4.13.2"
 
   constraints {
     implementation "jakarta.servlet:jakarta.servlet-api:6.1.0"
@@ -139,6 +142,17 @@ tasks.register("distZip", Zip) {
 tasks.register('superDev') {
   dependsOn("dist", "gwtDevMode")
   group("gwt")
+}
+
+// Exclude HtmlUnit classes from JaCoCo instrumentation to avoid
+// MethodTooLargeException errors in some HtmlUnit classes.
+tasks.test {
+  jacoco {
+    excludes = [
+      "com/gargoylesoftware/htmlunit/**",
+      "com/gargoylesoftware/css/**",
+    ]
+  }
 }
 
 tasks.compileJava.dependsOn("processResources")
