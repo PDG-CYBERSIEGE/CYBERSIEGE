@@ -44,7 +44,7 @@ public class AuthService {
     userRepository.persist(user);
 
     // Generate token
-    String token = Jwt.subject(String.valueOf(user.id)).sign();
+    String token = Jwt.issuer("https://cybersiege.com").subject(String.valueOf(user.id)).sign();
 
     return Response.ok(token).build();
   }
@@ -73,7 +73,7 @@ public class AuthService {
     }
 
     // Generate token
-    String token = Jwt.subject(String.valueOf(user.id)).sign();
+    String token = Jwt.issuer("https://cybersiege.com").subject(String.valueOf(user.id)).sign();
 
     return Response.ok(token).build();
   }
