@@ -12,9 +12,9 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import pdg.game.Main;
-import pdg.game.network.AuthClient;
-import pdg.game.network.HttpClient;
-import pdg.game.network.ResponseListener;
+import pdg.game.network.http.AuthClient;
+import pdg.game.network.http.HttpClient;
+import pdg.game.network.http.ResponseListener;
 
 /**
  * Main menu screen that displays the title, connection button, and authenticated user information.

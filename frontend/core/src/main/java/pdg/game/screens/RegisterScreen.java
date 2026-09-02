@@ -19,8 +19,8 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.function.Consumer;
-import pdg.game.network.AuthClient;
-import pdg.game.network.ResponseListener;
+import pdg.game.network.http.AuthClient;
+import pdg.game.network.http.ResponseListener;
 import pdg.game.ui.Frame;
 
 /**

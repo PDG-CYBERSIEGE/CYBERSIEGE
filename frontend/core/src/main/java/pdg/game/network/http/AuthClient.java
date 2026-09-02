@@ -1,4 +1,4 @@
-package pdg.game.network;
+package pdg.game.network.http;
 
 /**
  * Provides the client-side authentication API.
