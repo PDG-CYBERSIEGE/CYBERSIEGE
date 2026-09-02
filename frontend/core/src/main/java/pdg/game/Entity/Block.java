@@ -165,4 +165,8 @@ public class Block extends Entity {
     body.setTransform(savedPosition, savedAngle);
     updateSprite(); // évite d'attendre la prochaine frame pour voir le résultat
   }
+
+  public void initialState() {
+    body.setTransform(spawnPosition, 0);
+  }
 }

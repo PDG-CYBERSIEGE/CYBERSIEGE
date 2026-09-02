@@ -231,6 +231,10 @@ public class FightScreen implements Screen {
 
     //bouton pour la première phase
 
+
+    // init phase 1
+    initialisePhase1();
+
   }
 
   @Override
@@ -432,9 +436,14 @@ public class FightScreen implements Screen {
     }
   }
 
+  private void initialisePhase1(){
+    ownTeam.setupBlocks();
+  }
+
   private void transitionToPhase2() {
     resetCameraToFullView(1.5f); // transition fluide sur 1.5 seconde
-    ownTeam.enableGravity();
-    ennemyTeam.enableGravity();
+    ownTeam.changeGravity();
+    ennemyTeam.changeGravity();
   }
+
 }

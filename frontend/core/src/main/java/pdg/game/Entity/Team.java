@@ -186,4 +186,10 @@ public class Team {
       king.savePosition();
   }
 
+  public void setupBlocks() {
+      for (Block b : tower) {
+        b.initialState();
+      }
+  }
+
 }
