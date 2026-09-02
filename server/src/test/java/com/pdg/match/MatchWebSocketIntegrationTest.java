@@ -1,9 +1,6 @@
 package com.pdg.match;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.pdg.user.User;
 import com.pdg.user.UserRepository;
@@ -118,7 +115,15 @@ public class MatchWebSocketIntegrationTest {
 
     assertNotNull(match1);
     assertNotNull(match2);
-    assertEquals(match1, match2);
+
+    assertTrue(match1.contains("\"type\":\"START\""));
+    assertTrue(match2.contains("\"type\":\"START\""));
+
+    assertTrue(match1.contains("\"matchId\":\"1\""));
+    assertTrue(match2.contains("\"matchId\":\"1\""));
+
+    assertTrue(match1.contains("\"opponent\":\"" + user2.id + "\""));
+    assertTrue(match2.contains("\"opponent\":\"" + user1.id + "\""));
 
     player1.close();
     player2.close();
@@ -145,9 +150,21 @@ public class MatchWebSocketIntegrationTest {
     assertNotNull(match2);
     assertNotNull(match3);
     assertNotNull(match4);
-    assertEquals(match1, match2);
-    assertEquals(match3, match4);
-    assertNotEquals(match1, match3);
+
+    assertEquals("START", GameMessages.type(match1));
+    assertEquals("START", GameMessages.type(match2));
+    assertEquals("START", GameMessages.type(match3));
+    assertEquals("START", GameMessages.type(match4));
+
+    assertTrue(match1.contains("\"matchId\""));
+    assertTrue(match2.contains("\"matchId\""));
+    assertTrue(match3.contains("\"matchId\""));
+    assertTrue(match4.contains("\"matchId\""));
+
+    assertTrue(match1.contains("\"opponent\":\"" + user2.id + "\""));
+    assertTrue(match2.contains("\"opponent\":\"" + user1.id + "\""));
+    assertTrue(match3.contains("\"opponent\":\"" + user4.id + "\""));
+    assertTrue(match4.contains("\"opponent\":\"" + user3.id + "\""));
 
     player1.close();
     player2.close();

@@ -55,6 +55,11 @@ public class Match {
    * @param msg received message
    */
   void receiveMsg(PlayerConnection player, String msg) {
+
+    if (msg.equals("Hello !")) {
+      player.sendToPlayer("Hello Back !");
+    }
+
     switch (GameMessages.type(msg)) {
       case "BUILD_VALIDATE":
         // todo
