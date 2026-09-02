@@ -3,6 +3,7 @@ package com.pdg.match;
 import com.pdg.game.DTO.BlockDTO;
 import com.pdg.game.DTO.KingDTO;
 import com.pdg.game.DTO.RobotDTO;
+import com.pdg.game.DTO.TeamDTO;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -73,6 +74,10 @@ public class Match {
         // todo
         break;
 
+      case "TEAM":
+        // todo
+        break;
+
       default:
         player.sendToPlayer(GameMessages.invalid());
         break;
@@ -140,5 +145,15 @@ public class Match {
    */
   public void sendLoser(PlayerConnection player) {
     player.sendToPlayer(GameMessages.loser());
+  }
+
+  /**
+   * Sends a team message to a player.
+   *
+   * @param player target player
+   * @param team team to send
+   */
+  public void sendTeam(PlayerConnection player, TeamDTO team) {
+    player.sendToPlayer(GameMessages.team(team));
   }
 }

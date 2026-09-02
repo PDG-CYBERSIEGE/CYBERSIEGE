@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pdg.game.DTO.BlockDTO;
 import com.pdg.game.DTO.KingDTO;
 import com.pdg.game.DTO.RobotDTO;
+import com.pdg.game.DTO.TeamDTO;
 
 /** Utility class for creating and parsing game WebSocket messages. */
 public final class GameMessages {
@@ -63,11 +64,24 @@ public final class GameMessages {
     return read(message, BuildValidate.class);
   }
 
+  /**
+   * Parses a team message.
+   *
+   * @param message JSON message
+   * @return parsed team message
+   */
+  public static Team parseTeam(String message) {
+    return read(message, Team.class);
+  }
+
   /** Represents a fire action. */
   public record Fire(String type, int power, float angle, int robot) {}
 
   /** Represents a build validation action. */
   public record BuildValidate(String type, BlockDTO[] blocks, KingDTO king) {}
+
+  /** Represents a team message. */
+  public record Team(String type, TeamDTO team) {}
 
   // Outcoming ////////////////////////////////////////////////////
 
@@ -142,6 +156,16 @@ public final class GameMessages {
     return json(new ResultMessage("INVALID"));
   }
 
+  /**
+   * Creates a message containing a team.
+   *
+   * @param team team to send
+   * @return JSON message
+   */
+  public static String team(TeamDTO team) {
+    return json(new TeamMessage("TEAM", team));
+  }
+
   private record StartMessage(String type, String matchId, String opponent) {}
 
   private record AvailableComponentsMessage(
@@ -152,4 +176,6 @@ public final class GameMessages {
   private record OpponentStructureMessage(String type, BlockDTO[] blocks, KingDTO king) {}
 
   private record ResultMessage(String type) {}
+
+  private record TeamMessage(String type, TeamDTO team) {}
 }

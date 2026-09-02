@@ -2,9 +2,11 @@ package pdg.game.network.websocket;
 
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import java.util.ArrayList;
 import pdg.game.DTO.BlockDTO;
 import pdg.game.DTO.KingDTO;
 import pdg.game.DTO.RobotDTO;
+import pdg.game.DTO.TeamDTO;
 
 /**
  * Utility class used to parse and build WebSocket messages exchanged between the client and the
@@ -105,6 +107,20 @@ public final class GameMessages {
     return result;
   }
 
+  /**
+   * Parses a team message.
+   *
+   * @param message JSON message
+   * @return parsed team message
+   */
+  public static Team parseTeam(String message) {
+    JsonValue root = READER.parse(message);
+    Team result = new Team();
+    result.type = root.getString("type", "");
+    result.team = readTeam(root.get("team"));
+    return result;
+  }
+
   // Outgoing ////////////////////////////////////////////////////
 
   /**
@@ -158,6 +174,20 @@ public final class GameMessages {
     return "{\"type\":\"VERIFY_STATE\"}";
   }
 
+  /**
+   * Builds a team message.
+   *
+   * @param team team to send
+   * @return JSON message
+   */
+  public static String team(TeamDTO team) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("{\"type\":\"TEAM\",\"team\":");
+    appendTeam(sb, team);
+    sb.append('}');
+    return sb.toString();
+  }
+
   // Message DTOs ////////////////////////////////////////////////
 
   /** Represents a match start message. */
@@ -193,6 +223,12 @@ public final class GameMessages {
     public String type;
   }
 
+  /** Represents a team message, exchanged in both directions. */
+  public static class Team {
+    public String type;
+    public TeamDTO team;
+  }
+
   // Reads helpers //////////////////////////////////////////////////////
 
   private static BlockDTO[] readBlocks(JsonValue value) {
@@ -202,17 +238,20 @@ public final class GameMessages {
     BlockDTO[] blocks = new BlockDTO[value.size];
     int index = 0;
     for (JsonValue child = value.child; child != null; child = child.next) {
-      blocks[index++] =
-          new BlockDTO(
-              child.getString("type", ""),
-              child.getInt("health", 0),
-              child.getInt("mass", 0),
-              child.getBoolean("alive", false),
-              child.getInt("x", 0),
-              child.getInt("y", 0),
-              child.getInt("length", 0));
+      blocks[index++] = readBlock(child);
     }
     return blocks;
+  }
+
+  private static BlockDTO readBlock(JsonValue value) {
+    return new BlockDTO(
+        value.getString("type", ""),
+        value.getInt("health", 0),
+        value.getInt("mass", 0),
+        value.getBoolean("alive", false),
+        value.getInt("x", 0),
+        value.getInt("y", 0),
+        value.getInt("length", 0));
   }
 
   private static KingDTO readKing(JsonValue value) {
@@ -234,14 +273,50 @@ public final class GameMessages {
     RobotDTO[] robots = new RobotDTO[value.size];
     int index = 0;
     for (JsonValue child = value.child; child != null; child = child.next) {
-      robots[index++] =
-          new RobotDTO(
-              child.getString("sprite", ""),
-              child.getInt("health", 0),
-              child.getInt("mass", 0),
-              child.getInt("cooldown", 0));
+      robots[index++] = readRobot(child);
     }
     return robots;
+  }
+
+  private static RobotDTO readRobot(JsonValue value) {
+    return new RobotDTO(
+        value.getString("sprite", ""),
+        value.getInt("health", 0),
+        value.getInt("mass", 0),
+        value.getInt("cooldown", 0));
+  }
+
+  private static ArrayList<BlockDTO> readBlockList(JsonValue value) {
+    ArrayList<BlockDTO> blocks = new ArrayList<>();
+    if (value == null || value.isNull()) {
+      return blocks;
+    }
+    for (JsonValue child = value.child; child != null; child = child.next) {
+      blocks.add(readBlock(child));
+    }
+    return blocks;
+  }
+
+  private static ArrayList<RobotDTO> readRobotList(JsonValue value) {
+    ArrayList<RobotDTO> robots = new ArrayList<>();
+    if (value == null || value.isNull()) {
+      return robots;
+    }
+    for (JsonValue child = value.child; child != null; child = child.next) {
+      robots.add(readRobot(child));
+    }
+    return robots;
+  }
+
+  private static TeamDTO readTeam(JsonValue value) {
+    if (value == null || value.isNull()) {
+      return null;
+    }
+    return new TeamDTO(
+        value.getString("name", ""),
+        readBlockList(value.get("blocks")),
+        readRobotList(value.get("robots")),
+        readKing(value.get("king")));
   }
 
   // Writing helpers /////////////////////////////////////////////
@@ -276,6 +351,40 @@ public final class GameMessages {
         .append(",\"mass\":")
         .append(king.mass())
         .append('}');
+  }
+
+  private static void appendRobot(StringBuilder sb, RobotDTO robot) {
+    sb.append("{\"sprite\":\"")
+        .append(escape(robot.sprite()))
+        .append("\",\"health\":")
+        .append(robot.health())
+        .append(",\"mass\":")
+        .append(robot.mass())
+        .append(",\"cooldown\":")
+        .append(robot.cooldown())
+        .append('}');
+  }
+
+  private static void appendTeam(StringBuilder sb, TeamDTO team) {
+    sb.append("{\"name\":\"").append(escape(team.name())).append("\",\"blocks\":[");
+    ArrayList<BlockDTO> blocks = team.blocks();
+    for (int i = 0; i < blocks.size(); i++) {
+      if (i > 0) {
+        sb.append(',');
+      }
+      appendBlock(sb, blocks.get(i));
+    }
+    sb.append("],\"robots\":[");
+    ArrayList<RobotDTO> robots = team.robots();
+    for (int i = 0; i < robots.size(); i++) {
+      if (i > 0) {
+        sb.append(',');
+      }
+      appendRobot(sb, robots.get(i));
+    }
+    sb.append("],\"king\":");
+    appendKing(sb, team.king());
+    sb.append('}');
   }
 
   private static String escape(String value) {
