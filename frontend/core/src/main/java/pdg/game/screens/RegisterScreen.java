@@ -1,7 +1,5 @@
 package pdg.game.screens;
 
-import java.util.function.Consumer;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -20,7 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
+import java.util.function.Consumer;
 import pdg.game.network.AuthClient;
 import pdg.game.network.ResponseListener;
 import pdg.game.ui.Frame;
@@ -348,17 +346,18 @@ public class RegisterScreen implements Screen {
    *
    * @param field The text field to attach the listener to
    */
-  private void createEnterListener(TextField field){
-    field.addListener(new InputListener() {
-      @Override
-      public boolean keyDown(InputEvent event, int keycode) {
-        if (keycode == Input.Keys.ENTER) {
-          handleRegistration();
-          return true;
-        }
-        return false;
-      }
-    });
+  private void createEnterListener(TextField field) {
+    field.addListener(
+        new InputListener() {
+          @Override
+          public boolean keyDown(InputEvent event, int keycode) {
+            if (keycode == Input.Keys.ENTER) {
+              handleRegistration();
+              return true;
+            }
+            return false;
+          }
+        });
   }
 
   /**
