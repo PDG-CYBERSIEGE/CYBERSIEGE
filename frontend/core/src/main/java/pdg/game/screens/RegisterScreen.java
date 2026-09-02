@@ -74,7 +74,7 @@ public class RegisterScreen implements Screen {
    * <p>Initializes the registration screen with UI components including username, email, password,
    * and password confirmation fields, along with register and cancel buttons.
    *
-   * @param background The background to display behind the UI
+   * @param backgroundStage The background stage to display behind the UI
    * @param authClient The authentication client for server communication
    * @param callback Callback to handle screen transition results
    */
