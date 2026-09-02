@@ -1,5 +1,8 @@
 package com.pdg.match;
 
+import com.pdg.game.DTO.BlockDTO;
+import com.pdg.game.DTO.KingDTO;
+import com.pdg.game.DTO.RobotDTO;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -31,8 +34,8 @@ public class Match {
     } else {
       player2 = player;
       matchId = nextMatchId.getAndIncrement();
-      sendMsgToPlayer(player1, "MATCH_ID:" + matchId);
-      sendMsgToPlayer(player2, "MATCH_ID:" + matchId);
+      sendStart(player1, String.valueOf(matchId), String.valueOf(player2.playerId()));
+      sendStart(player2, String.valueOf(matchId), String.valueOf(player1.playerId()));
     }
   }
 
@@ -45,25 +48,48 @@ public class Match {
    */
   void removePlayer(PlayerConnection playerConnection) {}
 
-  /**
-   * Processes a message received from a player.
-   *
-   * @param player the player who sent the message
-   * @param msg the message received
-   */
   void receiveMsg(PlayerConnection player, String msg) {
-    if (msg.equals("Hello !")) {
-      sendMsgToPlayer(player, "Hello Back !");
+    switch (GameMessages.type(msg)) {
+      case "BUILD_VALIDATE":
+        // todo
+        break;
+
+      case "FIRE":
+        // todo
+        break;
+
+      case "VERIFY_STATE":
+        // todo
+        break;
+
+      default:
+        player.sendToPlayer(GameMessages.invalid());
+        break;
     }
   }
 
-  /**
-   * Sends a message directly to a player.
-   *
-   * @param player the player who should receive the message
-   * @param msg the message to send
-   */
-  public void sendMsgToPlayer(PlayerConnection player, String msg) {
-    player.sendToPlayer(msg);
+  public void sendStart(PlayerConnection player, String matchId, String opponentName) {
+    player.sendToPlayer(GameMessages.start(matchId, opponentName));
+  }
+
+  public void sendAvailableComponents(
+      PlayerConnection player, BlockDTO[] blocks, KingDTO king, RobotDTO[] robots) {
+    player.sendToPlayer(GameMessages.availableComponents(blocks, king, robots));
+  }
+
+  public void sendTimer(PlayerConnection player, int timeInSecRemaining) {
+    player.sendToPlayer(GameMessages.timer(timeInSecRemaining));
+  }
+
+  public void sendOpponentStructure(PlayerConnection player, BlockDTO[] blocks, KingDTO king) {
+    player.sendToPlayer(GameMessages.opponentStructure(blocks, king));
+  }
+
+  public void sendWinner(PlayerConnection player) {
+    player.sendToPlayer(GameMessages.winner());
+  }
+
+  public void sendLoser(PlayerConnection player) {
+    player.sendToPlayer(GameMessages.loser());
   }
 }
