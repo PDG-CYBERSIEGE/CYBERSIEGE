@@ -139,8 +139,8 @@ public class FightScreen implements Screen {
   public FightScreen(Main game, TeamDTO onwTeamDTO, TeamDTO ennemyTeamDTO) {
     this.game = game;
 
-    
-    
+    skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
+
     // initiating world
     world = new World(new Vector2(0, -9.81f), true);
     world.setContactListener(new GameContactListener());
@@ -170,6 +170,17 @@ public class FightScreen implements Screen {
         createColoredRectangle(RECTX, RECTY, RECTWIDTH, RECTHEIGHT, new Color(1f, 0f, 0f, 0.4f));
     itemStage.addActor(buildZonePlaceholder);
 
+    // ui de comptage de points
+    score =
+      new Score(
+        "player1", "player2",
+        3); // TODO remplacer par le nom des joueurs lorsque on les aura par la websockets et qu
+
+    verifyButton = new VerifyButton("Verifier", skin);
+    heavyCountLabel = new Label("", skin);
+    mediumCountLabel = new Label("", skin);
+    lightCountLabel = new Label("", skin);
+
 
     createWorldBorders();
   }
@@ -183,49 +194,30 @@ public class FightScreen implements Screen {
     // STAGE
     // =========================
 
-    InputMultiplexer multiplexer = new InputMultiplexer();
-    multiplexer.addProcessor(stage);
-    multiplexer.addProcessor(itemStage);
-    multiplexer.addProcessor(ownTeam.canon.getInputProcessor());
-    multiplexer.addProcessor(ownTeam.king.getInputProcessor());
-    Gdx.input.setInputProcessor(multiplexer);
 
     // =========================
     // SKIN
     // =========================
 
-    skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
-    Image t = new Image(skin.getDrawable("frame2"));
-
-    // ui de comptage de points
-    score =
-        new Score(
-            "player1", "player2",
-            3); // TODO remplacer par le nom des joueurs lorsque on les aura par la websockets et qu
     // on aura le retour des DTO
     score.setPosition(
         stage.getWidth() / 2f - score.getWidth() / 2f, stage.getHeight() - score.getHeight());
     stage.addActor(score);
 
     // label pour le compte de block de la première phase
-    heavyCountLabel = new Label("", skin);
     heavyCountLabel.setPosition(50, 805);
     stage.addActor(heavyCountLabel);
 
-    mediumCountLabel = new Label("", skin);
     mediumCountLabel.setPosition(50, 635);
     stage.addActor(mediumCountLabel);
 
-    lightCountLabel = new Label("", skin);
     lightCountLabel.setPosition(50, 470);
     stage.addActor(lightCountLabel);
 
     // bouton pour la première phase
-    gravityButton = new GravityButton("OFF", skin, ownTeam);
     gravityButton.setPosition(500, 270);
     stage.addActor(gravityButton);
 
-    verifyButton = new VerifyButton("Verifier", skin);
     verifyButton.setPosition(500, 370);
     verifyButton.addListener(
         new ClickListener() {
@@ -479,7 +471,17 @@ public class FightScreen implements Screen {
   }
 
   private void initialisePhase1() {
-    if (scoreP1 >= 3 || scoreP2 >= 3) {
+    InputMultiplexer multiplexer = new InputMultiplexer();
+    multiplexer.addProcessor(stage);
+    multiplexer.addProcessor(itemStage);
+    multiplexer.addProcessor(ownTeam.canon.getInputProcessor());
+    multiplexer.addProcessor(ownTeam.king.getInputProcessor());
+    Gdx.input.setInputProcessor(multiplexer);
+
+    gravityButton = new GravityButton("OFF", skin, ownTeam);
+
+
+    if (scoreP1 == 3 || scoreP2 == 3) {
       gameEnded = true;
     }
     ownTeam.setup();

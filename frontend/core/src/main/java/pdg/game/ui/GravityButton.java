@@ -26,13 +26,17 @@ public class GravityButton extends TextButton {
         new ClickListener() {
           @Override
           public void clicked(InputEvent event, float x, float y) {
-            if (!validated){
-              gravityOff = !gravityOff;
-              updateVisual();
-              team.changeGravity();
-            }
+            onClick();
           }
         });
+  }
+
+  private void onClick(){
+    if (!validated){
+      gravityOff = !gravityOff;
+      updateVisual();
+      team.changeGravity();
+    }
   }
 
   private void updateVisual() {
