@@ -24,6 +24,11 @@ Un Personal Access Token (PAT) GitHub avec la permission `read:packages` est uni
 
 ## Lancement en local
 
+Pour que les communications marchent en local il faut modifier la ligne 67 dans Dans frontend/core/src/main/java/pdg/game/screens/MainMenuScreen.java :
+```java
+    httpClient = new HttpClient("http://localhost:8080"); // for local testing
+```
+
 Pour construire le backend à partir du code source local, utiliser dans `docker-compose.yml` :
 
 ```yaml
@@ -138,7 +143,9 @@ Une Pull Request est créée de feature/nom-de-la-fonctionnalite vers developpem
 
 Les GitHub Actions exécutent automatiquement les vérifications du projet, notamment les tests et le formatage. La Pull Request peut être fusionnée uniquement après validation et réussite des vérifications.
 
-Après intégration et lors d'une release, le pipeline construit et publie l'image Docker du backend sur GitHub Container Registry (GHCR).
+Après intégration et lors d'une release (sur la branche main), le pipeline construit et publie l'image Docker du backend sur GitHub Container Registry (GHCR).
+
+Il faut donc faire valider une PR qui merge sur Main afin de déployer une nouvelle image a traver le pipeline CI/CD.
 
 ## Contribution au projet
 
