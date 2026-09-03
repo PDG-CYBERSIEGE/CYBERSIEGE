@@ -273,6 +273,7 @@ public class Team {
       for (Block b : tower) {
         if (b.getUUID() == blockDTO.uuid()) {
           Vector2 serverPos = resolvePosition(blockDTO.x(), blockDTO.y(), ennemy);
+          b.health = blockDTO.health();
           if (b.body.getPosition().dst(serverPos) > RECONCILIATION_THRESHOLD) {
             b.body.setTransform(serverPos, blockDTO.angle());
             b.updateSprite();
@@ -283,6 +284,7 @@ public class Team {
 
     if (king != null) {
       Vector2 serverKingPos = resolvePosition(teamDTO.king().x(), teamDTO.king().y(), ennemy);
+      king.health = teamDTO.king().health();
       if (king.body.getPosition().dst(serverKingPos) > RECONCILIATION_THRESHOLD) {
         king.body.setTransform(serverKingPos, 0);
       }
