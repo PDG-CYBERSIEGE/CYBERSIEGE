@@ -31,6 +31,8 @@ import pdg.game.blocks.MediumBlockSprite;
  */
 public class Block extends Entity {
 
+  private final long UUID;
+
   BlockSprite blockSprite;
   private boolean physicsEnabled =
       false; // false = phase construction (kinematic, immobile sauf drag)
@@ -52,6 +54,7 @@ public class Block extends Entity {
    */
   public Block(
       Texture sprite,
+      long UUID,
       Integer health,
       Body body,
       int mass,
@@ -61,6 +64,7 @@ public class Block extends Entity {
       int length) {
     super(health, sprite, body, mass, height, width);
     this.type = type;
+    this.UUID = UUID;
 
     switch (type) {
       case "HEAVY" :
@@ -280,5 +284,9 @@ public class Block extends Entity {
   /** * Replace le bloc dans son état initial, à sa position de spawn avec une rotation nulle. */
   public void initialState() {
     body.setTransform(spawnPosition, 0);
+  }
+
+  public long getUUID(){
+    return UUID;
   }
 }

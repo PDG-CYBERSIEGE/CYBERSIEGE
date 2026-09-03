@@ -288,11 +288,13 @@ public final class GameMessages {
   private static BlockDTO readBlock(JsonValue value) {
     return new BlockDTO(
         value.getString("type", ""),
+        value.getLong("uuid", 0L),
         value.getInt("health", 0),
         value.getInt("mass", 0),
         value.getBoolean("alive", false),
-        value.getInt("x", 0),
-        value.getInt("y", 0),
+        value.getFloat("x", 0f),
+        value.getFloat("y", 0f),
+        value.getFloat("angle", 0f),
         value.getInt("length", 0));
   }
 
@@ -322,6 +324,7 @@ public final class GameMessages {
 
   private static RobotDTO readRobot(JsonValue value) {
     return new RobotDTO(
+        value.getInt("id", 0),
         value.getString("sprite", ""),
         value.getInt("health", 0),
         value.getInt("mass", 0),
@@ -366,7 +369,9 @@ public final class GameMessages {
   private static void appendBlock(StringBuilder sb, BlockDTO block) {
     sb.append("{\"type\":\"")
         .append(escape(block.type()))
-        .append("\",\"health\":")
+        .append("\",\"uuid\":")
+        .append(block.uuid())
+        .append(",\"health\":")
         .append(block.health())
         .append(",\"mass\":")
         .append(block.mass())
@@ -376,6 +381,8 @@ public final class GameMessages {
         .append(block.x())
         .append(",\"y\":")
         .append(block.y())
+        .append(",\"angle\":")
+        .append(block.angle())
         .append(",\"length\":")
         .append(block.length())
         .append('}');

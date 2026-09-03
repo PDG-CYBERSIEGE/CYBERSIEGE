@@ -13,6 +13,7 @@ public class Block extends Entity {
 
   private boolean physicsEnabled = true;
 
+  private final long UUID;
   private final String type;
   private final int length;
   private final Vector2 spawnPosition;
@@ -23,10 +24,18 @@ public class Block extends Entity {
   private float savedAngle;
 
   public Block(
-      String type, int health, Body body, int mass, float height, float width, int length) {
+      String type,
+      long UUID,
+      int health,
+      Body body,
+      int mass,
+      float height,
+      float width,
+      int length) {
     super(type, health, body, mass, height, width);
 
     this.type = type;
+    this.UUID = UUID;
     this.length = length;
 
     switch (type) {
@@ -110,12 +119,13 @@ public class Block extends Entity {
   public BlockDTO getDTO() {
     return new BlockDTO(
         type,
+        UUID,
         health,
         mass,
         true,
         body.getPosition().x - width / 2f,
         body.getPosition().y - height / 2f,
-        length
-    );
-}
+        savedAngle,
+        length);
+  }
 }

@@ -2,6 +2,7 @@ package pdg.game.screens;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -56,8 +57,7 @@ public class FightScreen implements Screen {
 
   private static final float ARENA_WIDTH = 32f;
   private static final float ARENA_HEIGHT = 18f;
-  private static final float BORDER_THICKNESS =
-      1f; // épaisseur en mètres, ajuste selon le rendu voulu
+  private static final float BORDER_THICKNESS = 1f;
 
   private final Main game;
 
@@ -82,8 +82,10 @@ public class FightScreen implements Screen {
   /** Whether both stages should currently be rendered. */
   boolean isVisible = true;
 
-  private final Team ownTeam;
-  private final Team ennemyTeam;
+  private Team ownTeam;
+  private Team ennemyTeam;
+
+  private String username;
 
   // list of robotbutton
   private ArrayList<RobotChoiceButton> robotsBtn = new ArrayList<>();
@@ -128,6 +130,8 @@ public class FightScreen implements Screen {
 
   private GamePhase currentPhase = GamePhase.BUILD;
 
+  private boolean isValidated = false;
+
   public FightScreen(Main game, String ownPlayerName, String opponentPlayerName) {
     this(game, MainMenuScreen.createPlacedTeam(), MainMenuScreen.createPlacedTeam());
   }
@@ -166,14 +170,6 @@ public class FightScreen implements Screen {
         createColoredRectangle(RECTX, RECTY, RECTWIDTH, RECTHEIGHT, new Color(1f, 0f, 0f, 0.4f));
     itemStage.addActor(buildZonePlaceholder);
 
-    // creating teams
-    this.ownTeam = new Team(onwTeamDTO, world, itemStage, ALLYCANONSPAWN);
-    for (RobotChoiceButton btn : this.ownTeam.setupChoiceButton()) {
-      stage.addActor(btn);
-      this.robotsBtn.add(btn);
-    }
-
-    this.ennemyTeam = new Team(ennemyTeamDTO, world, itemStage, ENNEMYCANONSPAWN);
 
     createWorldBorders();
   }
@@ -236,7 +232,7 @@ public class FightScreen implements Screen {
           @Override
           public void clicked(InputEvent event, float x, float y) {
             if (verifyButton.isActivable()) {
-              transitionToPhase2();
+              //TODO envoyer un message au serveur pour savoir si c'est valide
             }
           }
         });
@@ -553,18 +549,50 @@ public class FightScreen implements Screen {
     return image;
   }
 
+  public void receiveStart(GameMessages.Start start) {
+
+  }
+
   public void receiveAvailableComponent(GameMessages.AvailableComponents availableComponents) {
-    
+    ownTeam = new Team(availableComponents, world, itemStage, ALLYCANONSPAWN);
+    for (RobotChoiceButton btn : this.ownTeam.setupChoiceButton()) {
+      stage.addActor(btn);
+      this.robotsBtn.add(btn);
+    }
+
+    ennemyTeam = new Team(availableComponents, world, itemStage, ENNEMYCANONSPAWN);
+    initialisePhase1();
   }
+
   public void receiveBuildValidate(GameMessages.BuildValidate buildValidate) {
-
+    if (buildValidate.valid){
+      gravityButton.validated();
+      isValidated = true;
+    }
   }
+
   public void receiveTeamState(GameMessages.Team team) {
+     if (currentPhase == GamePhase.BUILD){
+       if (Objects.equals(team.team.name(), ownTeam.user)){
+         ownTeam.setupToDate(team.team);
+       } else {
+         ennemyTeam.setupToDate(team.team);
+       }
 
+       if (ownTeam.isReceived() && ennemyTeam.isReceived() && isValidated) {
+         transitionToPhase2();
+       }
+
+     } else {
+       if (Objects.equals(team.team.name(), ownTeam.user)){
+         ownTeam.checkchanges(team.team);
+       } else {
+         ennemyTeam.checkchanges(team.team);
+       }
+     }
   }
+
   public void receiveEnemyFire(GameMessages.Fire fire) {
-
+    ennemyTeam.canon.sendRobot(ennemyTeam.getRobot(fire.robot), fire.power, fire.angle);
   }
-
-
 }

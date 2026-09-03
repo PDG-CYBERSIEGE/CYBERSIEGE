@@ -10,10 +10,13 @@ import pdg.game.Entity.Team;
 public class GravityButton extends TextButton {
 
   private boolean gravityOff;
+  private boolean validated;
   private Team team;
 
   public GravityButton(String text, Skin skin, Team team) {
     super(text, skin);
+
+    validated = false;
 
     this.team = team;
     this.gravityOff = true;
@@ -23,9 +26,11 @@ public class GravityButton extends TextButton {
         new ClickListener() {
           @Override
           public void clicked(InputEvent event, float x, float y) {
-            gravityOff = !gravityOff;
-            updateVisual();
-            team.changeGravity();
+            if (!validated){
+              gravityOff = !gravityOff;
+              updateVisual();
+              team.changeGravity();
+            }
           }
         });
   }
@@ -33,5 +38,13 @@ public class GravityButton extends TextButton {
   private void updateVisual() {
     setText(!gravityOff ? "ON" : "OFF");
     setColor(!gravityOff ? Color.GREEN : Color.RED);
+  }
+
+  public void validated() {
+    validated = true;
+  }
+
+  public void unValidated() {
+    validated = false;
   }
 }
