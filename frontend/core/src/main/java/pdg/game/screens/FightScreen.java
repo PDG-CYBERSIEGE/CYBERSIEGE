@@ -331,7 +331,7 @@ public class FightScreen implements Screen {
 
   private void createWorldBorders() {
     // Sol : la surface supérieure est à y = 0
-    createStaticBody(new Rectangle(0, 2, ARENA_WIDTH, 0));
+    createStaticBody(new Rectangle(0, 0, ARENA_WIDTH, 2f));
     // Plafond
     createStaticBody(new Rectangle(0, ARENA_HEIGHT, ARENA_WIDTH, BORDER_THICKNESS));
     // Mur gauche
@@ -503,12 +503,10 @@ public class FightScreen implements Screen {
 
   private void transitionToPhase2() {
     resetCameraToFullView(1.5f); // transition fluide sur 1.5 seconde
-    // reset to no gravity
-    ownTeam.changeGravity();
 
     // setup both towers
     ennemyTeam.changeGravity();
-    ownTeam.changeGravity();
+
 
     // restore potential health issues
     ennemyTeam.restoreHealth();
