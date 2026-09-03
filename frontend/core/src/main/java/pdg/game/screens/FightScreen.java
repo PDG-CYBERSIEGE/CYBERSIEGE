@@ -124,12 +124,12 @@ public class FightScreen implements Screen {
   int scoreP2 = 0;
 
 
-  private enum GamePhase {
+  public enum GamePhase {
     BUILD,
     COMBAT
   }
 
-  private GamePhase currentPhase = GamePhase.BUILD;
+  public GamePhase currentPhase = GamePhase.BUILD;
 
   private boolean isValidated = false;
 
@@ -142,7 +142,7 @@ public class FightScreen implements Screen {
 
     // initiating world
     world = new World(new Vector2(0, -9.81f), true);
-    world.setContactListener(new GameContactListener());
+    world.setContactListener(new GameContactListener(this));
     b2dr = new Box2DDebugRenderer();
 
     stage =
@@ -172,8 +172,8 @@ public class FightScreen implements Screen {
     // ui de comptage de points
     score =
       new Score(
-        "player1", "player2",
-        3); // TODO remplacer par le nom des joueurs lorsque on les aura par la websockets et qu
+        username, ennemyUser,
+        3);
 
     verifyButton = new VerifyButton("Verifier", skin);
     heavyCountLabel = new Label("", skin);
@@ -576,7 +576,7 @@ public class FightScreen implements Screen {
          ennemyTeam.setupToDate(team.team, true);
        }
 
-       if (ownTeam.isReceived() && ennemyTeam.isReceived() && isValidated) {
+       if (ownTeam.isReceived() && ennemyTeam.isReceived()) {
          transitionToPhase2();
        }
 
