@@ -538,10 +538,10 @@ public class FightScreen implements Screen {
   }
 
   private void createGroundSprite() {
-    int length = Math.round(ARENA_WIDTH + 8); // un segment par unité de largeur (32 segments)
+    int length = Math.round(ARENA_WIDTH + 16); // un segment par unité de largeur + 8 pour combler a gauche(32 + 8segments)
     HeavyBlockSprite groundSprite = new HeavyBlockSprite(length);
     groundSprite.resize(2); // recalcule la taille à length x 1, cohérent avec le nombre de segments
-    groundSprite.setPosition(-8, 0); // aligné avec le body statique du sol
+    groundSprite.setPosition(-16, 0); // aligné avec le body statique du sol, décalé a gauche pour pas voir le vide pendant la phase de construction
     itemStage.addActor(groundSprite);
   }
 
@@ -560,6 +560,10 @@ public class FightScreen implements Screen {
 
   public void receiveStart(GameMessages.Start start) {
 
+  }
+
+  public void receiveWin(){
+    scoreP1 = 3;
   }
 
   public void receiveAvailableComponent(GameMessages.AvailableComponents availableComponents) {

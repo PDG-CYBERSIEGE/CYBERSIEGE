@@ -425,14 +425,14 @@ public class Match {
  
     //  Blocks 
     String[] blockTypes = {"HEAVY", "MEDIUM", "LIGHT"}; 
-    int blocksPerType = 3; 
+    int blocksPerType = 1; 
     int blockHealth = 100; 
     int blockMass = 10; 
     int blockLength = 4; 
     // should be base on DB 
  
     for (String type : blockTypes) { 
-      blocksPerType = random.nextInt(4);
+      //blocksPerType = random.nextInt(4);
       for (int i = 0; i < blocksPerType; i++) { 
         blockLength = 2 + random.nextInt(3);
         blockMass = 10 *  blockLength;
