@@ -1,5 +1,7 @@
 package pdg.game.screens;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -11,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import java.util.ArrayList;
+
 import pdg.game.DTO.BlockDTO;
 import pdg.game.DTO.KingDTO;
 import pdg.game.DTO.RobotDTO;
@@ -22,8 +24,8 @@ import pdg.game.network.http.HttpClient;
 import pdg.game.network.http.ResponseListener;
 import pdg.game.network.websocket.GameListener;
 import pdg.game.network.websocket.GameMessages;
-import pdg.game.network.websocket.GameWebSocket;
 import pdg.game.network.websocket.GameMessages.Start;
+import pdg.game.network.websocket.GameWebSocket;
 
 /**
  * Main menu screen that displays the title, connection button, and authenticated user information.
@@ -240,7 +242,7 @@ public class MainMenuScreen implements Screen {
               case "START":
                 if (isConnecting) {
                   Start start = GameMessages.parseStart(message);
-                  
+                  isConnecting = false;
                   fightScreen = new FightScreen(game, username, start.opponent);
         
                   game.setScreen(fightScreen);

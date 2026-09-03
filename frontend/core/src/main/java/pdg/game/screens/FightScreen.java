@@ -1,6 +1,7 @@
 package pdg.game.screens;
 
-import static pdg.game.utils.StaticValues.*;
+import java.util.ArrayList;
+import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -14,24 +15,42 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import java.util.ArrayList;
-import java.util.Map;
+
 import pdg.game.DTO.TeamDTO;
 import pdg.game.Entity.Team;
 import pdg.game.GameContactListener;
 import pdg.game.Main;
 import pdg.game.blocks.HeavyBlockSprite;
-import pdg.game.scene.Background;
-import pdg.game.ui.*;
-import pdg.game.utils.StaticValues;
 import pdg.game.network.websocket.GameMessages;
+import pdg.game.scene.Background;
+import pdg.game.ui.Frame;
+import pdg.game.ui.GravityButton;
+import pdg.game.ui.RobotChoiceButton;
+import pdg.game.ui.Score;
+import pdg.game.ui.VerifyButton;
+import pdg.game.utils.StaticValues;
+import static pdg.game.utils.StaticValues.ALLYCANONSPAWN;
+import static pdg.game.utils.StaticValues.ENNEMYCANONSPAWN;
+import static pdg.game.utils.StaticValues.OWNBUILDINGZONE;
+import static pdg.game.utils.StaticValues.RECTHEIGHT;
+import static pdg.game.utils.StaticValues.RECTWIDTH;
+import static pdg.game.utils.StaticValues.RECTX;
+import static pdg.game.utils.StaticValues.RECTY;
 
 public class FightScreen implements Screen {
 
@@ -98,6 +117,9 @@ public class FightScreen implements Screen {
   private TextButton main_menu;
   private Label endGameLabel;
   private Frame frame;
+  int scoreP1 = 0;
+  int scoreP2 = 0;
+  
 
   private enum GamePhase {
     BUILD,
@@ -395,12 +417,14 @@ public class FightScreen implements Screen {
     }
     if (ownTeam.king.isDead()) {
       score.addScoreP2();
+      scoreP2++;
       initialisePhase1();
       return;
     }
     if (ennemyTeam.king.isDead()) {
       score.addScoreP1();
-      initialisePhase1();
+      scoreP1++;
+      initialisePhase1(); 
     }
   }
 
@@ -459,7 +483,7 @@ public class FightScreen implements Screen {
   }
 
   private void initialisePhase1() {
-    if (score.getScoreValue1() == 3 || score.getScoreValue2() == 3) {
+    if (scoreP1 >= 3 || scoreP2 >= 3) {
       gameEnded = true;
     }
     ownTeam.setup();
