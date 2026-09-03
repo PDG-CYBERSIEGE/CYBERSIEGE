@@ -159,7 +159,7 @@
 					---
 
 					<!-- .slide: data-background-color="#0f3460" -->
-					# Pipeline DevOps
+					# DevOps
 
 					--
 
@@ -207,14 +207,17 @@
 
 					--
 
-					## Étapes du pipeline
+					## Pipeline DevOps
 
-					1. Push / Pull Request sur `dev` ou `main`
-					2. Build du backend (Quarkus) et du frontend (LibGDX) à l'aide de gradle
-					3. Vérification formatage/documentation
-					3. Exécution des tests unitaires (JUnit)
-					4. Analyse de couverture (Jacoco)
-					5. Build des images Docker et enregistrement sur le repository
+					| Étape | Outil |
+					|---|---|
+					| Build | Gradle |
+					| Format | Spotless |
+					| Tests | JUnit |
+					| Coverage | JaCoCo |
+					| Documentation | Javadoc |
+					| Image | Docker |
+					| Automatisation | GitHub Actions |
 
 					--
 
