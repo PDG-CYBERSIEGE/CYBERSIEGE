@@ -166,8 +166,13 @@ public class Team {
 
     Body body = world.createBody(bdef);
 
+    float halfWidth = Math.max(rect.getWidth() / 2, 0.01f);
+    float halfHeight = Math.max(rect.getHeight() / 2, 0.01f);
+
     PolygonShape shape = new PolygonShape();
-    shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
+    shape.setAsBox(halfWidth, halfHeight);
+
+
 
     FixtureDef fdef = new FixtureDef();
     fdef.shape = shape;
