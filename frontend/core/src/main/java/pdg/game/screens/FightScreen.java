@@ -121,7 +121,7 @@ public class FightScreen implements Screen {
   private Frame frame;
   int scoreP1 = 0;
   int scoreP2 = 0;
-  
+
 
   private enum GamePhase {
     BUILD,
@@ -233,13 +233,13 @@ public class FightScreen implements Screen {
     // init phase 1
     initialisePhase1();
 
-    
+
   }
 
   @Override
   public void render(float delta) {
     ScreenUtils.clear(0, 0, 0, 1); // clear l'écran pour ne rien garder de la derniere frame
-    if (isVisible) { // désactive ecran si fenetre pas assez grand, pas obliger de garder.$
+    if (isVisible ) { // désactive ecran si fenetre pas assez grand, pas obliger de garder.$
 
       checkEnd(); // faut regarder comment on traite le nouveau round.
 
@@ -346,7 +346,7 @@ public class FightScreen implements Screen {
 
   private void checkEnd() {
     if (gameEnded) {
-      
+
       if( frame != null) return;
 
       play_again = new TextButton("play again", skin, "yellow");
@@ -412,7 +412,7 @@ public class FightScreen implements Screen {
     if (ennemyTeam.king.isDead()) {
       score.addScoreP1();
       scoreP1++;
-      initialisePhase1(); 
+      initialisePhase1();
     }
   }
 
