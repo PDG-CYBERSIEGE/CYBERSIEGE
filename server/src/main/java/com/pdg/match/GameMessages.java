@@ -178,6 +178,18 @@ public final class GameMessages {
     return json(new BuildValidateResultMessage("BUILD_VALIDATE", valid));
   }
 
+  /**
+   * Creates a fire message.
+   *
+   * @param power firing power
+   * @param angle firing angle
+   * @param robot robot used for the attack
+   * @return JSON message
+   */
+  public static String fire(int power, float angle, int robot) {
+    return json(new FireMessage("FIRE", power, angle, robot));
+  }
+
   private record StartMessage(String type, String matchId, String opponent) {}
 
   private record AvailableComponentsMessage(
@@ -192,4 +204,6 @@ public final class GameMessages {
   private record TeamMessage(String type, TeamDTO team) {}
 
   private record BuildValidateResultMessage(String type, boolean valid) {}
+
+  private record FireMessage(String type, int power, float angle, int robot) {}
 }

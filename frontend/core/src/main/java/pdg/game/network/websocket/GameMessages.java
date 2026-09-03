@@ -137,6 +137,24 @@ public final class GameMessages {
     return result;
   }
 
+  /**
+   * Parses a fire message.
+   *
+   * @param message JSON message
+   * @return parsed fire message
+   */
+  public static Fire parseFire(String message) {
+    JsonValue root = READER.parse(message);
+
+    Fire fire = new Fire();
+    fire.type = root.getString("type", "");
+    fire.power = root.getInt("power", 0);
+    fire.angle = root.getFloat("angle", 0f);
+    fire.robot = root.getInt("robot", 0);
+
+    return fire;
+  }
+
   // Outgoing ////////////////////////////////////////////////////
 
   /**
@@ -243,6 +261,14 @@ public final class GameMessages {
   public static class BuildValidate {
     public String type;
     public boolean valid;
+  }
+
+  /** Represents a fire message. */
+  public static class Fire {
+    public String type;
+    public int power;
+    public float angle;
+    public int robot;
   }
 
   // Reads helpers //////////////////////////////////////////////////////

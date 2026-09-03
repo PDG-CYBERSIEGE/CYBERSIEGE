@@ -261,6 +261,13 @@ public class Match {
       return;
     }
 
+    // Send fire to opponent
+    PlayerConnection enemyPlayer = playerIndex == 1 ? player2 : player1;
+
+    if (enemyPlayer != null) {
+      sendFire(enemyPlayer, fire.power(), fire.angle(), fire.robot());
+    }
+
     try {
 
       // Run the complete simulation until nothing is moving anymore.
@@ -399,5 +406,17 @@ public class Match {
    */
   public void sendTeam(PlayerConnection player, TeamDTO team) {
     player.sendToPlayer(GameMessages.team(team));
+  }
+
+  /**
+   * Sends a fire message to a player.
+   *
+   * @param player player receiving the fire
+   * @param power firing power
+   * @param angle firing angle
+   * @param robot robot used for the attack
+   */
+  public void sendFire(PlayerConnection player, int power, float angle, int robot) {
+    player.sendToPlayer(GameMessages.fire(power, angle, robot));
   }
 }

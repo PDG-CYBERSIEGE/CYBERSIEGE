@@ -47,7 +47,10 @@ public class MainMenuScreen implements Screen {
   boolean isConnecting = false;
 
   FightScreen fightScreen;
+<<<<<<< HEAD
   ConnectionScreen connectionScreen;
+=======
+>>>>>>> bb292c26c1fac3ab078d7ad1947360fea840d3bb
 
   /**
    * Creates the main menu screen with background, title, and action button.
@@ -55,10 +58,15 @@ public class MainMenuScreen implements Screen {
    * @param game the main game instance for screen transitions
    * @param backgroundStage the stage containing the background that persists across screens
    */
-  public MainMenuScreen(final Main game, Stage backgroundStage, GameWebSocket gameWebSocket) {
+  public MainMenuScreen(
+      final Main game,
+      Stage backgroundStage,
+      GameWebSocket gameWebSocket,
+      FightScreen fightScreen) {
     this.game = game;
     this.backgroundStage = backgroundStage;
     this.gameWebSocket = gameWebSocket;
+    this.fightScreen = fightScreen;
 
     // Initialize HTTP and authentication clients
     httpClient = new HttpClient("http://localhost:8080"); // for local testing
@@ -229,20 +237,56 @@ public class MainMenuScreen implements Screen {
           @Override
           public void onMessage(String message) {
             Gdx.app.log(TAG, "Match message: " + message);
-
-            String type = GameMessages.type(message);
-
-            if (type.equals("START")) {
-              if (isConnecting) {
-                Start start = GameMessages.parseStart(message);
-                if (fightScreen == null) {
-                  fightScreen = new FightScreen(game, username, start.opponent);
+            switch (GameMessages.type(message)) {
+              case "START":
+                if (isConnecting) {
+                  Start start = GameMessages.parseStart(message);
+                  if (fightScreen == null) {
+                    fightScreen = new FightScreen(game, username, start.opponent);
+                  }
+                  game.setScreen(fightScreen);
                 }
-                game.setScreen(fightScreen);
-              }
-            }
-            else{
-              fightScreen.handleMessage(type, message);
+                break;
+
+              case "AVAILABLE_COMPONENTS":
+                GameMessages.AvailableComponents availableComponents =
+                    GameMessages.parseAvailableComponents(message);
+                fightScreen.receiveAvailableComponent(availableComponents);
+                break;
+
+              case "BUILD_VALIDATE":
+                GameMessages.BuildValidate buildValidate = GameMessages.parseBuildValidate(message);
+                Gdx.app.log(TAG, "Build validation result: " + buildValidate.valid);
+                if (fightScreen != null) {
+                  fightScreen.receiveBuildValidate(buildValidate);
+                }
+                break;
+
+              case "TEAM":
+                GameMessages.Team team = GameMessages.parseTeam(message);
+                Gdx.app.log(TAG, "Team received: " + team.team.name());
+                if (fightScreen != null) {
+                  fightScreen.receiveTeamState(team);
+                }
+                break;
+
+              case "FIRE":
+                GameMessages.Fire fire = GameMessages.parseFire(message);
+                Gdx.app.log(
+                    TAG,
+                    "Enemy fired: power="
+                        + fire.power
+                        + ", angle="
+                        + fire.angle
+                        + ", robot="
+                        + fire.robot);
+                if (fightScreen != null) {
+                  fightScreen.receiveEnemyFire(fire);
+                }
+
+              default:
+                Gdx.app.log(TAG, "Unhandled match message: " + GameMessages.type(message));
+                break;
             }
           }
 

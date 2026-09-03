@@ -460,7 +460,5 @@ public class FightScreen implements Screen {
     return image;
   }
 
-  public void handleMessage(String type, String message) {
-    
-  }
+
 }
