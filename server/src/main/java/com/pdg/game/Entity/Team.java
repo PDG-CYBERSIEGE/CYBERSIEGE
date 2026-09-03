@@ -85,7 +85,14 @@ public class Team {
 
       Block block =
           new Block(
-              blockDTO.type(), blockDTO.health(), body, blockDTO.mass(), 1, 1, blockDTO.length());
+              blockDTO.type(),
+              blockDTO.uuid(),
+              blockDTO.health(),
+              body,
+              blockDTO.mass(),
+              1,
+              1,
+              blockDTO.length());
 
       body.setUserData(block);
 
@@ -103,7 +110,14 @@ public class Team {
 
       Robot robot =
           new Robot(
-              robotDTO.sprite(), robotDTO.health(), body, robotDTO.mass(), robotDTO.cooldown(), 1, 1);
+              robotDTO.sprite(),
+              robotDTO.id(),
+              robotDTO.health(),
+              body,
+              robotDTO.mass(),
+              robotDTO.cooldown(),
+              1,
+              1);
 
       body.setUserData(robot);
 

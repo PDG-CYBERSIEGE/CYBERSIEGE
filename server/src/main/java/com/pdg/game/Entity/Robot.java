@@ -5,12 +5,21 @@ import com.pdg.game.DTO.RobotDTO;
 
 public class Robot extends Entity {
 
+  private int id;
   private int cooldown;
   private int currentCooldown;
 
   public Robot(
-      String type, Integer health, Body body, int mass, int cooldown, float height, float width) {
+      String type,
+      int id,
+      Integer health,
+      Body body,
+      int mass,
+      int cooldown,
+      float height,
+      float width) {
     super(type, health, body, mass, height, width);
+    this.id = id;
     this.cooldown = cooldown;
     this.currentCooldown = 0;
   }
@@ -30,6 +39,6 @@ public class Robot extends Entity {
   }
 
   public RobotDTO getDTO() {
-    return new RobotDTO(type, health, mass, cooldown);
+    return new RobotDTO(type, id, health, mass, cooldown);
   }
 }
