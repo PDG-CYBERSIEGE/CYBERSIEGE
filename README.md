@@ -46,6 +46,11 @@ Aucun Personal Access Token GitHub n'est nécessaire dans ce mode.
 
 ## Lancement avec l'image publiée (production)
 
+Pour que les communications marchent en production il faut modifier la ligne 67 dans Dans frontend/core/src/main/java/pdg/game/screens/MainMenuScreen.java :
+```java
+     httpClient = new HttpClient("http://labo-iot5.iict-heig-vd.ch:8080"); // for release
+```
+
 Pour utiliser l'image Docker publiée sur GitHub Container Registry, utiliser dans `docker-compose.yml` :
 ```yaml
 server:
