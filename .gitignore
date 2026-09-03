@@ -87,7 +87,7 @@ www-test/
 *.launch
 
 ## vscode:
-.vscode
+.vscode/
 
 ## NetBeans:
 
