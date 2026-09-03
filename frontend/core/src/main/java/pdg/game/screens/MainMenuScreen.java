@@ -1,7 +1,5 @@
 package pdg.game.screens;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -13,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
+import java.util.ArrayList;
 import pdg.game.DTO.BlockDTO;
 import pdg.game.DTO.KingDTO;
 import pdg.game.DTO.RobotDTO;
@@ -53,8 +51,7 @@ public class MainMenuScreen implements Screen {
    * @param game the main game instance for screen transitions
    * @param backgroundStage the stage containing the background that persists across screens
    */
-  public MainMenuScreen(
-      final Main game, Stage backgroundStage, GameWebSocket gameWebSocket) {
+  public MainMenuScreen(final Main game, Stage backgroundStage, GameWebSocket gameWebSocket) {
     this.game = game;
     this.backgroundStage = backgroundStage;
     this.gameWebSocket = gameWebSocket;

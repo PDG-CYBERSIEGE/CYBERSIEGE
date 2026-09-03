@@ -5,7 +5,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
 import pdg.game.network.websocket.GameWebSocket;
 import pdg.game.scene.Background;
 import pdg.game.screens.MainMenuScreen;

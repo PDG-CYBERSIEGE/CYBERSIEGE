@@ -32,9 +32,7 @@ public class NewGameState {
       arenaSimulation.update(GRAVITY_SIMULATION_STEP);
     }
 
-    return new TeamDTO[] {
-      arenaSimulation.getTeam1().getDTO(), arenaSimulation.getTeam2().getDTO()
-    };
+    return new TeamDTO[] {arenaSimulation.getTeam1().getDTO(), arenaSimulation.getTeam2().getDTO()};
   }
 
   public TeamDTO simulateThrow(float power, float angle, int robotIndex, int player) {
