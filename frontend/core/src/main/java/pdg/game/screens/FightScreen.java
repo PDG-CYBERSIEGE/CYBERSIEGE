@@ -172,8 +172,7 @@ public class FightScreen implements Screen {
     // ui de comptage de points
     score =
       new Score(
-        username, ennemyUser,
-        3);
+        username, ennemyUser, 2);
 
     verifyButton = new VerifyButton("Verifier", skin);
     heavyCountLabel = new Label("", skin);
@@ -489,7 +488,7 @@ public class FightScreen implements Screen {
     ennemyTeam.resetGravity();
 
 
-    if (scoreP1 == 3 || scoreP2 == 3) {
+    if (scoreP1 == 2 || scoreP2 == 2) {
       gameEnded = true;
     }
     ownTeam.setup();

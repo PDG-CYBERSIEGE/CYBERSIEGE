@@ -336,6 +336,10 @@ public class Team {
       king = null;
     }
 
+    for (Robot r : robots){
+      r.body.setTransform(-100, -100, 0);
+    }
+
 
     // Réinitialise l'état de réception pour la prochaine phase de construction
     receivedState = false;
