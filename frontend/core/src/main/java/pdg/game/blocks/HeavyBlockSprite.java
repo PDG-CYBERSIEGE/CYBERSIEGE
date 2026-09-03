@@ -5,19 +5,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 /** Block with high health, built from left, middle and right textures. */
-public class HeavyBlock extends Block {
-
-  /** Maximum health assigned to a heavy block. */
-  private static final float MAX_HEALTH = 300;
+public class HeavyBlockSprite extends BlockSprite {
 
   /**
    * Creates a heavy block with the requested number of segments.
    *
    * @param length number of visual segments
    */
-  public HeavyBlock(int length) {
-    super(MAX_HEALTH);
-
+  public HeavyBlockSprite(int length) {
     // A block always needs at least two end segments.
     if (length < 2) length = 2;
 

@@ -137,6 +137,24 @@ public final class GameMessages {
     return result;
   }
 
+  /**
+   * Parses a fire message.
+   *
+   * @param message JSON message
+   * @return parsed fire message
+   */
+  public static Fire parseFire(String message) {
+    JsonValue root = READER.parse(message);
+
+    Fire fire = new Fire();
+    fire.type = root.getString("type", "");
+    fire.power = root.getInt("power", 0);
+    fire.angle = root.getFloat("angle", 0f);
+    fire.robot = root.getInt("robot", 0);
+
+    return fire;
+  }
+
   // Outgoing ////////////////////////////////////////////////////
 
   /**
@@ -163,7 +181,7 @@ public final class GameMessages {
    * @param robot robot used for the attack
    * @return JSON message
    */
-  public static String fire(int power, float angle, int robot) {
+  public static String fire(float power, float angle, int robot) {
     StringBuilder sb = new StringBuilder();
     sb.append("{\"type\":\"FIRE\",\"power\":")
         .append(power)
@@ -245,6 +263,14 @@ public final class GameMessages {
     public boolean valid;
   }
 
+  /** Represents a fire message. */
+  public static class Fire {
+    public String type;
+    public int power;
+    public float angle;
+    public int robot;
+  }
+
   // Reads helpers //////////////////////////////////////////////////////
 
   private static BlockDTO[] readBlocks(JsonValue value) {
@@ -262,11 +288,13 @@ public final class GameMessages {
   private static BlockDTO readBlock(JsonValue value) {
     return new BlockDTO(
         value.getString("type", ""),
+        value.getLong("uuid", 0L),
         value.getInt("health", 0),
         value.getInt("mass", 0),
         value.getBoolean("alive", false),
-        value.getInt("x", 0),
-        value.getInt("y", 0),
+        value.getFloat("x", 0f),
+        value.getFloat("y", 0f),
+        value.getFloat("angle", 0f),
         value.getInt("length", 0));
   }
 
@@ -275,7 +303,7 @@ public final class GameMessages {
       return null;
     }
     return new KingDTO(
-        value.getString("type", ""),
+        value.getString("sprite", ""),
         value.getInt("x", 0),
         value.getInt("y", 0),
         value.getInt("health", 0),
@@ -296,7 +324,8 @@ public final class GameMessages {
 
   private static RobotDTO readRobot(JsonValue value) {
     return new RobotDTO(
-        value.getString("type", ""),
+        value.getInt("id", 0),
+        value.getString("sprite", ""),
         value.getInt("health", 0),
         value.getInt("mass", 0),
         value.getInt("cooldown", 0));
@@ -340,7 +369,9 @@ public final class GameMessages {
   private static void appendBlock(StringBuilder sb, BlockDTO block) {
     sb.append("{\"type\":\"")
         .append(escape(block.type()))
-        .append("\",\"health\":")
+        .append("\",\"uuid\":")
+        .append(block.uuid())
+        .append(",\"health\":")
         .append(block.health())
         .append(",\"mass\":")
         .append(block.mass())
@@ -350,13 +381,15 @@ public final class GameMessages {
         .append(block.x())
         .append(",\"y\":")
         .append(block.y())
+        .append(",\"angle\":")
+        .append(block.angle())
         .append(",\"length\":")
         .append(block.length())
         .append('}');
   }
 
   private static void appendKing(StringBuilder sb, KingDTO king) {
-    sb.append("{\"type\":\"")
+    sb.append("{\"sprite\":\"")
         .append(escape(king.sprite()))
         .append("\",\"x\":")
         .append(king.x())
@@ -370,7 +403,7 @@ public final class GameMessages {
   }
 
   private static void appendRobot(StringBuilder sb, RobotDTO robot) {
-    sb.append("{\"type\":\"")
+    sb.append("{\"sprite\":\"")
         .append(escape(robot.sprite()))
         .append("\",\"health\":")
         .append(robot.health())

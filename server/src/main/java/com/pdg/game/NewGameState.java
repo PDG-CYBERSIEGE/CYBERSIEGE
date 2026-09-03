@@ -1,6 +1,7 @@
 package com.pdg.game;
 
 import com.pdg.game.DTO.TeamDTO;
+import com.pdg.game.Entity.Robot;
 import com.pdg.game.Entity.Team;
 
 public class NewGameState {
@@ -50,7 +51,11 @@ public class NewGameState {
     Team team = (player == 1) ? arenaSimulation.getTeam1() : arenaSimulation.getTeam2();
     Team enemyTeam = (player == 1) ? arenaSimulation.getTeam2() : arenaSimulation.getTeam1();
 
-    team.canon.loadRobot(team.robots.get(robotIndex));
+    Robot robot =
+        team.robots.stream()
+            .filter(r -> r.getDTO().id() == robotIndex)
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Robot not found: " + robotIndex));
     team.canon.fire(power, angle);
 
     while (arenaSimulation.isMoving(team) || arenaSimulation.isMoving(enemyTeam)) {

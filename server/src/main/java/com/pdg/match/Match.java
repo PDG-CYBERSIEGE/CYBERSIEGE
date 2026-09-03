@@ -6,6 +6,8 @@ import com.pdg.game.DTO.RobotDTO;
 import com.pdg.game.DTO.TeamDTO;
 import com.pdg.game.NewGameState;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -25,8 +27,22 @@ public class Match {
   private boolean player1BuildValidated;
   private boolean player2BuildValidated;
 
+  private static final int MAX_ROUNDS = 2;
+  private static final int ROUNDS_TO_WIN = MAX_ROUNDS / 2 + 1;
+
+  private int currentRound = 0;
+  private int player1Score = 0;
+  private int player2Score = 0;
+  private boolean roundOver = false;
+  private boolean matchOver = false;
+  private ArrayList<BlockDTO> availableBlocks;
+  private ArrayList<RobotDTO> availableRobots;
+
   /** Global counter used to generate unique match identifiers. */
   public static AtomicLong nextMatchId = new AtomicLong(1);
+
+  /** Counter used to generate unique ids for blocks/robots within this match. */
+  private final AtomicInteger nextComponentId = new AtomicInteger(1);
 
   /**
    * Adds a player to the match.
@@ -44,6 +60,7 @@ public class Match {
       matchId = nextMatchId.getAndIncrement();
       sendStart(player1, String.valueOf(matchId), player2.playerName());
       sendStart(player2, String.valueOf(matchId), player1.playerName());
+      startRound();
     } else {
       player.sendToPlayer(GameMessages.invalid());
     }
@@ -108,6 +125,38 @@ public class Match {
         player.sendToPlayer(GameMessages.invalid());
         break;
     }
+  }
+
+  /**
+   * Starts a new round.
+   *
+   * <p>The same available components are sent to both players.
+   */
+  private void startRound() {
+
+    if (matchOver || currentRound >= MAX_ROUNDS) {
+      return;
+    }
+
+    // Reset the state of the previous round.
+    gameState = null;
+    team1 = null;
+    team2 = null;
+    player1BuildValidated = false;
+    player2BuildValidated = false;
+    roundOver = false;
+
+    // Generate blocks and robots available for this round and send to players
+    generateAvailableComponents();
+    sendAvailableComponents(
+        player1, availableBlocks, new KingDTO("kings/geraud.png", 0, 0, 300, 25), availableRobots);
+    sendAvailableComponents(
+        player2,
+        availableBlocks,
+        new KingDTO("kings/timothee.png", 0, 0, 100, 100),
+        availableRobots);
+
+    System.out.println("[MATCH] Starting round " + currentRound);
   }
 
   /**
@@ -261,6 +310,13 @@ public class Match {
       return;
     }
 
+    // Send fire to opponent
+    PlayerConnection enemyPlayer = playerIndex == 1 ? player2 : player1;
+
+    if (enemyPlayer != null) {
+      sendFire(enemyPlayer, fire.power(), fire.angle(), fire.robot());
+    }
+
     try {
 
       // Run the complete simulation until nothing is moving anymore.
@@ -293,26 +349,135 @@ public class Match {
     checkGameOver();
   }
 
-  /** Checks whether the game has ended. */
+  /**
+   * Checks whether the current round has ended (a king died), updates the score, and either ends
+   * the match (if a player has won enough rounds, or the max number of rounds has been reached) or
+   * starts the next round.
+   */
   private void checkGameOver() {
 
-    if (team1 == null || team2 == null) {
+    if (roundOver || matchOver || team1 == null || team2 == null) {
       return;
     }
 
     boolean team1KingDead = team1.king().health() <= 0;
     boolean team2KingDead = team2.king().health() <= 0;
 
-    if (team2KingDead) {
-      sendWinner(player1);
-      sendLoser(player2);
+    if (!team1KingDead && !team2KingDead) {
       return;
     }
 
-    if (team1KingDead) {
-      sendWinner(player2);
-      sendLoser(player1);
+    // Round is over
+    roundOver = true;
+    currentRound++;
+
+    if (team2KingDead) {
+      player1Score++;
+      System.out.println(
+          "[MATCH] Player 1 wins round "
+              + currentRound
+              + " (score "
+              + player1Score
+              + "-"
+              + player2Score
+              + ")");
+    } else {
+      player2Score++;
+      System.out.println(
+          "[MATCH] Player 2 wins round "
+              + currentRound
+              + " (score "
+              + player1Score
+              + "-"
+              + player2Score
+              + ")");
     }
+
+    // Player won match
+    if (player1Score >= ROUNDS_TO_WIN) {
+      endMatch(player1, player2);
+      return;
+    }
+    if (player2Score >= ROUNDS_TO_WIN) {
+      endMatch(player2, player1);
+      return;
+    }
+
+    // Match not over, next round
+    startRound();
+  }
+
+  /**
+   * Generates the set of blocks and robots available for the upcoming round.
+   *
+   * <p>Each block/robot gets a unique id (scoped to this match) via {@link #nextComponentId}.
+   * Blocks are created "at rest" ({@code alive = true}) with a neutral position/angle since they
+   * haven't been placed by the player yet; the client is responsible for positioning them during
+   * the build phase.
+   */
+  private void generateAvailableComponents() {
+
+    availableBlocks = new ArrayList<>();
+    availableRobots = new ArrayList<>();
+
+    Random random = new Random();
+
+    //  Blocks
+    String[] blockTypes = {"HEAVY", "MEDIUM", "LIGHT"};
+    int blocksPerType = 1;
+    int blockHealth = 100;
+    int blockMass = 10;
+    int blockLength = 4;
+    // should be base on DB
+
+    for (String type : blockTypes) {
+      // blocksPerType = random.nextInt(4);
+      for (int i = 0; i < blocksPerType; i++) {
+        blockLength = 2 + random.nextInt(3);
+        blockMass = 10 * blockLength;
+        blockHealth = 50 * blockLength;
+        switch (type) {
+          case "HEAVY" -> blockHealth *= 3;
+          case "MEDIUM" -> blockHealth *= 2;
+          default -> {}
+        }
+        availableBlocks.add(
+            new BlockDTO(
+                type,
+                nextComponentId.getAndIncrement(),
+                blockHealth,
+                blockMass,
+                true,
+                0f,
+                0f,
+                0f,
+                blockLength));
+      }
+    }
+
+    // Robots
+    String[] robotSprites = {"throwables/base.png", "throwables/black.png", "throwables/green.png"};
+    int robotsPerType = 2;
+    int robotHealth = 100;
+    int robotMass = 20;
+    int robotCooldown = 0;
+    // should be base on DB
+
+    for (String sprite : robotSprites) {
+      for (int i = 0; i < robotsPerType; i++) {
+        availableRobots.add(
+            new RobotDTO(
+                sprite, nextComponentId.getAndIncrement(), robotHealth, robotMass, robotCooldown));
+      }
+    }
+  }
+
+  /** Ends the match, notifying the winner and the loser. */
+  private void endMatch(PlayerConnection winner, PlayerConnection loser) {
+    matchOver = true;
+    sendWinner(winner);
+    sendLoser(loser);
+    disposeGame();
   }
 
   /** Clears the game state. */
@@ -399,5 +564,17 @@ public class Match {
    */
   public void sendTeam(PlayerConnection player, TeamDTO team) {
     player.sendToPlayer(GameMessages.team(team));
+  }
+
+  /**
+   * Sends a fire message to a player.
+   *
+   * @param player player receiving the fire
+   * @param power firing power
+   * @param angle firing angle
+   * @param robot robot used for the attack
+   */
+  public void sendFire(PlayerConnection player, int power, float angle, int robot) {
+    player.sendToPlayer(GameMessages.fire(power, angle, robot));
   }
 }

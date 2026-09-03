@@ -14,10 +14,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import pdg.game.Main;
-import pdg.game.blocks.Block;
-import pdg.game.blocks.HeavyBlock;
-import pdg.game.blocks.LightBlock;
-import pdg.game.blocks.MediumBlock;
+import pdg.game.blocks.BlockSprite;
+import pdg.game.blocks.HeavyBlockSprite;
+import pdg.game.blocks.LightBlockSprite;
+import pdg.game.blocks.MediumBlockSprite;
 import pdg.game.scene.Background;
 import pdg.game.scene.Cannon;
 import pdg.game.ui.Frame;
@@ -122,20 +122,20 @@ public class FirstScreen implements Screen {
     stage.addActor(title);
 
     // Création de chaque type de block
-    Block block1 = new MediumBlock(5);
-    block1.setPosition(10, 0);
-    block1.resize(2);
+    BlockSprite blockSprite1 = new MediumBlockSprite(5);
+    blockSprite1.setPosition(10, 0);
+    blockSprite1.resize(2);
     // block1.setRotation(45);
-    itemStage.addActor(block1);
-    Block block2 = new LightBlock(3);
-    block2.setPosition(10, 2);
-    block2.resize(2);
-    itemStage.addActor(block2);
+    itemStage.addActor(blockSprite1);
+    BlockSprite blockSprite2 = new LightBlockSprite(3);
+    blockSprite2.setPosition(10, 2);
+    blockSprite2.resize(2);
+    itemStage.addActor(blockSprite2);
 
-    Block block3 = new HeavyBlock(4);
-    block3.setPosition(10, 4);
-    block3.resize(2);
-    itemStage.addActor(block3);
+    BlockSprite blockSprite3 = new HeavyBlockSprite(4);
+    blockSprite3.setPosition(10, 4);
+    blockSprite3.resize(2);
+    itemStage.addActor(blockSprite3);
 
     // image du robot
     Texture texture = new Texture("throwables/base.png");

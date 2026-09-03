@@ -50,6 +50,7 @@ public class King extends Entity {
   }
 
   public KingDTO getDTO() {
-    return new KingDTO(type, body.getPosition().x, body.getPosition().y, health, mass);
+    return new KingDTO(
+        type, body.getPosition().x - width / 2f, body.getPosition().y - height / 2f, health, mass);
   }
 }

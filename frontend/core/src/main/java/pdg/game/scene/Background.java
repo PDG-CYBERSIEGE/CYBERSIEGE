@@ -11,6 +11,7 @@ import java.util.Random;
 /** Manages the five layered images used for a randomly selected background. */
 public class Background {
 
+  private static final float SCALE_FACTOR = 1.7f; // 1.0 = taille exacte du stage, >1 = plus grand
   private static final String TAG = "Background";
   private static final int NUM_LAYERS = 5;
 
@@ -42,14 +43,19 @@ public class Background {
       Texture backgroundTexture = new Texture(Gdx.files.internal(path + i + ".png"));
       textures.add(backgroundTexture);
       images[i - 1] = new Image(backgroundTexture);
-      images[i - 1].setFillParent(true);
     }
   }
 
-  /** Adds all background layers to the stage in their rendering order. */
+  /** Adds all background layers to the stage in their rendering order, agrandis et centrés. */
   public void apply(Stage stage) {
+    float width = stage.getWidth() * SCALE_FACTOR;
+    float height = stage.getHeight() * SCALE_FACTOR;
+    float x = (stage.getWidth() - width) / 2f;
+    float y = (stage.getHeight() - height) / 2f;
 
     for (int i = 0; i < 5; i++) {
+      images[i].setSize(width, height);
+      images[i].setPosition(x, y);
       stage.addActor(images[i]);
     }
   }
