@@ -17,21 +17,6 @@ import pdg.game.ui.RobotChoiceButton;
 
 /**
  * Gère la visée (drag), la prévisualisation de trajectoire et le lancement des robots d'une équipe.
- *
- * <p>Différences majeures avec l'ancienne classe Catapult (tuto Angry Birds) : - Pas de
- * SpriteBatch/camera/Box2DDebugRenderer propres : ArenaScreen en a déjà, partagés pour toute la
- * scène. Canon dessine dans le batch déjà ouvert par ArenaScreen (voir draw(batch)). - Pas de
- * world.step() ici : déjà fait une fois par frame dans ArenaScreen.update(), sinon la simulation
- * avancerait trop vite dès qu'il y a 2 canons (1 par joueur) sur le même World. - Travaille
- * uniquement en mètres (comme le reste d'ArenaScreen), plus de mélange pixels/mètres. - La
- * trajectoire prévisualisée réutilise la vraie gravité du World (world.getGravity()) au lieu d'une
- * constante dupliquée : elle ne peut donc plus se désynchroniser du tir réel. - Plus de système
- * d'index/indexC façon "file d'oiseaux" : la file de robots disponibles, c'est directement
- * team.robots (ArrayList<Robot>), parcourue dans l'ordre.
- *
- * <p>API supposée sur Robot (à ajouter si elle n'existe pas déjà) : boolean isReady() -> le
- * cooldown de ce robot est-il écoulé ? void startCooldown() -> relance le cooldown de ce robot
- * après un tir (reduceCooldown() existe déjà et est appelé depuis ArenaScreen.teamUpdate)
  */
 public class Canon {
 
