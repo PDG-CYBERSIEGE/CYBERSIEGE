@@ -122,8 +122,8 @@ public class MatchWebSocketIntegrationTest {
     assertTrue(match1.contains("\"matchId\":\"1\""));
     assertTrue(match2.contains("\"matchId\":\"1\""));
 
-    assertTrue(match1.contains("\"opponent\":\"" + user2.id + "\""));
-    assertTrue(match2.contains("\"opponent\":\"" + user1.id + "\""));
+    assertTrue(match1.contains("\"opponent\":\"" + user2.username + "\""));
+    assertTrue(match2.contains("\"opponent\":\"" + user1.username + "\""));
 
     player1.close();
     player2.close();
@@ -161,10 +161,10 @@ public class MatchWebSocketIntegrationTest {
     assertTrue(match3.contains("\"matchId\""));
     assertTrue(match4.contains("\"matchId\""));
 
-    assertTrue(match1.contains("\"opponent\":\"" + user2.id + "\""));
-    assertTrue(match2.contains("\"opponent\":\"" + user1.id + "\""));
-    assertTrue(match3.contains("\"opponent\":\"" + user4.id + "\""));
-    assertTrue(match4.contains("\"opponent\":\"" + user3.id + "\""));
+    assertTrue(match1.contains("\"opponent\":\"" + user2.username + "\""));
+    assertTrue(match2.contains("\"opponent\":\"" + user1.username + "\""));
+    assertTrue(match3.contains("\"opponent\":\"" + user4.username + "\""));
+    assertTrue(match4.contains("\"opponent\":\"" + user3.username + "\""));
 
     player1.close();
     player2.close();
