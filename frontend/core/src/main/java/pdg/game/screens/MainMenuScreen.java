@@ -47,10 +47,7 @@ public class MainMenuScreen implements Screen {
   boolean isConnecting = false;
 
   FightScreen fightScreen;
-<<<<<<< HEAD
   ConnectionScreen connectionScreen;
-=======
->>>>>>> bb292c26c1fac3ab078d7ad1947360fea840d3bb
 
   /**
    * Creates the main menu screen with background, title, and action button.
@@ -61,12 +58,10 @@ public class MainMenuScreen implements Screen {
   public MainMenuScreen(
       final Main game,
       Stage backgroundStage,
-      GameWebSocket gameWebSocket,
-      FightScreen fightScreen) {
+      GameWebSocket gameWebSocket) {
     this.game = game;
     this.backgroundStage = backgroundStage;
     this.gameWebSocket = gameWebSocket;
-    this.fightScreen = fightScreen;
 
     // Initialize HTTP and authentication clients
     httpClient = new HttpClient("http://localhost:8080"); // for local testing
