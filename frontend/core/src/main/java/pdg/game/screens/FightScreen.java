@@ -526,10 +526,10 @@ public class FightScreen implements Screen {
   }
 
   private void createGroundSprite() {
-    int length = Math.round(ARENA_WIDTH); // un segment par unité de largeur (32 segments)
+    int length = Math.round(ARENA_WIDTH + 8); // un segment par unité de largeur (32 segments)
     HeavyBlockSprite groundSprite = new HeavyBlockSprite(length);
     groundSprite.resize(2); // recalcule la taille à length x 1, cohérent avec le nombre de segments
-    groundSprite.setPosition(0, 0); // aligné avec le body statique du sol
+    groundSprite.setPosition(-8, 0); // aligné avec le body statique du sol
     itemStage.addActor(groundSprite);
   }
 

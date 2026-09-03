@@ -285,6 +285,7 @@ public class MainMenuScreen implements Screen {
                   fightScreen.receiveEnemyFire(fire);
                 }
 
+
               default:
                 Gdx.app.log(TAG, "Unhandled match message: " + GameMessages.type(message));
                 break;
