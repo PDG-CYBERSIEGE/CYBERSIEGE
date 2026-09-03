@@ -87,7 +87,7 @@ public class FirstScreen implements Screen {
     // =========================
 
     skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
-    Image t = new Image(skin.getDrawable("frame2"));
+
     // ui central avec boutons
     TextButton button1 = new TextButton("cancel", skin, "red");
     TextButton button2 = new TextButton("accept", skin, "green");
@@ -194,6 +194,7 @@ public class FirstScreen implements Screen {
 
       timer = 0;
     }
+
     ScreenUtils.clear(0, 0, 0, 1); // clear l'écran pour ne rien garder de la derniere frame
     if (isVisible) { // désactive ecran si fenetre pas assez grand, pas obliger de garder.$
       // affiche le niveau, puis l'ui par dessus.

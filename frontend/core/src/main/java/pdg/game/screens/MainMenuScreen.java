@@ -1,5 +1,7 @@
 package pdg.game.screens;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -11,33 +13,61 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import pdg.game.Main;
-import pdg.game.scene.Background;
 
-/** Main menu screen that displays the title and connection or play action. */
+import pdg.game.DTO.BlockDTO;
+import pdg.game.DTO.KingDTO;
+import pdg.game.DTO.RobotDTO;
+import pdg.game.DTO.TeamDTO;
+import pdg.game.Main;
+import pdg.game.network.http.AuthClient;
+import pdg.game.network.http.HttpClient;
+import pdg.game.network.http.ResponseListener;
+import pdg.game.network.websocket.GameListener;
+import pdg.game.network.websocket.GameMessages;
+import pdg.game.network.websocket.GameWebSocket;
+
+/**
+ * Main menu screen that displays the title, connection button, and authenticated user information.
+ */
 public class MainMenuScreen implements Screen {
+
   private static final String TAG = "MainMenuScreen";
 
-  Main game;
-  Background background;
+  final Main game;
+  Stage backgroundStage;
   Stage stage;
   boolean isConnected = false;
   TextButton button;
+  Label title, usernameLabel;
+  String username;
   Skin skin;
-  ConnectionScreen connectionScreen;
 
-  /** Creates the main menu and adds its background, title, and action button. */
-  public MainMenuScreen(final Main game, Background background) {
+  HttpClient httpClient;
+  AuthClient authClient;
+  GameWebSocket gameWebSocket;
+  boolean isConnecting = false;
+
+  /**
+   * Creates the main menu screen with background, title, and action button.
+   *
+   * @param game the main game instance for screen transitions
+   * @param backgroundStage the stage containing the background that persists across screens
+   */
+  public MainMenuScreen(
+      final Main game, Stage backgroundStage, GameWebSocket gameWebSocket) {
     this.game = game;
-    this.background = background;
-    Gdx.app.log(TAG, "Initializing MainMenuScreen");
+    this.backgroundStage = backgroundStage;
+    this.gameWebSocket = gameWebSocket;
+
+    // Initialize HTTP and authentication clients
+    httpClient = new HttpClient("http://localhost:8080"); // for local testing
+    authClient = new AuthClient(httpClient);
 
     stage = new Stage(new FitViewport(1920, 1080));
-
     skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
-    Gdx.app.log(TAG, "UI skin loaded successfully");
 
-    button = new TextButton("Connect", skin, "red");
+    // Create and configure the connection/play button
+    button = new TextButton("Connect", skin, "red_large");
     button.setSize(450, 150);
     button.getLabel().setFontScale(0.5f);
     button.setPosition((stage.getWidth() - button.getWidth()) / 2f, 200);
@@ -45,68 +75,84 @@ public class MainMenuScreen implements Screen {
         new ClickListener() {
           @Override
           public void clicked(InputEvent event, float x, float y) {
-
-            // Open the connection screen until the player has connected.
             if (!isConnected) {
-              if (connectionScreen == null) {
-                connectionScreen =
-                    new ConnectionScreen(
-                        game,
-                        background,
-                        success -> {
-                          isConnected = success;
-
-                          game.setScreen(MainMenuScreen.this);
-                        });
-              }
-              game.setScreen(connectionScreen);
+              // Navigate to connection screen
+              game.setScreen(
+                  new ConnectionScreen(
+                      game,
+                      backgroundStage,
+                      authClient,
+                      success -> {
+                        isConnected = success;
+                        game.setScreen(MainMenuScreen.this);
+                      }));
             } else {
-              // The play-screen transition will be added here.
-              // setScreen(new LoadingScreen(this, background));
+              connectToMatch();
             }
           }
         });
 
-    Label title = new Label("CYBERSIEGE", skin, "big_title");
+    // Create and configure the title label
+    title = new Label("CYBERSIEGE", skin, "big_title_thick");
     title.pack();
     title.setSize(title.getWidth() + 50, title.getHeight() + 50);
     title.setAlignment(Align.center);
     title.setPosition((stage.getWidth() - title.getWidth()) / 2f, 500);
 
-    background.apply(stage);
+    // Create username label (populated after authentication)
+    usernameLabel = new Label("", skin);
+
     stage.addActor(title);
+    stage.addActor(usernameLabel);
     stage.addActor(button);
   }
 
-  /** Activates input and refreshes the button appearance for the connection state. */
+  /**
+   * Called when the screen becomes active. Updates button state based on connection status and
+   * fetches the username if connected.
+   */
   @Override
   public void show() {
-
     Gdx.input.setInputProcessor(stage);
 
     if (isConnected) {
       button.getLabel().setText("Play");
-      button.setStyle(skin.get("green", TextButton.TextButtonStyle.class));
+      button.setStyle(skin.get("green_large", TextButton.TextButtonStyle.class));
+      setUsername();
     } else {
       button.getLabel().setText("Connect");
-      button.setStyle(skin.get("red", TextButton.TextButtonStyle.class));
+      button.setStyle(skin.get("red_large", TextButton.TextButtonStyle.class));
     }
   }
 
-  /** Updates and draws the menu using the fixed 1920x1080 viewport. */
+  /**
+   * Renders the screen each frame, updating and drawing both background and UI stages.
+   *
+   * @param delta time in seconds since last frame
+   */
   @Override
   public void render(float delta) {
-
     ScreenUtils.clear(0, 0, 0, 1);
+
+    backgroundStage.getViewport().apply();
+    backgroundStage.act(delta);
+    backgroundStage.draw();
 
     stage.getViewport().apply();
     stage.act(delta);
     stage.draw();
   }
 
+  /**
+   * Called when the screen is resized. Updates viewports to match new dimensions.
+   *
+   * @param width new screen width in pixels
+   * @param height new screen height in pixels
+   */
   @Override
   public void resize(int width, int height) {
     stage.getViewport().update(width, height, true);
+    backgroundStage.getViewport().update(width, height, true);
   }
 
   @Override
@@ -118,18 +164,99 @@ public class MainMenuScreen implements Screen {
   @Override
   public void hide() {}
 
+  /**
+   * Fetches and displays the authenticated user's username. Called when the connection is
+   * successful.
+   */
+  private void setUsername() {
+    authClient.getUsername(
+        new ResponseListener() {
+          @Override
+          public void success(String _username) {
+            username = _username;
+            Gdx.app.log(TAG, "Retrieved username: " + _username);
+            usernameLabel.setText("connected as " + _username);
+            usernameLabel.pack();
+            usernameLabel.setPosition(
+                stage.getWidth() - usernameLabel.getWidth() - 20,
+                stage.getHeight() - usernameLabel.getHeight() - 20);
+          }
+
+          @Override
+          public void failure(int status, String result) {
+            Gdx.app.error(TAG, "Failed to retrieve username with status " + status + ": " + result);
+          }
+
+          @Override
+          public void error(String message) {
+            Gdx.app.error(TAG, "Network error while retrieving username: " + message);
+          }
+        });
+  }
+
+  private void connectToMatch() {
+    if (isConnecting) {
+      return;
+    }
+
+    String token = authClient.getToken();
+    if (token == null || token.isEmpty()) {
+      Gdx.app.error(TAG, "Cannot join a match without an authentication token");
+      return;
+    }
+
+    Gdx.app.log(TAG, "Attempting to connect to matchmaking with token: " + token);
+    isConnecting = true;
+    gameWebSocket.connect(
+        "http://localhost:8080",
+        token,
+        new GameListener() {
+          @Override
+          public void onConnected() {
+            Gdx.app.log(TAG, "Connected to matchmaking");
+            gameWebSocket.send(GameMessages.buildValidate(createPlacedTeam()));
+          }
+
+          @Override
+          public void onMessage(String message) {
+            Gdx.app.log(TAG, "Match message: " + message);
+          }
+
+          @Override
+          public void onDisconnected() {
+            isConnecting = false;
+            Gdx.app.log(TAG, "Disconnected from matchmaking");
+          }
+
+          @Override
+          public void onError(String message) {
+            isConnecting = false;
+            Gdx.app.error(TAG, message);
+          }
+        });
+  }
+
+  private TeamDTO createPlacedTeam() {
+    ArrayList<BlockDTO> blocks = new ArrayList<>();
+    blocks.add(new BlockDTO("block", 100, 10, true, 5, 1, 3));
+    blocks.add(new BlockDTO("block", 100, 10, true, 5, 2, 3));
+
+    ArrayList<RobotDTO> robots = new ArrayList<>();
+    robots.add(new RobotDTO("basic", 100, 10, 0));
+
+    return new TeamDTO(username, blocks, robots, new KingDTO("king", 6, 3, 100, 20));
+  }
+
   @Override
   public void dispose() {
-    Gdx.app.log(TAG, "Disposing MainMenuScreen resources");
-    if (connectionScreen != null) {
-      connectionScreen.dispose();
-      Gdx.app.log(TAG, "Disposed ConnectionScreen");
-    }
     if (stage != null) {
       stage.dispose();
     }
     if (skin != null) {
       skin.dispose();
+    }
+    if (backgroundStage != null) {
+      backgroundStage.dispose();
     }
   }
 }

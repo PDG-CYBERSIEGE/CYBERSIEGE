@@ -1,10 +1,12 @@
 package pdg.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -18,10 +20,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.function.Consumer;
 import pdg.game.Main;
-import pdg.game.network.AuthClient;
-import pdg.game.network.HttpClient;
-import pdg.game.network.ResponseListener;
-import pdg.game.scene.Background;
+import pdg.game.network.http.AuthClient;
+import pdg.game.network.http.ResponseListener;
 import pdg.game.ui.Frame;
 
 /**
@@ -40,39 +40,36 @@ public class ConnectionScreen implements Screen {
   private static final String TAG = "ConnectionScreen";
 
   // Game reference for screen management
-  private Main game;
+  private final Main game;
 
   // Background and stage for rendering
-  private Background background;
-  private Stage stage;
+  private final Stage backgroundStage;
+  private final Stage stage;
 
   // UI resources
-  private Skin skin;
-
-  // HTTP client for server communication
-  private HttpClient httpClient;
+  private final Skin skin;
 
   // Authentication client for server communication
-  private AuthClient authClient;
+  private final AuthClient authClient;
 
   // Register screen reference (lazy-loaded)
   private Screen registerScreen;
 
   // Callback for screen transitions
-  private Consumer<Boolean> callback;
+  private final Consumer<Boolean> callback;
 
   // Input fields
-  private TextField username;
-  private TextField password;
+  private final TextField username;
+  private final TextField password;
 
-  private Label errorMessage;
+  private final Label errorMessage;
 
-  private ImageButton showPassword;
+  private final ImageButton showPassword;
 
   // UI styling constants
   private static final Color BASE_COLOR = Color.GRAY;
   private static final Color EDIT_COLOR = Color.WHITE;
-  private static final String BASE_TEXT = "type here";
+  private static final String BASE_TEXT = " type here";
 
   /**
    * Constructor for ConnectionScreen.
@@ -81,23 +78,18 @@ public class ConnectionScreen implements Screen {
    * login/register/cancel buttons.
    *
    * @param game The main game instance for screen transitions
-   * @param background The background to display behind the UI
+   * @param backgroundStage The background stage to display behind the UI
    * @param callback Callback to handle screen transition results
    */
-  public ConnectionScreen(final Main game, Background background, Consumer<Boolean> callback) {
+  public ConnectionScreen(
+      final Main game, Stage backgroundStage, AuthClient authClient, Consumer<Boolean> callback) {
     this.game = game;
-    this.background = background;
+    this.backgroundStage = backgroundStage;
+    this.authClient = authClient;
     this.callback = callback;
-
-    // Initialize HTTP and authentication clients
-    // httpClient = new HttpClient("http://localhost:8080"); // for local testing
-    httpClient = new HttpClient("http://labo-iot5.iict-heig-vd.ch:8080"); // for release
-
-    authClient = new AuthClient(httpClient);
 
     // Setup stage with viewport and background
     stage = new Stage(new FitViewport(1920, 1080));
-    background.apply(stage);
 
     // Load UI skin
     skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
@@ -110,6 +102,7 @@ public class ConnectionScreen implements Screen {
     // Create and configure username input field
     Label usernameLabel = new Label("username:", skin);
     username = new TextField(BASE_TEXT, skin);
+    createEnterListener(username);
     username.setStyle(
         new TextField.TextFieldStyle(username.getStyle()) {
           {
@@ -121,6 +114,7 @@ public class ConnectionScreen implements Screen {
     // Create and configure password input field
     Label passwordLabel = new Label("password:", skin);
     password = new TextField(BASE_TEXT, skin);
+    createEnterListener(password);
     password.setStyle(
         new TextField.TextFieldStyle(password.getStyle()) {
           {
@@ -146,7 +140,7 @@ public class ConnectionScreen implements Screen {
         });
 
     // Create register button (navigates to RegisterScreen)
-    TextButton register = new TextButton("register", skin, "red");
+    TextButton register = new TextButton("register", skin, "yellow");
     register.setSize(150, 75);
     register.addListener(
         new ClickListener() {
@@ -248,7 +242,7 @@ public class ConnectionScreen implements Screen {
   /** Navigates to the registration screen. Lazily initializes RegisterScreen on first access. */
   private void navigateToRegisterScreen() {
     if (registerScreen == null) {
-      registerScreen = new RegisterScreen(background, authClient, callback);
+      registerScreen = new RegisterScreen(backgroundStage, authClient, callback);
     }
     game.setScreen(registerScreen);
   }
@@ -279,6 +273,7 @@ public class ConnectionScreen implements Screen {
           @Override
           public void success(String token) {
             authClient.setToken(token);
+            Gdx.app.log(TAG, "Login successful, token: " + token);
             Gdx.app.postRunnable(() -> callback.accept(true));
           }
 
@@ -292,6 +287,25 @@ public class ConnectionScreen implements Screen {
           public void error(String message) {
             Gdx.app.error(TAG, "Login network error: " + message);
             errorMessage.setText("Network error");
+          }
+        });
+  }
+
+  /**
+   * Creates an input listener for handling the Enter key press event, while try to connect.
+   *
+   * @param field The text field to attach the listener to
+   */
+  private void createEnterListener(TextField field) {
+    field.addListener(
+        new InputListener() {
+          @Override
+          public boolean keyDown(InputEvent event, int keycode) {
+            if (keycode == Input.Keys.ENTER) {
+              handleLogin();
+              return true;
+            }
+            return false;
           }
         });
   }
@@ -327,6 +341,10 @@ public class ConnectionScreen implements Screen {
     // Clear screen with black color
     ScreenUtils.clear(0, 0, 0, 1);
 
+    backgroundStage.getViewport().apply();
+    backgroundStage.act(delta);
+    backgroundStage.draw();
+
     // Update and render stage
     stage.getViewport().apply();
     stage.act(delta);
@@ -342,6 +360,7 @@ public class ConnectionScreen implements Screen {
   @Override
   public void resize(int width, int height) {
     stage.getViewport().update(width, height, true);
+    backgroundStage.getViewport().update(width, height, true);
   }
 
   /** Called when application is paused. */
