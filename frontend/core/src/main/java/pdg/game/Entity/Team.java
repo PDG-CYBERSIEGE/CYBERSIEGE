@@ -42,7 +42,7 @@ public class Team {
   private boolean receivedState;
 
   public Team(GameMessages.AvailableComponents availableComponents, World world, Stage itemStage, Vector2 canonPos) {
-    canon = new Canon(world, itemStage, canonPos, new Texture("launcher/Generator.png"));
+    canon = new Canon(world, itemStage, canonPos, new Texture("launcher/launcher.png"));
     this.world = world;
     this.itemStage = itemStage;
     this.receivedState = false;
