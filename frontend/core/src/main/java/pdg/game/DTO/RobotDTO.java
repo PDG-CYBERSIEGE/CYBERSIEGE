@@ -8,8 +8,8 @@ public class RobotDTO {
   private final int mass;
   private final int cooldown;
 
-  public RobotDTO(String type, int health, int mass, int cooldown) {
-    this.sprite = type;
+  public RobotDTO(String sprite, int health, int mass, int cooldown) {
+    this.sprite = sprite;
     this.health = health;
     this.mass = mass;
     this.cooldown = cooldown;

@@ -9,8 +9,8 @@ public class KingDTO {
   private final int health;
   private final int mass;
 
-  public KingDTO(String type, float x, float y, int health, int mass) {
-    this.sprite = type;
+  public KingDTO(String sprite, float x, float y, int health, int mass) {
+    this.sprite = sprite;
     this.x = (int) x;
     this.y = (int) y;
     this.health = health;

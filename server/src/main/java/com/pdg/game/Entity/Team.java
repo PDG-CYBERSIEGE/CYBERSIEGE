@@ -36,6 +36,7 @@ public class Team {
     canon = new Canon(world, new Vector2(24f, 3f));
 
     this.world = world;
+    this.user = teamDTO.name();
 
     createKing(teamDTO);
 
