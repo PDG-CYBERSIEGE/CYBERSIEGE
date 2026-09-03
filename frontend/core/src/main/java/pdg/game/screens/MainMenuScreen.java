@@ -23,6 +23,7 @@ import pdg.game.network.http.ResponseListener;
 import pdg.game.network.websocket.GameListener;
 import pdg.game.network.websocket.GameMessages;
 import pdg.game.network.websocket.GameWebSocket;
+import pdg.game.network.websocket.GameMessages.Start;
 
 /**
  * Main menu screen that displays the title, connection button, and authenticated user information.
@@ -46,6 +47,7 @@ public class MainMenuScreen implements Screen {
   boolean isConnecting = false;
 
   FightScreen fightScreen;
+  ConnectionScreen connectionScreen;
 
   /**
    * Creates the main menu screen with background, title, and action button.
@@ -56,12 +58,10 @@ public class MainMenuScreen implements Screen {
   public MainMenuScreen(
       final Main game,
       Stage backgroundStage,
-      GameWebSocket gameWebSocket,
-      FightScreen fightScreen) {
+      GameWebSocket gameWebSocket) {
     this.game = game;
     this.backgroundStage = backgroundStage;
     this.gameWebSocket = gameWebSocket;
-    this.fightScreen = fightScreen;
 
     // Initialize HTTP and authentication clients
     httpClient = new HttpClient("http://localhost:8080"); // for local testing
@@ -81,15 +81,18 @@ public class MainMenuScreen implements Screen {
           public void clicked(InputEvent event, float x, float y) {
             if (!isConnected) {
               // Navigate to connection screen
-              game.setScreen(
-                  new ConnectionScreen(
-                      game,
-                      backgroundStage,
-                      authClient,
-                      success -> {
-                        isConnected = success;
-                        game.setScreen(MainMenuScreen.this);
-                      }));
+              if (connectionScreen == null) {
+                connectionScreen =
+                    new ConnectionScreen(
+                        game,
+                        backgroundStage,
+                        authClient,
+                        success -> {
+                          isConnected = success;
+                          game.setScreen(MainMenuScreen.this);
+                        });
+              }
+              game.setScreen(connectionScreen);
             } else {
               connectToMatch();
             }
@@ -231,9 +234,13 @@ public class MainMenuScreen implements Screen {
             Gdx.app.log(TAG, "Match message: " + message);
             switch (GameMessages.type(message)) {
               case "START":
-                GameMessages.Start start = GameMessages.parseStart(message);
-                Gdx.app.log(TAG, "Match started: " + start.matchId + " vs " + start.opponent);
-                fightScreen.receiveStart(start);
+                if (isConnecting) {
+                  Start start = GameMessages.parseStart(message);
+                  if (fightScreen == null) {
+                    fightScreen = new FightScreen(game, username, start.opponent);
+                  }
+                  game.setScreen(fightScreen);
+                }
                 break;
 
               case "AVAILABLE_COMPONENTS":
@@ -245,13 +252,17 @@ public class MainMenuScreen implements Screen {
               case "BUILD_VALIDATE":
                 GameMessages.BuildValidate buildValidate = GameMessages.parseBuildValidate(message);
                 Gdx.app.log(TAG, "Build validation result: " + buildValidate.valid);
-                fightScreen.receiveBuildValidate(buildValidate);
+                if (fightScreen != null) {
+                  fightScreen.receiveBuildValidate(buildValidate);
+                }
                 break;
 
               case "TEAM":
                 GameMessages.Team team = GameMessages.parseTeam(message);
                 Gdx.app.log(TAG, "Team received: " + team.team.name());
-                fightScreen.receiveTeamState(team);
+                if (fightScreen != null) {
+                  fightScreen.receiveTeamState(team);
+                }
                 break;
 
               case "FIRE":
@@ -264,7 +275,9 @@ public class MainMenuScreen implements Screen {
                         + fire.angle
                         + ", robot="
                         + fire.robot);
-                fightScreen.receiveEnemyFire(fire);
+                if (fightScreen != null) {
+                  fightScreen.receiveEnemyFire(fire);
+                }
 
               default:
                 Gdx.app.log(TAG, "Unhandled match message: " + GameMessages.type(message));
@@ -293,15 +306,15 @@ public class MainMenuScreen implements Screen {
         });
   }
 
-  private TeamDTO createPlacedTeam() {
+  public static TeamDTO createPlacedTeam() {
     ArrayList<BlockDTO> blocks = new ArrayList<>();
-    blocks.add(new BlockDTO("block", 100, 10, true, 5, 1, 3));
-    blocks.add(new BlockDTO("block", 100, 10, true, 5, 2, 3));
+    blocks.add(new BlockDTO("HEAVY", 100, 10, true, 5, 1, 3));
+    blocks.add(new BlockDTO("HEAVY", 100, 10, true, 5, 2, 3));
 
     ArrayList<RobotDTO> robots = new ArrayList<>();
-    robots.add(new RobotDTO("basic", 100, 10, 0));
+    robots.add(new RobotDTO("throwables/base.png", 100, 10, 0));
 
-    return new TeamDTO(username, blocks, robots, new KingDTO("king", 6, 3, 100, 20));
+    return new TeamDTO("player1", blocks, robots, new KingDTO("kings/geraud.png", 6, 3, 100, 20));
   }
 
   @Override

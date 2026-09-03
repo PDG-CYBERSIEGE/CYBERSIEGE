@@ -31,6 +31,7 @@ import pdg.game.blocks.HeavyBlockSprite;
 import pdg.game.scene.Background;
 import pdg.game.ui.*;
 import pdg.game.utils.StaticValues;
+import pdg.game.network.websocket.GameMessages;
 
 public class FightScreen implements Screen {
 
@@ -97,6 +98,10 @@ public class FightScreen implements Screen {
   }
 
   private GamePhase currentPhase = GamePhase.BUILD;
+
+  public FightScreen(Main game, String ownPlayerName, String opponentPlayerName) {
+    this(game, MainMenuScreen.createPlacedTeam(), MainMenuScreen.createPlacedTeam());
+  }
 
   public FightScreen(Main game, TeamDTO onwTeamDTO, TeamDTO ennemyTeamDTO) {
     this.game = game;
@@ -455,4 +460,19 @@ public class FightScreen implements Screen {
     image.setSize(width, height);
     return image;
   }
+
+  public void receiveAvailableComponent(GameMessages.AvailableComponents availableComponents) {
+    
+  }
+  public void receiveBuildValidate(GameMessages.BuildValidate buildValidate) {
+
+  }
+  public void receiveTeamState(GameMessages.Team team) {
+
+  }
+  public void receiveEnemyFire(GameMessages.Fire fire) {
+
+  }
+
+
 }
