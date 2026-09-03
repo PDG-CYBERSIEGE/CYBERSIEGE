@@ -23,6 +23,7 @@ import pdg.game.network.http.ResponseListener;
 import pdg.game.network.websocket.GameListener;
 import pdg.game.network.websocket.GameMessages;
 import pdg.game.network.websocket.GameWebSocket;
+import pdg.game.network.websocket.GameMessages.Start;
 
 /**
  * Main menu screen that displays the title, connection button, and authenticated user information.
@@ -45,13 +46,19 @@ public class MainMenuScreen implements Screen {
   GameWebSocket gameWebSocket;
   boolean isConnecting = false;
 
+  FightScreen fightScreen;
+  ConnectionScreen connectionScreen;
+
   /**
    * Creates the main menu screen with background, title, and action button.
    *
    * @param game the main game instance for screen transitions
    * @param backgroundStage the stage containing the background that persists across screens
    */
-  public MainMenuScreen(final Main game, Stage backgroundStage, GameWebSocket gameWebSocket) {
+  public MainMenuScreen(
+      final Main game,
+      Stage backgroundStage,
+      GameWebSocket gameWebSocket) {
     this.game = game;
     this.backgroundStage = backgroundStage;
     this.gameWebSocket = gameWebSocket;
@@ -65,7 +72,7 @@ public class MainMenuScreen implements Screen {
 
     // Create and configure the connection/play button
     button = new TextButton("Connect", skin, "red_large");
-    button.setSize(450, 150);
+    button.setSize(550, 150);
     button.getLabel().setFontScale(0.5f);
     button.setPosition((stage.getWidth() - button.getWidth()) / 2f, 200);
     button.addListener(
@@ -74,15 +81,18 @@ public class MainMenuScreen implements Screen {
           public void clicked(InputEvent event, float x, float y) {
             if (!isConnected) {
               // Navigate to connection screen
-              game.setScreen(
-                  new ConnectionScreen(
-                      game,
-                      backgroundStage,
-                      authClient,
-                      success -> {
-                        isConnected = success;
-                        game.setScreen(MainMenuScreen.this);
-                      }));
+              if (connectionScreen == null) {
+                connectionScreen =
+                    new ConnectionScreen(
+                        game,
+                        backgroundStage,
+                        authClient,
+                        success -> {
+                          isConnected = success;
+                          game.setScreen(MainMenuScreen.this);
+                        });
+              }
+              game.setScreen(connectionScreen);
             } else {
               connectToMatch();
             }
@@ -112,6 +122,7 @@ public class MainMenuScreen implements Screen {
   public void show() {
     Gdx.input.setInputProcessor(stage);
 
+    button.setDisabled(false);
     if (isConnected) {
       button.getLabel().setText("Play");
       button.setStyle(skin.get("green_large", TextButton.TextButtonStyle.class));
@@ -120,6 +131,8 @@ public class MainMenuScreen implements Screen {
       button.getLabel().setText("Connect");
       button.setStyle(skin.get("red_large", TextButton.TextButtonStyle.class));
     }
+
+    isConnecting = false;
   }
 
   /**
@@ -192,9 +205,12 @@ public class MainMenuScreen implements Screen {
   }
 
   private void connectToMatch() {
-    if (isConnecting) {
-      return;
+    if (isConnecting || button.isDisabled()) {
+        return;
     }
+
+    button.getLabel().setText("Connecting...");
+    button.setDisabled(true);
 
     String token = authClient.getToken();
     if (token == null || token.isEmpty()) {
@@ -211,37 +227,94 @@ public class MainMenuScreen implements Screen {
           @Override
           public void onConnected() {
             Gdx.app.log(TAG, "Connected to matchmaking");
-            gameWebSocket.send(GameMessages.buildValidate(createPlacedTeam()));
           }
 
           @Override
           public void onMessage(String message) {
             Gdx.app.log(TAG, "Match message: " + message);
+            switch (GameMessages.type(message)) {
+              case "START":
+                if (isConnecting) {
+                  Start start = GameMessages.parseStart(message);
+                  if (fightScreen == null) {
+                    fightScreen = new FightScreen(game, username, start.opponent);
+                  }
+                  game.setScreen(fightScreen);
+                }
+                break;
+
+              case "AVAILABLE_COMPONENTS":
+                GameMessages.AvailableComponents availableComponents =
+                    GameMessages.parseAvailableComponents(message);
+                fightScreen.receiveAvailableComponent(availableComponents);
+                break;
+
+              case "BUILD_VALIDATE":
+                GameMessages.BuildValidate buildValidate = GameMessages.parseBuildValidate(message);
+                Gdx.app.log(TAG, "Build validation result: " + buildValidate.valid);
+                if (fightScreen != null) {
+                  fightScreen.receiveBuildValidate(buildValidate);
+                }
+                break;
+
+              case "TEAM":
+                GameMessages.Team team = GameMessages.parseTeam(message);
+                Gdx.app.log(TAG, "Team received: " + team.team.name());
+                if (fightScreen != null) {
+                  fightScreen.receiveTeamState(team);
+                }
+                break;
+
+              case "FIRE":
+                GameMessages.Fire fire = GameMessages.parseFire(message);
+                Gdx.app.log(
+                    TAG,
+                    "Enemy fired: power="
+                        + fire.power
+                        + ", angle="
+                        + fire.angle
+                        + ", robot="
+                        + fire.robot);
+                if (fightScreen != null) {
+                  fightScreen.receiveEnemyFire(fire);
+                }
+
+              default:
+                Gdx.app.log(TAG, "Unhandled match message: " + GameMessages.type(message));
+                break;
+            }
           }
 
           @Override
           public void onDisconnected() {
             isConnecting = false;
-            Gdx.app.log(TAG, "Disconnected from matchmaking");
+            isConnected = false;
+            button.getLabel().setText("Connect");
+            button.setStyle(skin.get("red_large", TextButton.TextButtonStyle.class));
+            button.setDisabled(false);
           }
 
           @Override
           public void onError(String message) {
             isConnecting = false;
+            isConnected = false;
             Gdx.app.error(TAG, message);
+            button.getLabel().setText("Connect");
+            button.setStyle(skin.get("red_large", TextButton.TextButtonStyle.class));
+            button.setDisabled(false);
           }
         });
   }
 
-  private TeamDTO createPlacedTeam() {
+  public static TeamDTO createPlacedTeam() {
     ArrayList<BlockDTO> blocks = new ArrayList<>();
-    blocks.add(new BlockDTO("block", 100, 10, true, 5, 1, 3));
-    blocks.add(new BlockDTO("block", 100, 10, true, 5, 2, 3));
+    blocks.add(new BlockDTO("HEAVY", 1,100, 10, true, 5, 1, 0,3));
+    blocks.add(new BlockDTO("HEAVY", 1,100, 10, true, 5, 2, 0,3));
 
     ArrayList<RobotDTO> robots = new ArrayList<>();
-    robots.add(new RobotDTO("basic", 100, 10, 0));
+    robots.add(new RobotDTO(1, "throwables/base.png", 100, 10, 0));
 
-    return new TeamDTO(username, blocks, robots, new KingDTO("king", 6, 3, 100, 20));
+    return new TeamDTO("player1", blocks, robots, new KingDTO("kings/geraud.png", 6, 3, 100, 20));
   }
 
   @Override

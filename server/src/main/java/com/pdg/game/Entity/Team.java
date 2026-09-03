@@ -68,7 +68,7 @@ public class Team {
 
     Body kingBody = createDynamicBody(kingRect, kingDTO.mass());
 
-    King newKing = new King(kingDTO.type(), kingDTO.health(), kingBody, kingDTO.mass(), 1, 1);
+    King newKing = new King(kingDTO.sprite(), kingDTO.health(), kingBody, kingDTO.mass(), 1, 1);
 
     kingBody.setUserData(newKing);
 
@@ -103,7 +103,7 @@ public class Team {
 
       Robot robot =
           new Robot(
-              robotDTO.type(), robotDTO.health(), body, robotDTO.mass(), robotDTO.cooldown(), 1, 1);
+              robotDTO.sprite(), robotDTO.health(), body, robotDTO.mass(), robotDTO.cooldown(), 1, 1);
 
       body.setUserData(robot);
 

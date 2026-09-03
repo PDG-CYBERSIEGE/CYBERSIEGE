@@ -32,15 +32,15 @@ public class Main extends Game {
     // test avec le screen de jeu
 
     ArrayList<BlockDTO> blocks = new ArrayList<>();
-    BlockDTO block = new BlockDTO(HEAVY, 1,  50, 100, true, 30, 4, 3);
+    BlockDTO block = new BlockDTO(HEAVY, 1,  50, 100, true, 30, 4, 0, 3);
     blocks.add(block);
-    blocks.add(new BlockDTO(MEDIUM, 2 ,50, 800, true, 26, 2, 3));
-    blocks.add(new BlockDTO(LIGHT, 3,50, 800, true, 28, 5, 3));
+    blocks.add(new BlockDTO(MEDIUM, 2 ,50, 800, true, 26, 2, 0,3));
+    blocks.add(new BlockDTO(LIGHT, 3,50, 800, true, 28, 5, 0,3));
 
     ArrayList<RobotDTO> robots = new ArrayList<>();
-    RobotDTO robot1 = new RobotDTO("throwables/base.png", 50, 100, 2);
-    RobotDTO robot2 = new RobotDTO("throwables/green.png", 50, 500, 10);
-    RobotDTO robot3 = new RobotDTO("throwables/black.png", 50, 800, 50);
+    RobotDTO robot1 = new RobotDTO(1,"throwables/base.png", 50, 100, 2);
+    RobotDTO robot2 = new RobotDTO(2,"throwables/green.png", 50, 500, 10);
+    RobotDTO robot3 = new RobotDTO(3,"throwables/black.png", 50, 800, 50);
     robots.add(robot1);
     robots.add(robot2);
     robots.add(robot3);

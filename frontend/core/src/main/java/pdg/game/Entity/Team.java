@@ -126,7 +126,7 @@ public class Team {
       pdg.game.Entity.Block block =
           new pdg.game.Entity.Block(
               null,
-              blockDTO.UUID(),
+              blockDTO.uuid(),
               blockDTO.health(),
               body,
               blockDTO.mass(),
@@ -148,7 +148,7 @@ public class Team {
       Body body = createDynamicBody(rect, robotDTO.mass());
       Texture texture = new Texture(robotDTO.sprite());
       Robot robot =
-          new Robot(texture, robotDTO.health(), body, robotDTO.mass(), robotDTO.cooldown(), 1, 1);
+          new Robot(texture, robotDTO.id(), robotDTO.health(), body, robotDTO.mass(), robotDTO.cooldown(), 1, 1);
       body.setUserData(robot);
       this.robots.add(robot);
     }
@@ -250,7 +250,7 @@ public class Team {
 
     for (BlockDTO blockDTO : teamDTO.blocks()){
       for (Block b : tower) {
-        if (b.getUUID() == blockDTO.UUID()){
+        if (b.getUUID() == blockDTO.uuid()){
           b.body.setTransform(new Vector2(blockDTO.x(), blockDTO.y()), blockDTO.angle());
           b.updateSprite();
         }
@@ -264,7 +264,7 @@ public class Team {
   public void checkchanges(TeamDTO teamDTO) {
     for (BlockDTO blockDTO : teamDTO.blocks()) {
       for (Block b : tower) {
-        if (b.getUUID() == blockDTO.UUID()) {
+        if (b.getUUID() == blockDTO.uuid()) {
           Vector2 serverPos = new Vector2(blockDTO.x(), blockDTO.y());
           if (b.body.getPosition().dst(serverPos) > RECONCILIATION_THRESHOLD) {
             b.body.setTransform(serverPos, blockDTO.angle());
@@ -280,5 +280,14 @@ public class Team {
         king.body.setTransform(serverKingPos, 0);
       }
     }
+  }
+
+  public Robot getRobot(int id) {
+    for (Robot robot : robots) {
+      if (robot.getId() == id) {
+        return robot;
+      }
+    }
+    return null;
   }
 }

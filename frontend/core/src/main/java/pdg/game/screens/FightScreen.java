@@ -34,6 +34,7 @@ import pdg.game.network.websocket.GameMessages;
 import pdg.game.scene.Background;
 import pdg.game.ui.*;
 import pdg.game.utils.StaticValues;
+import pdg.game.network.websocket.GameMessages;
 
 public class FightScreen implements Screen {
 
@@ -104,8 +105,11 @@ public class FightScreen implements Screen {
 
   private boolean isValidated = false;
 
-  public FightScreen(Main game, String username) {
-    this.username = username;
+  public FightScreen(Main game, String ownPlayerName, String opponentPlayerName) {
+    this(game, MainMenuScreen.createPlacedTeam(), MainMenuScreen.createPlacedTeam());
+  }
+
+  public FightScreen(Main game, TeamDTO onwTeamDTO, TeamDTO ennemyTeamDTO) {
     this.game = game;
 
     // initiating world
@@ -499,6 +503,6 @@ public class FightScreen implements Screen {
   }
 
   public void receiveEnemyFire(GameMessages.Fire fire) {
-    ennemyTeam.canon.
+    ennemyTeam.canon.sendRobot(ennemyTeam.getRobot(fire.robot), fire.power, fire.angle);
   }
 }

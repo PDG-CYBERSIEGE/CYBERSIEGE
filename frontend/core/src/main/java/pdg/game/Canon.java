@@ -171,8 +171,10 @@ public class Canon {
     isFiring = true;
     fireStateTime = 0f;
 
-    btn.unload();
-    btn = null;
+    if (btn != null){
+      btn.unload();
+      btn = null;
+    }
     loadedRobot = null;
   }
 
@@ -233,5 +235,12 @@ public class Canon {
     pixmap.dispose();
     texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
     return texture;
+  }
+
+  public void sendRobot(Robot robot, float power, float angle) {
+    this.angle = angle;
+    this.power = power;
+    loadedRobot = robot;
+    fire();
   }
 }

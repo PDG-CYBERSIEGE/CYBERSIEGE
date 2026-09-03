@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 
 public class Robot extends Entity {
 
+  private int id;
   private int cooldown;
   private int currentCooldown;
 
@@ -25,6 +26,7 @@ public class Robot extends Entity {
 
   public Robot(
       Texture sprite,
+      int id,
       Integer health,
       Body body,
       int mass,
@@ -75,5 +77,9 @@ public class Robot extends Entity {
         sprite.getHeight(),
         false,
         false);
+  }
+
+  public int getId(){
+    return id;
   }
 }
