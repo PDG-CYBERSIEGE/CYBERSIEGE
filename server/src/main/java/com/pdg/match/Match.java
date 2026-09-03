@@ -28,7 +28,7 @@ public class Match {
   private boolean player1BuildValidated;
   private boolean player2BuildValidated;
 
-  private static final int MAX_ROUNDS = 3;
+  private static final int MAX_ROUNDS = 2;
   private static final int ROUNDS_TO_WIN = MAX_ROUNDS / 2 + 1;
 
   private int currentRound = 0;
