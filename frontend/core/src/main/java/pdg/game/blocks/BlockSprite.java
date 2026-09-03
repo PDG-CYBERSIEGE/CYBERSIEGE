@@ -1,7 +1,6 @@
 package pdg.game.blocks;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import pdg.game.Entity.Entity;
 
 /**
  * Base block of the game. This class represents a destructible element displayed in the world. It

@@ -229,4 +229,12 @@ public class Score extends Table {
 
     scoreValue2++;
   }
+
+  public int getScoreValue1() {
+    return scoreValue1;
+  }
+
+  public int getScoreValue2() {
+    return scoreValue2;
+  }
 }

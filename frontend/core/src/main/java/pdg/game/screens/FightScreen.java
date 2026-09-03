@@ -1,13 +1,15 @@
 package pdg.game.screens;
 
+import static pdg.game.utils.StaticValues.*;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -19,40 +21,25 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import pdg.game.Canon;
-import pdg.game.DTO.BlockDTO;
-import pdg.game.DTO.KingDTO;
-import pdg.game.DTO.RobotDTO;
+import java.util.ArrayList;
+import java.util.Map;
 import pdg.game.DTO.TeamDTO;
-import pdg.game.Entity.King;
-import pdg.game.Entity.Robot;
 import pdg.game.Entity.Team;
 import pdg.game.GameContactListener;
 import pdg.game.Main;
-import pdg.game.blocks.BlockSprite;
 import pdg.game.blocks.HeavyBlockSprite;
-import pdg.game.blocks.LightBlockSprite;
-import pdg.game.blocks.MediumBlockSprite;
 import pdg.game.scene.Background;
-import pdg.game.ui.Frame;
-import pdg.game.ui.RobotChoiceButton;
-import pdg.game.ui.Score;
+import pdg.game.ui.*;
 import pdg.game.utils.StaticValues;
-
-import java.util.ArrayList;
-import java.util.Map;
-
 
 public class FightScreen implements Screen {
 
   private static final float ARENA_WIDTH = 32f;
   private static final float ARENA_HEIGHT = 18f;
-  private static final float BORDER_THICKNESS = 1f; // épaisseur en mètres, ajuste selon le rendu voulu
+  private static final float BORDER_THICKNESS =
+      1f; // épaisseur en mètres, ajuste selon le rendu voulu
 
   private final Main game;
-
-  // renderer for placeholder TODO a enlever quand on aura plus besoin de placeholder
-  private final ShapeRenderer shapeRenderer;
 
   // ce qui gère la physique du jeu
   private World world;
@@ -60,10 +47,8 @@ public class FightScreen implements Screen {
   // Passe à false avant de livrer en prod : le rendu debug Box2D coûte cher.
   private static final boolean DEBUG_RENDER_PHYSICS = true;
 
-  //utile pour dessiner tout ce qui n'est pas un acteur comme les dot de direction par exemple
+  // utile pour dessiner tout ce qui n'est pas un acteur comme les dot de direction par exemple
   private SpriteBatch batch;
-
-
 
   /** Scene2D stage for the interface and game-world layers. */
   private Stage stage, itemStage;
@@ -71,32 +56,19 @@ public class FightScreen implements Screen {
   private Background background;
   private Skin skin;
 
-  /** Connection dialog displayed in the centre of the screen. */
-  Frame frame;
-
   /** Score panel displayed at the top of the screen. */
   Score score;
 
   /** Whether both stages should currently be rendered. */
   boolean isVisible = true;
 
-  /** Accumulator used to update the demo score once per second. */
-  private float timer = 0f;
-
-  /** Rotating loading image displayed on the interface stage. */
-  Image loading = new Image();
-
   private final Team ownTeam;
   private final Team ennemyTeam;
 
-  float initialX = 420;
-  float initialY = 80;
-  float offset = 50;
-
-  //list of robotbutton
+  // list of robotbutton
   private ArrayList<RobotChoiceButton> robotsBtn = new ArrayList<>();
 
-  //endgame
+  // endgame
   private boolean gameEnded = false;
 
   // camera settings
@@ -108,15 +80,26 @@ public class FightScreen implements Screen {
   private float camTransitionDuration = 0f;
   private boolean camTransitioning = false;
 
-  //label pour la première phase
+  // label pour la première phase
   private Label heavyCountLabel, mediumCountLabel, lightCountLabel;
 
+  private GravityButton gravityButton;
+  private VerifyButton verifyButton;
+  private Image buildZonePlaceholder;
 
+  // physique
+  private static final float PHYSICS_TIMESTEP = 1f / 60f; // 60 Hz, standard Box2D
+  private float physicsAccumulator = 0f;
 
+  private enum GamePhase {
+    BUILD,
+    COMBAT
+  }
+
+  private GamePhase currentPhase = GamePhase.BUILD;
 
   public FightScreen(Main game, TeamDTO onwTeamDTO, TeamDTO ennemyTeamDTO) {
     this.game = game;
-    this.shapeRenderer = new ShapeRenderer();
 
     // initiating world
     world = new World(new Vector2(0, -9.81f), true);
@@ -124,14 +107,14 @@ public class FightScreen implements Screen {
     b2dr = new Box2DDebugRenderer();
 
     stage =
-      new Stage(
-        new FitViewport(1920, 1080)); // stage pour l'ui, dimention de l'écran pour etre précis
+        new Stage(
+            new FitViewport(1920, 1080)); // stage pour l'ui, dimention de l'écran pour etre précis
 
     itemStage =
-      new Stage(
-        new FitViewport(
-          32,
-          18)); // stage pour construire le niveau, avec les dimention en nombre de block (si
+        new Stage(
+            new FitViewport(
+                32,
+                18)); // stage pour construire le niveau, avec les dimention en nombre de block (si
     // leur taille est pas changé) garder dimentions de l'écran (multiple de 16:9)
     // fitViewPort pour que les coordonnées soient indépendant sde la taille de la fenêtre, et pour
     // pas étirer l'affichage.
@@ -141,19 +124,23 @@ public class FightScreen implements Screen {
     background = new Background();
     background.apply(itemStage);
 
+    createGroundSprite();
 
-    //creating teams
-    this.ownTeam = new Team(onwTeamDTO, world, itemStage);
+    buildZonePlaceholder =
+        createColoredRectangle(RECTX, RECTY, RECTWIDTH, RECTHEIGHT, new Color(1f, 0f, 0f, 0.4f));
+    itemStage.addActor(buildZonePlaceholder);
+
+    // creating teams
+    this.ownTeam = new Team(onwTeamDTO, world, itemStage, ALLYCANONSPAWN);
     for (RobotChoiceButton btn : this.ownTeam.setupChoiceButton()) {
       stage.addActor(btn);
       this.robotsBtn.add(btn);
     }
 
-    this.ennemyTeam = new Team(ennemyTeamDTO, world, itemStage);
-
+    this.ennemyTeam = new Team(ennemyTeamDTO, world, itemStage, ENNEMYCANONSPAWN);
 
     createWorldBorders();
-    }
+  }
 
   @Override
   public void show() {
@@ -178,63 +165,49 @@ public class FightScreen implements Screen {
     skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
     Image t = new Image(skin.getDrawable("frame2"));
 
-
     // ui de comptage de points
-    score = new Score("player1", "player2", 3); // TODO remplacer par le nom des joueurs lorsque on les aura par la websockets et qu on aura le retour des DTO
+    score =
+        new Score(
+            "player1", "player2",
+            3); // TODO remplacer par le nom des joueurs lorsque on les aura par la websockets et qu
+    // on aura le retour des DTO
     score.setPosition(
-      stage.getWidth() / 2f - score.getWidth() / 2f, stage.getHeight() - score.getHeight());
+        stage.getWidth() / 2f - score.getWidth() / 2f, stage.getHeight() - score.getHeight());
     stage.addActor(score);
-    score.addScoreP1();
 
-    // Création de chaque type de block
-    BlockSprite blockSprite1 = new MediumBlockSprite(5);
-    blockSprite1.setPosition(10, 0);
-    blockSprite1.resize(2);
-    // block1.setRotation(45);
-    itemStage.addActor(blockSprite1);
-    BlockSprite blockSprite2 = new LightBlockSprite(3);
-    blockSprite2.setPosition(10, 2);
-    blockSprite2.resize(2);
-    itemStage.addActor(blockSprite2);
-
-    /*
-    BlockSprite blockSprite3 = new HeavyBlockSprite(4);
-    blockSprite3.setPosition(10, 4);
-    blockSprite3.resize(2);
-    itemStage.addActor(blockSprite3);
-
-
-     */
-    // image du robot
-    Texture texture = new Texture("throwables/base.png");
-    Image image = new Image(texture);
-    image.setPosition(2, 1);
-    image.setSize(1, 1);
-    itemStage.addActor(image);
-
-    // zoom pour la 1er phase
-    Rectangle ownBuildZone = new Rectangle(0f, 1f, 6f, 11f);
-    focusCameraOn(ownBuildZone, 1f, 0f);
-
-    //label pour le compte de block de la première phase
+    // label pour le compte de block de la première phase
     heavyCountLabel = new Label("", skin);
-    heavyCountLabel.setPosition(50, 300);
+    heavyCountLabel.setPosition(50, 805);
     stage.addActor(heavyCountLabel);
 
     mediumCountLabel = new Label("", skin);
-    mediumCountLabel.setPosition(50, 250);
+    mediumCountLabel.setPosition(50, 635);
     stage.addActor(mediumCountLabel);
 
     lightCountLabel = new Label("", skin);
-    lightCountLabel.setPosition(50, 200);
+    lightCountLabel.setPosition(50, 470);
     stage.addActor(lightCountLabel);
 
-    //bouton pour la première phase
+    // bouton pour la première phase
+    gravityButton = new GravityButton("OFF", skin, ownTeam);
+    gravityButton.setPosition(500, 270);
+    stage.addActor(gravityButton);
 
+    verifyButton = new VerifyButton("Verifier", skin);
+    verifyButton.setPosition(500, 370);
+    verifyButton.addListener(
+        new ClickListener() {
+          @Override
+          public void clicked(InputEvent event, float x, float y) {
+            if (verifyButton.isActivable()) {
+              transitionToPhase2();
+            }
+          }
+        });
+    stage.addActor(verifyButton);
 
     // init phase 1
     initialisePhase1();
-
   }
 
   @Override
@@ -242,48 +215,28 @@ public class FightScreen implements Screen {
     ScreenUtils.clear(0, 0, 0, 1); // clear l'écran pour ne rien garder de la derniere frame
     if (isVisible) { // désactive ecran si fenetre pas assez grand, pas obliger de garder.$
 
-      checkEnd(); //faut regarder comment on traite le nouveau round.
+      checkEnd(); // faut regarder comment on traite le nouveau round.
 
-      world.step(delta, 6, 2); // valeurs standard : 6 vélocity iterations, 2 position iterations
-
+      stepPhysics(delta);
       updateCameraTransition(delta);
 
-      ownTeam.updateBlocks(world);
-      ennemyTeam.updateBlocks(world);
+      // placeholder : rectangle rouge plein, pour les tour  construire
+      // coordonnées que itemStage (unités de blocs, 32x18)
 
       Map<String, Integer> counts = ownTeam.countBlocksAtSpawn();
       heavyCountLabel.setText("Heavy: " + counts.getOrDefault(StaticValues.HEAVY, 0));
       mediumCountLabel.setText("Medium: " + counts.getOrDefault(StaticValues.MEDIUM, 0));
       lightCountLabel.setText("Light: " + counts.getOrDefault(StaticValues.LIGHT, 0));
 
+      buildZonePlaceholder.setVisible(currentPhase == GamePhase.BUILD);
+
       // affiche le niveau, puis l'ui par dessus.
       itemStage.getViewport().apply();
       itemStage.act(delta);
       itemStage.draw();
 
-      // placeholder : rectangle rouge plein, pour les tour  construire
-      // coordonnées que itemStage (unités de blocs, 32x18)
-      float x = 1f;
-      float y = 2f;
-      float width = 5f;
-      float height = 10f;
-
-      shapeRenderer.setProjectionMatrix(itemStage.getViewport().getCamera().combined);
-      shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-      shapeRenderer.setColor(Color.RED);
-      shapeRenderer.rect(x, y, width, height);
-      shapeRenderer.rect(x + 25, y, width, height);
-
-
-
-      // placeholder : vert, pour les tour de lancement
-      shapeRenderer.setColor(Color.GREEN);
-      shapeRenderer.rect(0, y, 2f, 2f);
-      shapeRenderer.rect(-7, y, 4f, height);
-      shapeRenderer.rect(-3, 3, 1f, 1f);
-      shapeRenderer.rect(-3, 4, 1f, 1f);
-
-      shapeRenderer.end();
+      ownTeam.updateBlocks(world);
+      ennemyTeam.updateBlocks(world);
 
       batch.setProjectionMatrix(itemStage.getViewport().getCamera().combined);
       batch.begin();
@@ -297,7 +250,7 @@ public class FightScreen implements Screen {
 
       for (RobotChoiceButton btn : robotsBtn) {
         btn.robot.reduceCooldown();
-        if (btn.isRobotLoaded() || !btn.robot.isReady()){
+        if (btn.isRobotLoaded() || !btn.robot.isReady()) {
           btn.setImageVisible(false);
           btn.setBorderColor(Color.RED);
         } else {
@@ -305,6 +258,8 @@ public class FightScreen implements Screen {
           btn.setBorderColor(Color.WHITE);
         }
       }
+
+      verifyButton.update(ownTeam);
 
       stage.getViewport().apply();
       stage.act(delta);
@@ -319,19 +274,13 @@ public class FightScreen implements Screen {
   }
 
   @Override
-  public void pause() {
-
-  }
+  public void pause() {}
 
   @Override
-  public void resume() {
-
-  }
+  public void resume() {}
 
   @Override
-  public void hide() {
-
-  }
+  public void hide() {}
 
   @Override
   public void dispose() {
@@ -369,21 +318,22 @@ public class FightScreen implements Screen {
     createStaticBody(new Rectangle(ARENA_WIDTH, 0, BORDER_THICKNESS, ARENA_HEIGHT));
   }
 
-  private void checkEnd (){
-    if (ownTeam.king.isDead()){
-      world.destroyBody(ownTeam.king.getBody());
+  private void checkEnd() {
+    if (gameEnded) {}
+    if (ownTeam.king.isDead()) {
       score.addScoreP2();
+      initialisePhase1();
       return;
     }
-    if (ennemyTeam.king.isDead()){
-      world.destroyBody(ennemyTeam.king.getBody());
+    if (ennemyTeam.king.isDead()) {
       score.addScoreP1();
-      return;
+      initialisePhase1();
     }
-
   }
+
   /**
    * Démarre une transition fluide de la caméra vers une zone donnée.
+   *
    * @param area zone à cadrer (en unités itemStage, mètres)
    * @param padding marge autour de la zone, en mètres
    * @param duration durée de la transition, en secondes
@@ -424,10 +374,9 @@ public class FightScreen implements Screen {
 
     OrthographicCamera cam = (OrthographicCamera) itemStage.getViewport().getCamera();
     cam.position.set(
-      camStartPos.x + (camTargetPos.x - camStartPos.x) * t,
-      camStartPos.y + (camTargetPos.y - camStartPos.y) * t,
-      0
-    );
+        camStartPos.x + (camTargetPos.x - camStartPos.x) * t,
+        camStartPos.y + (camTargetPos.y - camStartPos.y) * t,
+        0);
     cam.zoom = camStartZoom + (camTargetZoom - camStartZoom) * t;
     cam.update();
 
@@ -436,14 +385,74 @@ public class FightScreen implements Screen {
     }
   }
 
-  private void initialisePhase1(){
-    ownTeam.setupBlocks();
+  private void initialisePhase1() {
+    if (score.getScoreValue1() == 3 || score.getScoreValue2() == 3) {
+      gameEnded = true;
+    }
+    ownTeam.setup();
+    focusCameraOn(OWNBUILDINGZONE, 2f, 1f);
+    applyPhaseVisibility();
+    ownTeam.restoreHealth();
+    ennemyTeam.restoreHealth();
   }
 
   private void transitionToPhase2() {
     resetCameraToFullView(1.5f); // transition fluide sur 1.5 seconde
+    // reset to no gravity
     ownTeam.changeGravity();
+
+    // setup both towers
     ennemyTeam.changeGravity();
+    ownTeam.changeGravity();
+
+    // restore potential health issues
+    ennemyTeam.restoreHealth();
+    ownTeam.restoreHealth();
+
+    currentPhase = GamePhase.COMBAT;
+    applyPhaseVisibility();
   }
 
+  private void stepPhysics(float delta) {
+    physicsAccumulator += delta;
+    while (physicsAccumulator >= PHYSICS_TIMESTEP) {
+      world.step(PHYSICS_TIMESTEP, 6, 2);
+      physicsAccumulator -= PHYSICS_TIMESTEP;
+    }
+  }
+
+  private void applyPhaseVisibility() {
+    boolean isBuildPhase = currentPhase == GamePhase.BUILD;
+
+    gravityButton.setVisible(isBuildPhase);
+    verifyButton.setVisible(isBuildPhase);
+    heavyCountLabel.setVisible(isBuildPhase);
+    mediumCountLabel.setVisible(isBuildPhase);
+    lightCountLabel.setVisible(isBuildPhase);
+
+    for (RobotChoiceButton btn : robotsBtn) {
+      btn.setVisible(!isBuildPhase);
+    }
+  }
+
+  private void createGroundSprite() {
+    int length = Math.round(ARENA_WIDTH); // un segment par unité de largeur (32 segments)
+    HeavyBlockSprite groundSprite = new HeavyBlockSprite(length);
+    groundSprite.resize(2); // recalcule la taille à length x 1, cohérent avec le nombre de segments
+    groundSprite.setPosition(0, 0); // aligné avec le body statique du sol
+    itemStage.addActor(groundSprite);
+  }
+
+  private Image createColoredRectangle(float x, float y, float width, float height, Color color) {
+    Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+    pixmap.setColor(color);
+    pixmap.fill();
+    Texture texture = new Texture(pixmap);
+    pixmap.dispose();
+
+    Image image = new Image(texture);
+    image.setPosition(x, y);
+    image.setSize(width, height);
+    return image;
+  }
 }

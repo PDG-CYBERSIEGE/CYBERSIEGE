@@ -8,16 +8,15 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import pdg.game.Canon;
 import pdg.game.DTO.BlockDTO;
 import pdg.game.DTO.KingDTO;
 import pdg.game.DTO.RobotDTO;
 import pdg.game.DTO.TeamDTO;
 import pdg.game.ui.RobotChoiceButton;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Team {
 
@@ -26,80 +25,91 @@ public class Team {
   float initialY = 80;
   float offset = 50;
 
-  //gravity
+  // gravity
   private boolean gravity = false;
 
+  public String user;
+  public ArrayList<Block> tower = new ArrayList<>();
+  public King king;
+  public ArrayList<Robot> robots = new ArrayList<>();
+  public Canon canon;
+  private World world;
+  private Stage itemStage;
 
-    public String user;
-    public ArrayList<Block> tower = new ArrayList<>();
-    public King king;
-    public ArrayList<Robot> robots = new ArrayList<>();
-    public Canon canon;
-    private World world;
-    private Stage itemStage;
+  public Team(TeamDTO teamDTO, World world, Stage itemStage, Vector2 canonPos) {
+    canon = new Canon(world, itemStage, canonPos, new Texture("launcher/Generator.png"));
+    this.world = world;
+    this.itemStage = itemStage;
+    createKing(teamDTO);
+    createBlocks(teamDTO);
+    createRobot(teamDTO);
+  }
 
-    public Team(TeamDTO teamDTO, World world, Stage itemStage) {
-      canon =  new Canon(world, itemStage, new Vector2(24f, 3f), new Texture("launcher/Generator.png"));
-      this.world = world;
-      this.itemStage = itemStage;
-      createKing(teamDTO);
-      createBlocks(teamDTO);
-      createRobot(teamDTO);
+  /** A appeler ENTRE batch.begin() et batch.end() dans FightScreen.render(). */
+  public void draw(SpriteBatch batch) {
+    for (Block block : tower) {
+      block.draw(batch);
     }
 
-    /** A appeler ENTRE batch.begin() et batch.end() dans FightScreen.render(). */
-    public void draw(SpriteBatch batch) {
-      for (Block block : tower) {
-        block.draw(batch);
-      }
-
-      if (king != null) {
-        king.draw(batch);
-      }
-
-      for (Robot robot : robots) {
-        robot.draw(batch);
-      }
-
-      if (canon != null) {
-        canon.draw(batch);
-      }
+    if (king != null) {
+      king.draw(batch);
     }
 
-    public void updateBlocks(World world){
-      removeDeadEntities(world);
-      for (Block b : tower){
-        b.updateSprite();
-      }
+    for (Robot robot : robots) {
+      robot.draw(batch);
     }
+
+    if (canon != null) {
+      canon.draw(batch);
+    }
+  }
+
+  public void updateBlocks(World world) {
+    removeDeadEntities(world);
+    for (Block b : tower) {
+      b.updateSprite();
+    }
+  }
 
   public void removeDeadEntities(World world) {
-    tower.removeIf(block -> {
-      if (block.isDead()) {
-        block.destroy(world);
-        return true;
-      }
-      return false;
-    });
+    tower.removeIf(
+        block -> {
+          if (block.isDead()) {
+            block.destroy(world);
+            return true;
+          }
+          return false;
+        });
   }
 
   public void changeGravity() {
     gravity = !gravity;
     for (Block block : tower) {
       block.setGravityEnabled(gravity);
+      if (gravity) {
+        block.savePosition();
+      } else {
+        block.restorePosition();
+      }
     }
 
     if (king != null) {
       king.setGravityEnabled(gravity);
+      if (gravity) {
+        king.savePosition();
+      } else {
+        king.restorePosition();
+      }
     }
   }
 
-  private void createKing(TeamDTO teamDTO){
+  private void createKing(TeamDTO teamDTO) {
     KingDTO kingDTO = teamDTO.king();
     Rectangle kingRect = new Rectangle(-100, -100, 1, 1);
     Body kingBody = createDynamicBody(kingRect, kingDTO.mass());
     Texture kingTexture = new Texture(kingDTO.sprite());
-    King newKing = new King(kingTexture, kingDTO.health(), kingBody, kingDTO.mass(), 1, 1, itemStage);
+    King newKing =
+        new King(kingTexture, kingDTO.health(), kingBody, kingDTO.mass(), 1, 1, itemStage);
     kingBody.setUserData(newKing);
     this.king = newKing;
   }
@@ -108,7 +118,16 @@ public class Team {
     for (BlockDTO blockDTO : teamDTO.blocks()) {
       Rectangle rect = new Rectangle(-100, -100, blockDTO.length(), 1);
       Body body = createDynamicBody(rect, blockDTO.mass());
-      pdg.game.Entity.Block block = new pdg.game.Entity.Block(null, blockDTO.health(), body, blockDTO.mass(), 1, 1, blockDTO.type(), blockDTO.length());
+      pdg.game.Entity.Block block =
+          new pdg.game.Entity.Block(
+              null,
+              blockDTO.health(),
+              body,
+              blockDTO.mass(),
+              1,
+              1,
+              blockDTO.type(),
+              blockDTO.length());
       body.setUserData(block);
       this.tower.add(block);
       if (block.getBlockSprite() != null) {
@@ -118,14 +137,15 @@ public class Team {
   }
 
   private void createRobot(TeamDTO teamDTO) {
-      for (RobotDTO robotDTO : teamDTO.robots()){
-        Rectangle rect = new Rectangle(-100, -100, 1, 1);
-        Body body = createDynamicBody(rect, robotDTO.mass());
-        Texture texture = new Texture(robotDTO.sprite());
-        Robot robot = new Robot(texture, robotDTO.health(), body, robotDTO.mass(), robotDTO.cooldown(), 1, 1);
-        body.setUserData(robot);
-        robots.add(robot);
-      }
+    for (RobotDTO robotDTO : teamDTO.robots()) {
+      Rectangle rect = new Rectangle(-100, -100, 1, 1);
+      Body body = createDynamicBody(rect, robotDTO.mass());
+      Texture texture = new Texture(robotDTO.sprite());
+      Robot robot =
+          new Robot(texture, robotDTO.health(), body, robotDTO.mass(), robotDTO.cooldown(), 1, 1);
+      body.setUserData(robot);
+      robots.add(robot);
+    }
   }
 
   private Body createDynamicBody(Rectangle rect, int mass) {
@@ -140,7 +160,7 @@ public class Team {
 
     FixtureDef fdef = new FixtureDef();
     fdef.shape = shape;
-    fdef.density = mass/1000f;
+    fdef.density = mass / 1000f;
     fdef.friction = 0.2f;
     fdef.restitution = 0f;
 
@@ -149,24 +169,26 @@ public class Team {
     return body;
   }
 
-  public ArrayList<RobotChoiceButton> setupChoiceButton () {
-      ArrayList<RobotChoiceButton> btns = new ArrayList<>();
-      for (Robot robot : robots) {
-        // bouton pour choisir le robot a envoyer
-        RobotChoiceButton btn = new RobotChoiceButton(robot);
+  public ArrayList<RobotChoiceButton> setupChoiceButton() {
+    ArrayList<RobotChoiceButton> btns = new ArrayList<>();
+    for (Robot robot : robots) {
+      // bouton pour choisir le robot a envoyer
+      RobotChoiceButton btn = new RobotChoiceButton(robot);
 
-        btn.setPosition(initialX, initialY);
+      btn.setPosition(initialX, initialY);
 
-        initialX += offset;
+      initialX += offset;
 
-        btn.addListener(new ClickListener() {
-          @Override
-          public void clicked(InputEvent event, float x, float y) {canon.loadNextRobot(btn);
-          }
-        });
-        btns.add(btn);
-      }
-      return btns;
+      btn.addListener(
+          new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+              canon.loadNextRobot(btn);
+            }
+          });
+      btns.add(btn);
+    }
+    return btns;
   }
 
   public Map<String, Integer> countBlocksAtSpawn() {
@@ -180,16 +202,33 @@ public class Team {
   }
 
   public void saveTower() {
-      for (Block b : tower) {
-        b.savePosition();
-      }
-      king.savePosition();
+    for (Block b : tower) {
+      b.savePosition();
+    }
+    king.savePosition();
   }
 
-  public void setupBlocks() {
-      for (Block b : tower) {
-        b.initialState();
-      }
+  public void setup() {
+    for (Block b : tower) {
+      b.initialState();
+    }
+    king.initialState();
   }
 
+  public boolean isGravityEnabled() {
+    return gravity;
+  }
+
+  public boolean isFullyPlaced() {
+    boolean allBlocksPlaced = countBlocksAtSpawn().values().stream().allMatch(count -> count == 0);
+    boolean kingPlaced = king == null || !king.isAtSpawn();
+    return allBlocksPlaced && kingPlaced;
+  }
+
+  public void restoreHealth() {
+    for (Block b : tower) {
+      b.restoreHealth();
+    }
+    king.restoreHealth();
+  }
 }

@@ -5,11 +5,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 
-
 public class Robot extends Entity {
 
-    private int cooldown;
-    private int currentCooldown;
+  private int cooldown;
+  private int currentCooldown;
 
   // Offset entre l'orientation "au repos" du sprite (0° = pointe vers la droite,
   // convention standard) et l'angle réel du dessin sur la texture.
@@ -24,23 +23,30 @@ public class Robot extends Entity {
 
   private float lastFacingAngleDeg = 0f;
 
-    public Robot(Texture sprite, Integer health, Body body, int mass, int cooldown, float height, float width) {
-        super(health, sprite, body, mass, height, width);
-        this.cooldown = cooldown;
-        this.currentCooldown = 0;
-    }
+  public Robot(
+      Texture sprite,
+      Integer health,
+      Body body,
+      int mass,
+      int cooldown,
+      float height,
+      float width) {
+    super(health, sprite, body, mass, height, width);
+    this.cooldown = cooldown;
+    this.currentCooldown = 0;
+  }
 
-    public void reduceCooldown (){
-      if (currentCooldown > 0) currentCooldown--;
-    }
+  public void reduceCooldown() {
+    if (currentCooldown > 0) currentCooldown--;
+  }
 
-    public void startCooldown(){
-        currentCooldown = cooldown;
-    }
+  public void startCooldown() {
+    currentCooldown = cooldown;
+  }
 
-    public boolean isReady() {
-        return currentCooldown == 0;
-    }
+  public boolean isReady() {
+    return currentCooldown == 0;
+  }
 
   /** A appeler ENTRE batch.begin() et batch.end(). */
   @Override
@@ -53,14 +59,21 @@ public class Robot extends Entity {
     }
 
     batch.draw(
-      sprite,
-      worldPos.x - width / 2f, worldPos.y - height / 2f,
-      width / 2f, height / 2f,
-      width, height,
-      1f, 1f,
-      lastFacingAngleDeg - spriteBaseAngleOffset,
-      0, 0, sprite.getWidth(), sprite.getHeight(),
-      false, false
-    );
+        sprite,
+        worldPos.x - width / 2f,
+        worldPos.y - height / 2f,
+        width / 2f,
+        height / 2f,
+        width,
+        height,
+        1f,
+        1f,
+        lastFacingAngleDeg - spriteBaseAngleOffset,
+        0,
+        0,
+        sprite.getWidth(),
+        sprite.getHeight(),
+        false,
+        false);
   }
 }
