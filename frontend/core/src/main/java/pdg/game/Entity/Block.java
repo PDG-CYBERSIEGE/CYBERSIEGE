@@ -15,7 +15,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
-import pdg.game.blocks.BlockSprite;
+import pdg.game.DTO.BlockDTO;import pdg.game.blocks.BlockSprite;
 import pdg.game.blocks.HeavyBlockSprite;
 import pdg.game.blocks.LightBlockSprite;
 import pdg.game.blocks.MediumBlockSprite;
@@ -42,6 +42,7 @@ public class Block extends Entity {
 
   private Vector2 savedPosition;
   private float savedAngle;
+  private int length;
 
   /**
    * * Crée un nouveau bloc. * *
@@ -65,6 +66,7 @@ public class Block extends Entity {
     super(health, sprite, body, mass, height, width);
     this.type = type;
     this.UUID = UUID;
+    this.length = length;
 
     switch (type) {
       case "HEAVY" :
@@ -288,5 +290,18 @@ public class Block extends Entity {
 
   public long getUUID(){
     return UUID;
+  }
+
+  public BlockDTO getDTO() {
+    return new BlockDTO(
+      type,
+      UUID,
+      health,
+      mass,
+      true,
+      body.getPosition().x - width / 2f,
+      body.getPosition().y - height / 2f,
+      savedAngle,
+      length);
   }
 }

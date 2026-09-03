@@ -290,4 +290,23 @@ public class Team {
     }
     return null;
   }
+
+  public TeamDTO getDTO() {
+
+    ArrayList<BlockDTO> blockDTOs = new ArrayList<>();
+
+    for (Block block : tower) {
+
+      blockDTOs.add(block.getDTO());
+    }
+
+    ArrayList<RobotDTO> robotDTOs = new ArrayList<>();
+
+    for (Robot robot : robots) {
+
+      robotDTOs.add(robot.getDTO());
+    }
+
+    return new TeamDTO(user, blockDTOs, robotDTOs, king.getDTO());
+  }
 }

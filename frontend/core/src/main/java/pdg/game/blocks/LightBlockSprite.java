@@ -22,7 +22,7 @@ public class LightBlockSprite extends BlockSprite {
     setTransform(true);
     setOrigin(getWidth() / 2f, getHeight() / 2f);
 
-    for (int i = 0; i < length * 2; i++) {
+    for (int i = 0; i < length; i++) {
       add(new Image(texture));
     }
   }

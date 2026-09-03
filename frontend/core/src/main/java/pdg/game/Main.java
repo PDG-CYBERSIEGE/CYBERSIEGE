@@ -6,9 +6,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import pdg.game.network.websocket.GameWebSocket;
+import pdg.game.DTO.BlockDTO;import pdg.game.DTO.KingDTO;import pdg.game.DTO.RobotDTO;import pdg.game.DTO.TeamDTO;import pdg.game.network.websocket.GameMessages;import pdg.game.network.websocket.GameWebSocket;
 import pdg.game.scene.Background;
-import pdg.game.screens.MainMenuScreen;
+import pdg.game.screens.FightScreen;import pdg.game.screens.MainMenuScreen;import java.util.ArrayList;import static pdg.game.utils.StaticValues.*;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
@@ -64,7 +64,11 @@ public class Main extends Game {
     screen1.receiveAvailableComponent(team22);
 
     setScreen(screen1);
-    */
+
+
+
+     */
+
 
     Background background = new Background();
     Stage backgroundStage = new Stage(new FitViewport(1920, 1080));
@@ -72,6 +76,8 @@ public class Main extends Game {
     Gdx.app.setLogLevel(Application.LOG_DEBUG);
     mainMenuScreen = new MainMenuScreen(this, backgroundStage, gameWebSocket);
     setScreen(mainMenuScreen);
+
+
   }
 
   public MainMenuScreen getMainMenuScreen() {

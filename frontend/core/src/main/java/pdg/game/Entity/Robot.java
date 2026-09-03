@@ -3,7 +3,7 @@ package pdg.game.Entity;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Body;import pdg.game.DTO.RobotDTO;
 
 public class Robot extends Entity {
 
@@ -81,5 +81,9 @@ public class Robot extends Entity {
 
   public int getId(){
     return id;
+  }
+
+  public RobotDTO getDTO() {
+    return new RobotDTO(id, "", health, mass, cooldown);
   }
 }

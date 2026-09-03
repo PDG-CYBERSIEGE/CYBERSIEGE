@@ -214,9 +214,6 @@ public class FightScreen implements Screen {
     lightCountLabel.setPosition(50, 470);
     stage.addActor(lightCountLabel);
 
-    // bouton pour la première phase
-    gravityButton.setPosition(500, 270);
-    stage.addActor(gravityButton);
 
     verifyButton.setPosition(500, 370);
     verifyButton.addListener(
@@ -225,13 +222,13 @@ public class FightScreen implements Screen {
           public void clicked(InputEvent event, float x, float y) {
             if (verifyButton.isActivable()) {
               //TODO envoyer un message au serveur pour savoir si c'est valide
+
+              game.getMainMenuScreen().getGameWebSocket().send(GameMessages.buildValidate(ownTeam.getDTO()));
             }
           }
         });
     stage.addActor(verifyButton);
 
-    // init phase 1
-    initialisePhase1();
 
 
   }
@@ -239,7 +236,7 @@ public class FightScreen implements Screen {
   @Override
   public void render(float delta) {
     ScreenUtils.clear(0, 0, 0, 1); // clear l'écran pour ne rien garder de la derniere frame
-    if (isVisible ) { // désactive ecran si fenetre pas assez grand, pas obliger de garder.$
+    if (isVisible && ownTeam != null && ennemyTeam != null) { // désactive ecran si fenetre pas assez grand, pas obliger de garder.$
 
       checkEnd(); // faut regarder comment on traite le nouveau round.
 
@@ -479,7 +476,9 @@ public class FightScreen implements Screen {
     Gdx.input.setInputProcessor(multiplexer);
 
     gravityButton = new GravityButton("OFF", skin, ownTeam);
-
+    // bouton pour la première phase
+    gravityButton.setPosition(500, 270);
+    stage.addActor(gravityButton);
 
     if (scoreP1 == 3 || scoreP2 == 3) {
       gameEnded = true;
