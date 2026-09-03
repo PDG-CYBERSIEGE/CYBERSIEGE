@@ -46,6 +46,7 @@ public class Team {
 
   public Team(String user, Main game, GameMessages.AvailableComponents availableComponents, World world, Stage itemStage, Vector2 canonPos, float arenaWidth) {
     canon = new Canon(game, world, itemStage, canonPos, new Texture("launcher/launcher.png"));
+    this.user = user;
     this.world = world;
     this.itemStage = itemStage;
     this.receivedState = false;
