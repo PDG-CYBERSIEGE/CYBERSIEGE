@@ -384,6 +384,7 @@ public class FightScreen implements Screen {
           });
 
       endGameLabel = new Label("you won!", skin, "title");
+      if(scoreP2 >= 3) endGameLabel.setText("you lost <3");
 
       frame = new Frame(600, 600, "Connection", play_again, main_menu);
       frame.setPosition(
@@ -565,6 +566,9 @@ public class FightScreen implements Screen {
 
   public void receiveWin(){
     scoreP1 = 3;
+  }
+  public void receiveLost(){
+    scoreP2 = 3;
   }
 
   public void receiveAvailableComponent(GameMessages.AvailableComponents availableComponents) {
