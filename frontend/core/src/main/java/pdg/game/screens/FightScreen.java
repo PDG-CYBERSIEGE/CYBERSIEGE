@@ -98,6 +98,10 @@ public class FightScreen implements Screen {
 
   private GamePhase currentPhase = GamePhase.BUILD;
 
+  public FightScreen(Main game, String ownPlayerName, String opponentPlayerName) {
+    this(game, MainMenuScreen.createPlacedTeam(), MainMenuScreen.createPlacedTeam());
+  }
+
   public FightScreen(Main game, TeamDTO onwTeamDTO, TeamDTO ennemyTeamDTO) {
     this.game = game;
 
@@ -454,5 +458,9 @@ public class FightScreen implements Screen {
     image.setPosition(x, y);
     image.setSize(width, height);
     return image;
+  }
+
+  public void handleMessage(String type, String message) {
+    
   }
 }

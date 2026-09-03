@@ -23,6 +23,7 @@ import pdg.game.network.http.ResponseListener;
 import pdg.game.network.websocket.GameListener;
 import pdg.game.network.websocket.GameMessages;
 import pdg.game.network.websocket.GameWebSocket;
+import pdg.game.network.websocket.GameMessages.Start;
 
 /**
  * Main menu screen that displays the title, connection button, and authenticated user information.
@@ -44,6 +45,9 @@ public class MainMenuScreen implements Screen {
   AuthClient authClient;
   GameWebSocket gameWebSocket;
   boolean isConnecting = false;
+
+  FightScreen fightScreen;
+  ConnectionScreen connectionScreen;
 
   /**
    * Creates the main menu screen with background, title, and action button.
@@ -74,15 +78,18 @@ public class MainMenuScreen implements Screen {
           public void clicked(InputEvent event, float x, float y) {
             if (!isConnected) {
               // Navigate to connection screen
-              game.setScreen(
-                  new ConnectionScreen(
-                      game,
-                      backgroundStage,
-                      authClient,
-                      success -> {
-                        isConnected = success;
-                        game.setScreen(MainMenuScreen.this);
-                      }));
+              if (connectionScreen == null) {
+                connectionScreen =
+                    new ConnectionScreen(
+                        game,
+                        backgroundStage,
+                        authClient,
+                        success -> {
+                          isConnected = success;
+                          game.setScreen(MainMenuScreen.this);
+                        });
+              }
+              game.setScreen(connectionScreen);
             } else {
               connectToMatch();
             }
@@ -217,12 +224,26 @@ public class MainMenuScreen implements Screen {
           @Override
           public void onConnected() {
             Gdx.app.log(TAG, "Connected to matchmaking");
-            gameWebSocket.send(GameMessages.buildValidate(createPlacedTeam()));
           }
 
           @Override
           public void onMessage(String message) {
             Gdx.app.log(TAG, "Match message: " + message);
+
+            String type = GameMessages.type(message);
+
+            if (type.equals("START")) {
+              if (isConnecting) {
+                Start start = GameMessages.parseStart(message);
+                if (fightScreen == null) {
+                  fightScreen = new FightScreen(game, username, start.opponent);
+                }
+                game.setScreen(fightScreen);
+              }
+            }
+            else{
+              fightScreen.handleMessage(type, message);
+            }
           }
 
           @Override
@@ -246,7 +267,7 @@ public class MainMenuScreen implements Screen {
         });
   }
 
-  private TeamDTO createPlacedTeam() {
+  public static TeamDTO createPlacedTeam() {
     ArrayList<BlockDTO> blocks = new ArrayList<>();
     blocks.add(new BlockDTO("block", 100, 10, true, 5, 1, 3));
     blocks.add(new BlockDTO("block", 100, 10, true, 5, 2, 3));
@@ -254,7 +275,7 @@ public class MainMenuScreen implements Screen {
     ArrayList<RobotDTO> robots = new ArrayList<>();
     robots.add(new RobotDTO("basic", 100, 10, 0));
 
-    return new TeamDTO(username, blocks, robots, new KingDTO("king", 6, 3, 100, 20));
+    return new TeamDTO("player1", blocks, robots, new KingDTO("king", 6, 3, 100, 20));
   }
 
   @Override
