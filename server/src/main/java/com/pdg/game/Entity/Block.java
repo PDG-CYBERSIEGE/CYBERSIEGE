@@ -109,6 +109,13 @@ public class Block extends Entity {
 
   public BlockDTO getDTO() {
     return new BlockDTO(
-        type, health, mass, true, body.getPosition().x, body.getPosition().y, length);
-  }
+        type,
+        health,
+        mass,
+        true,
+        body.getPosition().x - width / 2f,
+        body.getPosition().y - height / 2f,
+        length
+    );
+}
 }

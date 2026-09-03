@@ -275,7 +275,7 @@ public final class GameMessages {
       return null;
     }
     return new KingDTO(
-        value.getString("type", ""),
+      value.getString("sprite", ""),
         value.getInt("x", 0),
         value.getInt("y", 0),
         value.getInt("health", 0),
@@ -296,7 +296,7 @@ public final class GameMessages {
 
   private static RobotDTO readRobot(JsonValue value) {
     return new RobotDTO(
-        value.getString("type", ""),
+        value.getString("sprite", ""),
         value.getInt("health", 0),
         value.getInt("mass", 0),
         value.getInt("cooldown", 0));
@@ -356,7 +356,7 @@ public final class GameMessages {
   }
 
   private static void appendKing(StringBuilder sb, KingDTO king) {
-    sb.append("{\"type\":\"")
+    sb.append("{\"sprite\":\"")
         .append(escape(king.sprite()))
         .append("\",\"x\":")
         .append(king.x())
@@ -370,7 +370,7 @@ public final class GameMessages {
   }
 
   private static void appendRobot(StringBuilder sb, RobotDTO robot) {
-    sb.append("{\"type\":\"")
+    sb.append("{\"sprite\":\"")
         .append(escape(robot.sprite()))
         .append("\",\"health\":")
         .append(robot.health())
