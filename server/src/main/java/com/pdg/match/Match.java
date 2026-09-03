@@ -212,6 +212,8 @@ public class Match {
     // Send the authoritative state to both players.
     sendTeam(player1, team1);
     sendTeam(player2, team2);
+    sendTeam(player1, team2);
+    sendTeam(player2, team1);
   }
 
   /**
