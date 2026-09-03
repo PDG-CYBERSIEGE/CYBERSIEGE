@@ -323,12 +323,4 @@ public class ArenaSimulation {
         }
         return false;
     }
-
-    public TeamDTO getTeamDTO(Team team) {
-        // Convertit l'état actuel de l'équipe en TeamDTO pour l'envoyer au client.
-        // Implémente cette méthode selon la structure de TeamDTO.
-        throw new UnsupportedOperationException(
-                "Adapter getTeamDTO aux entités sans Texture"
-        );
-    }
 }

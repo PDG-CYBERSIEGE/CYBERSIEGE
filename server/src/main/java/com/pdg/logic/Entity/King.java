@@ -1,8 +1,9 @@
 package com.pdg.logic.Entity;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.math.Vector2;
+import com.pdg.logic.DTO.KingDTO;
 
 public class King extends Entity {
 
@@ -10,13 +11,14 @@ public class King extends Entity {
     private Vector2 savedPosition;
     
     public King(
+            String type,
             Integer health,
             Body body,
             int mass,
             float height,
             float width
     ) {
-        super(health, body, mass, height, width);
+        super(type, health, body, mass, height, width);
 
         setGravityEnabled(false);
     }
@@ -58,5 +60,9 @@ public class King extends Entity {
         setGravityEnabled(false);
 
         body.setTransform(savedPosition, 0);
+    }
+
+    public KingDTO getDTO() {
+        return new KingDTO(type, body.getPosition().x, body.getPosition().y, health, mass);
     }
 }

@@ -7,11 +7,14 @@ import static com.pdg.logic.utils.StaticValues.HEAVYSPAWN;
 import static com.pdg.logic.utils.StaticValues.LIGHTSPAWN;
 import static com.pdg.logic.utils.StaticValues.MEDIUMSPAWN;
 
+import com.pdg.logic.DTO.BlockDTO;
+
 public class Block extends Entity {
 
-    private boolean physicsEnabled = false;
+    private boolean physicsEnabled = true;
 
     private final String type;
+    private final int length;
     private final Vector2 spawnPosition;
 
     private static final float SPAWN_THRESHOLD = 0.3f;
@@ -20,17 +23,18 @@ public class Block extends Entity {
     private float savedAngle;
 
     public Block(
+            String type,
             int health,
             Body body,
             int mass,
             float height,
             float width,
-            String type,
             int length
     ) {
-        super(health, body, mass, height, width);
+        super(type, health, body, mass, height, width);
 
         this.type = type;
+        this.length = length;
 
         switch (type) {
             case "HEAVY" -> spawnPosition = HEAVYSPAWN;
@@ -38,8 +42,6 @@ public class Block extends Entity {
             case "LIGHT" -> spawnPosition = LIGHTSPAWN;
             default -> spawnPosition = null;
         }
-
-        setGravityEnabled(false);
     }
 
     /**
@@ -124,5 +126,9 @@ public class Block extends Entity {
 
     public boolean isPhysicsEnabled() {
         return physicsEnabled;
+    }
+
+    public BlockDTO getDTO() {
+        return new BlockDTO(type, health, mass, true, body.getPosition().x, body.getPosition().y, length);
     }
 }

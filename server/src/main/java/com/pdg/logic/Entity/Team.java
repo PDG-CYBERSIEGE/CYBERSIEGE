@@ -67,8 +67,8 @@ public class Team {
         KingDTO kingDTO = teamDTO.king();
 
         Rectangle kingRect = new Rectangle(
-                -100,
-                -100,
+                kingDTO.x(),
+                kingDTO.y(),
                 1,
                 1
         );
@@ -79,6 +79,7 @@ public class Team {
         );
 
         King newKing = new King(
+                kingDTO.type(),
                 kingDTO.health(),
                 kingBody,
                 kingDTO.mass(),
@@ -96,8 +97,8 @@ public class Team {
         for (BlockDTO blockDTO : teamDTO.blocks()) {
 
             Rectangle rect = new Rectangle(
-                    -100,
-                    -100,
+                    blockDTO.x(),
+                    blockDTO.y(),
                     blockDTO.length(),
                     1
             );
@@ -108,12 +109,12 @@ public class Team {
             );
 
             Block block = new Block(
+                    blockDTO.type(),
                     blockDTO.health(),
                     body,
                     blockDTO.mass(),
                     1,
                     1,
-                    blockDTO.type(),
                     blockDTO.length()
             );
 
@@ -140,6 +141,7 @@ public class Team {
             );
 
             Robot robot = new Robot(
+                    robotDTO.type(),
                     robotDTO.health(),
                     body,
                     robotDTO.mass(),
@@ -229,5 +231,29 @@ public class Team {
 
             b.initialState();
         }
+    }
+
+    public TeamDTO getDTO() {
+
+        ArrayList<BlockDTO> blockDTOs = new ArrayList<>();
+
+        for (Block block : tower) {
+
+            blockDTOs.add(block.getDTO());
+        }
+
+        ArrayList<RobotDTO> robotDTOs = new ArrayList<>();
+
+        for (Robot robot : robots) {
+
+            robotDTOs.add(robot.getDTO());
+        }
+
+        return new TeamDTO(
+                user,
+                blockDTOs,
+                robotDTOs,
+                king.getDTO()
+        );
     }
 }

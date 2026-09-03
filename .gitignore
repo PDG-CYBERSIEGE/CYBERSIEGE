@@ -144,6 +144,9 @@ www-test/
 nbactions.xml
 nb-configuration.xml
 
+## keys
+*.pem
+
 ## OS-Specific:
 .DS_Store
 Thumbs.db

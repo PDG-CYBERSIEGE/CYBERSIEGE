@@ -31,7 +31,7 @@ public class NewGameState {
             arenaSimulation.update(GRAVITY_SIMULATION_STEP);
         }
 
-        return new TeamDTO[] {arenaSimulation.getTeamDTO(arenaSimulation.getTeam1()), arenaSimulation.getTeamDTO(arenaSimulation.getTeam2()) };
+        return new TeamDTO[] {arenaSimulation.getTeam1().getDTO(), arenaSimulation.getTeam2().getDTO() };
     }
 
     public TeamDTO simulateThrow(float power, float angle, int robotIndex, int player) {
@@ -56,7 +56,7 @@ public class NewGameState {
             arenaSimulation.update(GRAVITY_SIMULATION_STEP);
         }
 
-        return arenaSimulation.getTeamDTO(enemyTeam);
+        return enemyTeam.getDTO(); // On retourne l'état de l'équipe adverse après le tir.
     }
     
 }

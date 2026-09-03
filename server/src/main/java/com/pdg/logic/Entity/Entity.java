@@ -6,6 +6,7 @@ import static com.pdg.logic.utils.StaticValues.DAMAGETRESHOLD;
 
 public class Entity {
 
+    protected String type;
     protected int health;
     protected Body body;
     protected int mass;
@@ -14,12 +15,14 @@ public class Entity {
     protected float height;
 
     public Entity(
+            String type,
             int health,
             Body body,
             int mass,
             float height,
             float width
     ) {
+        this.type = type;
         this.health = health;
         this.body = body;
         this.mass = mass;
@@ -46,4 +49,5 @@ public class Entity {
     public Body getBody() {
         return body;
     }
+    
 }

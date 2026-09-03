@@ -1,6 +1,7 @@
 package com.pdg.logic.Entity;
 
 import com.badlogic.gdx.physics.box2d.Body;
+import com.pdg.logic.DTO.RobotDTO;
 
 public class Robot extends Entity {
 
@@ -8,6 +9,7 @@ public class Robot extends Entity {
     private int currentCooldown;
 
     public Robot(
+            String type,
             Integer health,
             Body body,
             int mass,
@@ -15,7 +17,7 @@ public class Robot extends Entity {
             float height,
             float width
     ) {
-        super(health, body, mass, height, width);
+        super(type, health, body, mass, height, width);
         this.cooldown = cooldown;
         this.currentCooldown = 0;
     }
@@ -32,5 +34,9 @@ public class Robot extends Entity {
 
     public boolean isReady() {
         return currentCooldown == 0;
+    }
+
+    public RobotDTO getDTO() {
+        return new RobotDTO(type, health, mass, cooldown);
     }
 }
