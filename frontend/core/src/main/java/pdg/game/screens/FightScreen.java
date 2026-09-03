@@ -503,12 +503,10 @@ public class FightScreen implements Screen {
 
   private void transitionToPhase2() {
     resetCameraToFullView(1.5f); // transition fluide sur 1.5 seconde
-    // reset to no gravity
-    ownTeam.changeGravity();
 
     // setup both towers
     ennemyTeam.changeGravity();
-    ownTeam.changeGravity();
+
 
     // restore potential health issues
     ennemyTeam.restoreHealth();
