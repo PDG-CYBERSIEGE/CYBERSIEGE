@@ -303,6 +303,9 @@ public class FightScreen implements Screen {
 
   @Override
   public void dispose() {
+    itemStage.dispose();
+    stage.dispose();
+    world.dispose();
     batch.dispose();
   }
 
@@ -589,7 +592,6 @@ public class FightScreen implements Screen {
 
      } else {
        if (Objects.equals(team.team.name(), ownTeam.user)){
-
          ownTeam.checkchanges(team.team, false);
        } else {
          ennemyTeam.checkchanges(team.team, true);
