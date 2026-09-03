@@ -16,6 +16,7 @@ import pdg.game.DTO.BlockDTO;
 import pdg.game.DTO.KingDTO;
 import pdg.game.DTO.RobotDTO;
 import pdg.game.DTO.TeamDTO;
+import pdg.game.network.websocket.GameMessages;
 import pdg.game.ui.RobotChoiceButton;
 
 public class Team {
@@ -24,6 +25,9 @@ public class Team {
   float initialX = 420;
   float initialY = 80;
   float offset = 50;
+
+  private static final float RECONCILIATION_THRESHOLD = 0.5f; // en mètres, à ajuster selon la tolérance voulue
+
 
   // gravity
   private boolean gravity = false;
@@ -35,14 +39,16 @@ public class Team {
   public Canon canon;
   private World world;
   private Stage itemStage;
+  private boolean receivedState;
 
-  public Team(TeamDTO teamDTO, World world, Stage itemStage, Vector2 canonPos) {
+  public Team(GameMessages.AvailableComponents availableComponents, World world, Stage itemStage, Vector2 canonPos) {
     canon = new Canon(world, itemStage, canonPos, new Texture("launcher/Generator.png"));
     this.world = world;
     this.itemStage = itemStage;
-    createKing(teamDTO);
-    createBlocks(teamDTO);
-    createRobot(teamDTO);
+    this.receivedState = false;
+    createKing(availableComponents.king);
+    createBlocks(availableComponents.blocks);
+    createRobot(availableComponents.robots);
   }
 
   /** A appeler ENTRE batch.begin() et batch.end() dans FightScreen.render(). */
@@ -103,8 +109,7 @@ public class Team {
     }
   }
 
-  private void createKing(TeamDTO teamDTO) {
-    KingDTO kingDTO = teamDTO.king();
+  private void createKing(KingDTO kingDTO) {
     Rectangle kingRect = new Rectangle(-100, -100, 1, 1);
     Body kingBody = createDynamicBody(kingRect, kingDTO.mass());
     Texture kingTexture = new Texture(kingDTO.sprite());
@@ -114,13 +119,14 @@ public class Team {
     this.king = newKing;
   }
 
-  private void createBlocks(TeamDTO teamDTO) {
-    for (BlockDTO blockDTO : teamDTO.blocks()) {
+  private void createBlocks(BlockDTO[] blocks) {
+    for (BlockDTO blockDTO : blocks) {
       Rectangle rect = new Rectangle(-100, -100, blockDTO.length(), 1);
       Body body = createDynamicBody(rect, blockDTO.mass());
       pdg.game.Entity.Block block =
           new pdg.game.Entity.Block(
               null,
+              blockDTO.UUID(),
               blockDTO.health(),
               body,
               blockDTO.mass(),
@@ -136,15 +142,15 @@ public class Team {
     }
   }
 
-  private void createRobot(TeamDTO teamDTO) {
-    for (RobotDTO robotDTO : teamDTO.robots()) {
+  private void createRobot(RobotDTO[] robots) {
+    for (RobotDTO robotDTO : robots) {
       Rectangle rect = new Rectangle(-100, -100, 1, 1);
       Body body = createDynamicBody(rect, robotDTO.mass());
       Texture texture = new Texture(robotDTO.sprite());
       Robot robot =
           new Robot(texture, robotDTO.health(), body, robotDTO.mass(), robotDTO.cooldown(), 1, 1);
       body.setUserData(robot);
-      robots.add(robot);
+      this.robots.add(robot);
     }
   }
 
@@ -230,5 +236,49 @@ public class Team {
       b.restoreHealth();
     }
     king.restoreHealth();
+  }
+
+  public boolean isReceived() {
+    return receivedState;
+  }
+
+  private void received(){
+    receivedState = true;
+  }
+
+  public void setupToDate(TeamDTO teamDTO){
+
+    for (BlockDTO blockDTO : teamDTO.blocks()){
+      for (Block b : tower) {
+        if (b.getUUID() == blockDTO.UUID()){
+          b.body.setTransform(new Vector2(blockDTO.x(), blockDTO.y()), blockDTO.angle());
+          b.updateSprite();
+        }
+      }
+    }
+    king.body.setTransform(new Vector2(teamDTO.king().x(), teamDTO.king().y()), 0);
+
+    received();
+  }
+
+  public void checkchanges(TeamDTO teamDTO) {
+    for (BlockDTO blockDTO : teamDTO.blocks()) {
+      for (Block b : tower) {
+        if (b.getUUID() == blockDTO.UUID()) {
+          Vector2 serverPos = new Vector2(blockDTO.x(), blockDTO.y());
+          if (b.body.getPosition().dst(serverPos) > RECONCILIATION_THRESHOLD) {
+            b.body.setTransform(serverPos, blockDTO.angle());
+            b.updateSprite();
+          }
+        }
+      }
+    }
+
+    if (king != null) {
+      Vector2 serverKingPos = new Vector2(teamDTO.king().x(), teamDTO.king().y());
+      if (king.body.getPosition().dst(serverKingPos) > RECONCILIATION_THRESHOLD) {
+        king.body.setTransform(serverKingPos, 0);
+      }
+    }
   }
 }
