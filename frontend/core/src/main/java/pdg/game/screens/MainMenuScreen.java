@@ -72,7 +72,7 @@ public class MainMenuScreen implements Screen {
 
     // Create and configure the connection/play button
     button = new TextButton("Connect", skin, "red_large");
-    button.setSize(450, 150);
+    button.setSize(550, 150);
     button.getLabel().setFontScale(0.5f);
     button.setPosition((stage.getWidth() - button.getWidth()) / 2f, 200);
     button.addListener(
@@ -119,6 +119,7 @@ public class MainMenuScreen implements Screen {
   public void show() {
     Gdx.input.setInputProcessor(stage);
 
+    button.setDisabled(false);
     if (isConnected) {
       button.getLabel().setText("Play");
       button.setStyle(skin.get("green_large", TextButton.TextButtonStyle.class));
@@ -127,6 +128,8 @@ public class MainMenuScreen implements Screen {
       button.getLabel().setText("Connect");
       button.setStyle(skin.get("red_large", TextButton.TextButtonStyle.class));
     }
+
+    isConnecting = false;
   }
 
   /**
@@ -199,9 +202,12 @@ public class MainMenuScreen implements Screen {
   }
 
   private void connectToMatch() {
-    if (isConnecting) {
-      return;
+    if (isConnecting || button.isDisabled()) {
+        return;
     }
+
+    button.getLabel().setText("Connecting...");
+    button.setDisabled(true);
 
     String token = authClient.getToken();
     if (token == null || token.isEmpty()) {
@@ -269,13 +275,20 @@ public class MainMenuScreen implements Screen {
           @Override
           public void onDisconnected() {
             isConnecting = false;
-            Gdx.app.log(TAG, "Disconnected from matchmaking");
+            isConnected = false;
+            button.getLabel().setText("Connect");
+            button.setStyle(skin.get("red_large", TextButton.TextButtonStyle.class));
+            button.setDisabled(false);
           }
 
           @Override
           public void onError(String message) {
             isConnecting = false;
+            isConnected = false;
             Gdx.app.error(TAG, message);
+            button.getLabel().setText("Connect");
+            button.setStyle(skin.get("red_large", TextButton.TextButtonStyle.class));
+            button.setDisabled(false);
           }
         });
   }
