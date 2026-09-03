@@ -1,0 +1,156 @@
+{
+com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	CyberpunkCraftpixPixel: {
+		file: CyberpunkCraftpixPixel.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+	CyberpunkCraftpixPixel_big_title: {
+		file: CyberpunkCraftpixPixel_big_title.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+	CyberpunkCraftpixPixel_title: {
+		file: CyberpunkCraftpixPixel_title.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+	CyberpunkCraftpixPixelScalable: {
+		file: CyberpunkCraftpixPixelScalable.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+	Orbitron-Regular: {
+		file: Orbitron-Regular.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+}
+com.badlogic.gdx.graphics.Color: {
+	white: {
+		r: 1
+		g: 1
+		b: 1
+		a: 1
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
+	default: {
+		up: red_button_up
+		down: red_button_down
+	}
+	green: {
+		up: green_button_up
+		down: green_button_down
+	}
+	red: {
+		up: red_button_up
+		down: red_button_down
+	}
+	yellow: {
+		up: yellow_up
+		down: yellow_down
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
+	eye: {
+		imageUp: hidden_white
+		imageDown: eye_white
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
+	default: {
+		font: CyberpunkCraftpixPixel
+		fontColor: white
+	}
+	thin: {
+		font: CyberpunkCraftpixPixel
+		fontColor: white
+		background: light_textbox
+	}
+	thick: {
+		font: CyberpunkCraftpixPixel
+		fontColor: white
+		background: textbox
+	}
+	title: {
+		font: CyberpunkCraftpixPixel_title
+		fontColor: white
+	}
+	big_title: {
+		font: CyberpunkCraftpixPixel_big_title
+	}
+	big_title_thick: {
+		font: CyberpunkCraftpixPixel_big_title
+		fontColor: white
+		background: textbox
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
+	default: {
+		font: CyberpunkCraftpixPixel
+		fontColor: white
+		up: green_button_up
+		down: green_button_down
+	}
+	green: {
+		font: CyberpunkCraftpixPixel
+		fontColor: white
+		up: green_button_up
+		down: green_button_down
+	}
+	red: {
+		font: CyberpunkCraftpixPixel
+		fontColor: white
+		up: red_button_up
+		down: red_button_down
+	}
+	green_large: {
+		font: CyberpunkCraftpixPixel_title
+		fontColor: white
+		up: green_button_up
+		down: green_button_down
+		disabled: green_button_down
+	}
+	yellow: {
+		font: CyberpunkCraftpixPixel
+		fontColor: white
+		up: yellow_up
+		down: yellow_down
+	}
+	red_large: {
+		font: CyberpunkCraftpixPixel_title
+		fontColor: white
+		up: red_button_up
+		down: red_button_down
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
+	default: {
+		font: Orbitron-Regular
+		fontColor: white
+		background: light_textbox
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
+	default: {
+		label: default
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
+	default: {
+		background: frame2
+		titleFont: CyberpunkCraftpixPixel
+	}
+	score: {
+		background: score_frame
+		titleFont: CyberpunkCraftpixPixel
+		titleFontColor: white
+	}
+}
+}
