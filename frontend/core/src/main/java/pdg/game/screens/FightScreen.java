@@ -589,6 +589,7 @@ public class FightScreen implements Screen {
 
      } else {
        if (Objects.equals(team.team.name(), ownTeam.user)){
+
          ownTeam.checkchanges(team.team, false);
        } else {
          ennemyTeam.checkchanges(team.team, true);
