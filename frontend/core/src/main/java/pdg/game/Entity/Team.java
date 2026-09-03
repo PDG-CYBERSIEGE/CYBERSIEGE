@@ -299,21 +299,14 @@ public class Team {
   }
 
   public TeamDTO getDTO() {
-
     ArrayList<BlockDTO> blockDTOs = new ArrayList<>();
-
     for (Block block : tower) {
-
       blockDTOs.add(block.getDTO());
     }
-
     ArrayList<RobotDTO> robotDTOs = new ArrayList<>();
-
     for (Robot robot : robots) {
-
       robotDTOs.add(robot.getDTO());
     }
-
     return new TeamDTO(user, blockDTOs, robotDTOs, king.getDTO());
   }
 
@@ -321,5 +314,28 @@ public class Team {
   private Vector2 resolvePosition(float x, float y, boolean ennemy) {
     float resolvedX = ennemy ? (arenaWidth - x) : x;
     return new Vector2(resolvedX, y);
+  }
+
+  public void resetFromAvailableComponents(GameMessages.AvailableComponents availableComponents) {
+    // Détruit tous les blocs actuels (body Box2D + sprite Scene2D)
+    for (Block b : tower) {
+      b.destroy(world);
+    }
+    tower.clear();
+
+    // Détruit le king actuel
+    if (king != null) {
+      world.destroyBody(king.getBody());
+      king = null;
+    }
+
+
+    // Réinitialise l'état de réception pour la prochaine phase de construction
+    receivedState = false;
+    gravity = false;
+
+    // Recrée tout depuis les nouvelles données
+    createKing(availableComponents.king);
+    createBlocks(availableComponents.blocks);
   }
 }

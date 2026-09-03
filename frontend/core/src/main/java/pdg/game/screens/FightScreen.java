@@ -551,13 +551,20 @@ public class FightScreen implements Screen {
   }
 
   public void receiveAvailableComponent(GameMessages.AvailableComponents availableComponents) {
-    ownTeam = new Team(username, game, availableComponents, world, itemStage, ALLYCANONSPAWN, ARENA_WIDTH);
-    for (RobotChoiceButton btn : this.ownTeam.setupChoiceButton()) {
-      stage.addActor(btn);
-      this.robotsBtn.add(btn);
+    if (currentPhase == GamePhase.BUILD){
+      ownTeam = new Team(username, game, availableComponents, world, itemStage, ALLYCANONSPAWN, ARENA_WIDTH);
+      for (RobotChoiceButton btn : this.ownTeam.setupChoiceButton()) {
+        stage.addActor(btn);
+        this.robotsBtn.add(btn);
+      }
+
+      ennemyTeam = new Team(ennemyUser, game, availableComponents, world, itemStage, ENNEMYCANONSPAWN, ARENA_WIDTH);
+    } else {
+      currentPhase = GamePhase.BUILD;
+      ownTeam.resetFromAvailableComponents(availableComponents);
+      ennemyTeam.resetFromAvailableComponents(availableComponents);
     }
 
-    ennemyTeam = new Team(ennemyUser, game, availableComponents, world, itemStage, ENNEMYCANONSPAWN, ARENA_WIDTH);
     initialisePhase1();
   }
 
