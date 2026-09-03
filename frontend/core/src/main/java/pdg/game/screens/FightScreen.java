@@ -63,7 +63,7 @@ public class FightScreen implements Screen {
   private World world;
   private Box2DDebugRenderer b2dr;
   // Passe à false avant de livrer en prod : le rendu debug Box2D coûte cher.
-  private static final boolean DEBUG_RENDER_PHYSICS = true;
+  private static final boolean DEBUG_RENDER_PHYSICS = false;
 
   // utile pour dessiner tout ce qui n'est pas un acteur comme les dot de direction par exemple
   private SpriteBatch batch;
@@ -374,7 +374,7 @@ public class FightScreen implements Screen {
           });
 
       endGameLabel = new Label("you won!", skin, "title");
-      if(scoreP2 >= 3) endGameLabel.setText("you lost <3");
+      if (scoreP2 >= 3) endGameLabel.setText("you lost <3");
 
       frame = new Frame(600, 600, "Connection", play_again, main_menu);
       frame.setPosition(
@@ -558,7 +558,8 @@ public class FightScreen implements Screen {
   public void receiveWin() {
     scoreP1 = 3;
   }
-  public void receiveLost(){
+
+  public void receiveLost() {
     scoreP2 = 3;
   }
 

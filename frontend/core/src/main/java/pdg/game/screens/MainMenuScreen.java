@@ -283,7 +283,7 @@ public class MainMenuScreen implements Screen {
               case "WINNER":
                 fightScreen.receiveWin();
                 break;
-              
+
               case "LOSER":
                 fightScreen.receiveLost();
               default:
