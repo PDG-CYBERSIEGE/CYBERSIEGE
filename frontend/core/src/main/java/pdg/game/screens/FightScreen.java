@@ -230,8 +230,6 @@ public class FightScreen implements Screen {
         });
     stage.addActor(verifyButton);
 
-    // init phase 1
-    initialisePhase1();
 
     
   }
@@ -239,7 +237,7 @@ public class FightScreen implements Screen {
   @Override
   public void render(float delta) {
     ScreenUtils.clear(0, 0, 0, 1); // clear l'écran pour ne rien garder de la derniere frame
-    if (isVisible) { // désactive ecran si fenetre pas assez grand, pas obliger de garder.$
+    if (isVisible && ownTeam != null && ennemyTeam != null) { // désactive ecran si fenetre pas assez grand, pas obliger de garder.$
 
       checkEnd(); // faut regarder comment on traite le nouveau round.
 
