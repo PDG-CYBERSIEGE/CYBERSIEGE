@@ -150,7 +150,7 @@ public class Match {
     // Generate blocks and robots available for this round and send to players
     generateAvailableComponents();
     sendAvailableComponents(
-        player1, availableBlocks, new KingDTO("kings/geraud.png", 0, 0, 100, 100), availableRobots);
+        player1, availableBlocks, new KingDTO("kings/geraud.png", 0, 0, 300, 25), availableRobots);
     sendAvailableComponents(
         player2,
         availableBlocks,
@@ -434,7 +434,7 @@ public class Match {
     for (String type : blockTypes) { 
       blocksPerType = random.nextInt(4);
       for (int i = 0; i < blocksPerType; i++) { 
-        blockLength = 1 + random.nextInt(4);
+        blockLength = 2 + random.nextInt(3);
         blockMass = 10 *  blockLength;
         blockHealth = 50 * blockLength;
         switch (type) {
