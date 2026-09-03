@@ -30,7 +30,7 @@ public class MatchmakingService {
    * @param connection the player's WebSocket connection
    * @return the {@link PlayerConnection} associated with the player
    */
-  public synchronized PlayerConnection findMatch(Long playerId, WebSocketConnection connection) {
+  public synchronized PlayerConnection findMatch(String playerName, Long playerId, WebSocketConnection connection) {
 
     Match connectionMatch;
 
@@ -44,7 +44,7 @@ public class MatchmakingService {
       currentMatch = null;
     }
 
-    PlayerConnection playerConnection = new PlayerConnection(connection, playerId, connectionMatch);
+    PlayerConnection playerConnection = new PlayerConnection(connection, playerName, playerId, connectionMatch);
     connectionMatch.addPlayer(playerConnection);
 
     return playerConnection;

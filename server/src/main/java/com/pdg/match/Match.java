@@ -43,8 +43,8 @@ public class Match {
     } else if (player2 == null) {
       player2 = player;
       matchId = nextMatchId.getAndIncrement();
-      sendStart(player1, String.valueOf(matchId), String.valueOf(player2.playerId()));
-      sendStart(player2, String.valueOf(matchId), String.valueOf(player1.playerId()));
+      sendStart(player1, String.valueOf(matchId), player2.playerName());
+      sendStart(player2, String.valueOf(matchId), player1.playerName());
     } else {
       player.sendToPlayer(GameMessages.invalid());
     }

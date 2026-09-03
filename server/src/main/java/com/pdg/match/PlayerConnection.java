@@ -11,6 +11,7 @@ import io.quarkus.websockets.next.WebSocketConnection;
 public class PlayerConnection {
 
   private final WebSocketConnection connection;
+  private String playerName;
   private final Long playerId;
   private final Match match;
 
@@ -21,10 +22,20 @@ public class PlayerConnection {
    * @param playerId the unique identifier of the player
    * @param match the match associated with the player
    */
-  public PlayerConnection(WebSocketConnection connection, Long playerId, Match match) {
+  public PlayerConnection(WebSocketConnection connection, String playerName, Long playerId, Match match) {
     this.connection = connection;
+    this.playerName = playerName;
     this.playerId = playerId;
     this.match = match;
+  }
+
+  /**
+   * Returns the player's name.
+   *
+   * @return the player name
+   */
+  public String playerName() {
+    return playerName;
   }
 
   /**
