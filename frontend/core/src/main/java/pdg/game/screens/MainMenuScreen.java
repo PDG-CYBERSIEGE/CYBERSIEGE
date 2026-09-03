@@ -308,13 +308,13 @@ public class MainMenuScreen implements Screen {
 
   public static TeamDTO createPlacedTeam() {
     ArrayList<BlockDTO> blocks = new ArrayList<>();
-    blocks.add(new BlockDTO("block", 100, 10, true, 5, 1, 3));
-    blocks.add(new BlockDTO("block", 100, 10, true, 5, 2, 3));
+    blocks.add(new BlockDTO("HEAVY", 100, 10, true, 5, 1, 3));
+    blocks.add(new BlockDTO("HEAVY", 100, 10, true, 5, 2, 3));
 
     ArrayList<RobotDTO> robots = new ArrayList<>();
-    robots.add(new RobotDTO("basic", 100, 10, 0));
+    robots.add(new RobotDTO("throwables/base.png", 100, 10, 0));
 
-    return new TeamDTO("player1", blocks, robots, new KingDTO("king", 6, 3, 100, 20));
+    return new TeamDTO("player1", blocks, robots, new KingDTO("kings/geraud.png", 6, 3, 100, 20));
   }
 
   @Override
