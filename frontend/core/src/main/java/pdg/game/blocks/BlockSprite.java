@@ -1,6 +1,10 @@
 package pdg.game.blocks;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 /**
  * Base block of the game. This class represents a destructible element displayed in the world. It
@@ -19,5 +23,16 @@ public class BlockSprite extends Table {
 
     setSize(factor * ratio, factor);
     setOrigin(getWidth() / 2f, getHeight() / 2f);
+  }
+
+  public void disposeTextures() {
+    for (Actor child : getChildren()) {
+      if (child instanceof Image) {
+        Drawable drawable = ((Image) child).getDrawable();
+        if (drawable instanceof TextureRegionDrawable) {
+          ((TextureRegionDrawable) drawable).getRegion().getTexture().dispose();
+        }
+      }
+    }
   }
 }

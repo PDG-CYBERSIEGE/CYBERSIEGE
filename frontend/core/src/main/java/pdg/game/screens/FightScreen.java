@@ -467,6 +467,8 @@ public class FightScreen implements Screen {
   }
 
   private void initialisePhase1() {
+    currentPhase = GamePhase.BUILD;
+    isValidated = false;
     Gdx.app.log("Screen", "debut initiate");
 
     InputMultiplexer multiplexer = new InputMultiplexer();
@@ -476,10 +478,16 @@ public class FightScreen implements Screen {
     multiplexer.addProcessor(ownTeam.king.getInputProcessor());
     Gdx.input.setInputProcessor(multiplexer);
 
-    // bouton pour la première phase
+    if (gravityButton != null) {
+      gravityButton.remove();
+    }
     gravityButton = new GravityButton("OFF", skin, ownTeam);
     gravityButton.setPosition(500, 270);
     stage.addActor(gravityButton);
+
+    ownTeam.resetGravity();
+    ennemyTeam.resetGravity();
+
 
     if (scoreP1 == 3 || scoreP2 == 3) {
       gameEnded = true;

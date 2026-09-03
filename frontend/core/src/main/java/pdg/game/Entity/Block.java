@@ -147,6 +147,7 @@ public class Block extends Entity {
    */
   public void destroy(World world) {
     if (blockSprite != null) {
+      blockSprite.disposeTextures();
       blockSprite.remove();
     }
     world.destroyBody(body);

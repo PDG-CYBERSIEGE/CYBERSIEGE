@@ -345,4 +345,10 @@ public class Team {
     createKing(availableComponents.king);
     createBlocks(availableComponents.blocks);
   }
+
+  public void resetGravity() {
+    if (gravity) {
+      changeGravity();
+    }
+  }
 }
