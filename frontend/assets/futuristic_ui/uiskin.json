@@ -18,8 +18,8 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: {
 		markupEnabled: false
 		flip: false
 	}
-	Orbitron-Regular: {
-		file: Orbitron-Regular(1).fnt
+	CyberpunkCraftpixPixelScalable: {
+		file: CyberpunkCraftpixPixelScalable.fnt
 		scaledSize: -1
 		markupEnabled: false
 		flip: false
@@ -47,12 +47,6 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 		down: red_button_down
 	}
 }
-com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
-	eye: {
-		imageUp: hidden_white
-		imageDown: eye_white
-	}
-}
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
 		font: CyberpunkCraftpixPixel
@@ -74,8 +68,9 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	big_title: {
 		font: CyberpunkCraftpixPixel_big_title
 	}
-	big_title_thick: {
+	big_title_tick: {
 		font: CyberpunkCraftpixPixel_big_title
+		fontColor: white
 		background: textbox
 	}
 }
@@ -98,17 +93,12 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 		up: red_button_up
 		down: red_button_down
 	}
-	red_large: {
-		font: CyberpunkCraftpixPixel_title
-		fontColor: white
-		up: red_button_up
-		down: red_button_down
-	}
 	green_large: {
 		font: CyberpunkCraftpixPixel_title
 		fontColor: white
 		up: green_button_up
 		down: green_button_down
+		disabled: green_button_down
 	}
 	yellow: {
 		font: CyberpunkCraftpixPixel
@@ -116,13 +106,18 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 		up: yellow_up
 		down: yellow_down
 	}
+	red_large: {
+		font: CyberpunkCraftpixPixel_title
+		fontColor: white
+		up: red_button_up
+		down: red_button_down
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: {
-		font: Orbitron-Regular
+		font: CyberpunkCraftpixPixel
 		fontColor: white
 		background: light_textbox
-		cursor: cursor
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
