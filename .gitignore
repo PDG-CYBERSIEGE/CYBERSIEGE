@@ -87,7 +87,7 @@ www-test/
 *.launch
 
 ## vscode:
-.vscode
+.vscode/
 
 ## NetBeans:
 
@@ -145,6 +145,9 @@ www-test/
 
 nbactions.xml
 nb-configuration.xml
+
+## keys
+*.pem
 
 ## OS-Specific:
 .DS_Store

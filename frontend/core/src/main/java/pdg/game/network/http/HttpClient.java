@@ -28,6 +28,11 @@ public class HttpClient {
     this.token = token;
   }
 
+  /** Returns the authentication token currently used by this client. */
+  public String getToken() {
+    return token;
+  }
+
   /**
    * Sends an asynchronous GET request.
    *

@@ -11,10 +11,18 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import java.util.ArrayList;
+import pdg.game.DTO.BlockDTO;
+import pdg.game.DTO.KingDTO;
+import pdg.game.DTO.RobotDTO;
+import pdg.game.DTO.TeamDTO;
 import pdg.game.Main;
 import pdg.game.network.http.AuthClient;
 import pdg.game.network.http.HttpClient;
 import pdg.game.network.http.ResponseListener;
+import pdg.game.network.websocket.GameListener;
+import pdg.game.network.websocket.GameMessages;
+import pdg.game.network.websocket.GameWebSocket;
 
 /**
  * Main menu screen that displays the title, connection button, and authenticated user information.
@@ -29,10 +37,13 @@ public class MainMenuScreen implements Screen {
   boolean isConnected = false;
   TextButton button;
   Label title, usernameLabel;
+  String username;
   Skin skin;
 
   HttpClient httpClient;
   AuthClient authClient;
+  GameWebSocket gameWebSocket;
+  boolean isConnecting = false;
 
   /**
    * Creates the main menu screen with background, title, and action button.
@@ -40,9 +51,10 @@ public class MainMenuScreen implements Screen {
    * @param game the main game instance for screen transitions
    * @param backgroundStage the stage containing the background that persists across screens
    */
-  public MainMenuScreen(final Main game, Stage backgroundStage) {
+  public MainMenuScreen(final Main game, Stage backgroundStage, GameWebSocket gameWebSocket) {
     this.game = game;
     this.backgroundStage = backgroundStage;
+    this.gameWebSocket = gameWebSocket;
 
     // Initialize HTTP and authentication clients
     httpClient = new HttpClient("http://localhost:8080"); // for local testing
@@ -72,9 +84,7 @@ public class MainMenuScreen implements Screen {
                         game.setScreen(MainMenuScreen.this);
                       }));
             } else {
-              // TODO: Transition to gameplay screen when implemented
-              // use a consumer callback like for connectionscreen to update isConnected, token
-              // could expire and we need to handle that
+              connectToMatch();
             }
           }
         });
@@ -159,9 +169,10 @@ public class MainMenuScreen implements Screen {
     authClient.getUsername(
         new ResponseListener() {
           @Override
-          public void success(String username) {
-            Gdx.app.log(TAG, "Retrieved username: " + username);
-            usernameLabel.setText("connected as " + username);
+          public void success(String _username) {
+            username = _username;
+            Gdx.app.log(TAG, "Retrieved username: " + _username);
+            usernameLabel.setText("connected as " + _username);
             usernameLabel.pack();
             usernameLabel.setPosition(
                 stage.getWidth() - usernameLabel.getWidth() - 20,
@@ -178,6 +189,59 @@ public class MainMenuScreen implements Screen {
             Gdx.app.error(TAG, "Network error while retrieving username: " + message);
           }
         });
+  }
+
+  private void connectToMatch() {
+    if (isConnecting) {
+      return;
+    }
+
+    String token = authClient.getToken();
+    if (token == null || token.isEmpty()) {
+      Gdx.app.error(TAG, "Cannot join a match without an authentication token");
+      return;
+    }
+
+    Gdx.app.log(TAG, "Attempting to connect to matchmaking with token: " + token);
+    isConnecting = true;
+    gameWebSocket.connect(
+        "http://localhost:8080",
+        token,
+        new GameListener() {
+          @Override
+          public void onConnected() {
+            Gdx.app.log(TAG, "Connected to matchmaking");
+            gameWebSocket.send(GameMessages.buildValidate(createPlacedTeam()));
+          }
+
+          @Override
+          public void onMessage(String message) {
+            Gdx.app.log(TAG, "Match message: " + message);
+          }
+
+          @Override
+          public void onDisconnected() {
+            isConnecting = false;
+            Gdx.app.log(TAG, "Disconnected from matchmaking");
+          }
+
+          @Override
+          public void onError(String message) {
+            isConnecting = false;
+            Gdx.app.error(TAG, message);
+          }
+        });
+  }
+
+  private TeamDTO createPlacedTeam() {
+    ArrayList<BlockDTO> blocks = new ArrayList<>();
+    blocks.add(new BlockDTO("block", 100, 10, true, 5, 1, 3));
+    blocks.add(new BlockDTO("block", 100, 10, true, 5, 2, 3));
+
+    ArrayList<RobotDTO> robots = new ArrayList<>();
+    robots.add(new RobotDTO("basic", 100, 10, 0));
+
+    return new TeamDTO(username, blocks, robots, new KingDTO("king", 6, 3, 100, 20));
   }
 
   @Override

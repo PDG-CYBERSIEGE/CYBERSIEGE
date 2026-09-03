@@ -1,6 +1,8 @@
 package pdg.game;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import pdg.game.network.websocket.GameWebSocket;
@@ -21,7 +23,7 @@ public class Main extends Game {
     Background background = new Background();
     Stage backgroundStage = new Stage(new FitViewport(1920, 1080));
     background.apply(backgroundStage);
-
-    setScreen(new MainMenuScreen(this, backgroundStage));
+    Gdx.app.setLogLevel(Application.LOG_DEBUG);
+    setScreen(new MainMenuScreen(this, backgroundStage, gameWebSocket));
   }
 }

@@ -1,0 +1,28 @@
+# Build artifacts
+frontend/build/
+frontend/.gradle/
+frontend/node_modules/
+server/build/
+server/.gradle/
+server/node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Git
+.git/
+.gitignore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# CI
+.github/
+
+# Docs
+README.md
+description/
+présentation/
