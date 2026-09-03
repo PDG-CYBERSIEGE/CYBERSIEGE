@@ -1,5 +1,6 @@
 package com.pdg.match;
 
+import com.pdg.user.UserRepository;
 import io.quarkus.security.Authenticated;
 import io.quarkus.websockets.next.*;
 import jakarta.inject.Inject;
@@ -37,7 +38,10 @@ public class MatchWebSocket {
   @OnOpen
   public void onOpen(WebSocketConnection connection) {
     Long playerId = Long.valueOf(jwt.getSubject());
-    PlayerConnection playerConnection = matchmakingService.findMatch(playerId, connection);
+    UserRepository userRepository = new UserRepository();
+    String playerName = userRepository.findById(playerId).username;
+    PlayerConnection playerConnection =
+        matchmakingService.findMatch(playerName, playerId, connection);
     connection.userData().put(PLAYER_CONNECTION, playerConnection);
   }
 

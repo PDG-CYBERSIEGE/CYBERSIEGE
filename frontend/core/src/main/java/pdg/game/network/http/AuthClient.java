@@ -56,6 +56,11 @@ public class AuthClient {
     httpClient.setToken(token);
   }
 
+  /** Returns the token used to authenticate network requests. */
+  public String getToken() {
+    return httpClient.getToken();
+  }
+
   /**
    * Retrieves the username of the currently authenticated user.
    *
