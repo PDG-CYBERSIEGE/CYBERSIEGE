@@ -1,4 +1,4 @@
-package pdg.game.network;
+package pdg.game.network.http;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
@@ -26,6 +26,11 @@ public class HttpClient {
    */
   public void setToken(String token) {
     this.token = token;
+  }
+
+  /** Returns the authentication token currently used by this client. */
+  public String getToken() {
+    return token;
   }
 
   /**

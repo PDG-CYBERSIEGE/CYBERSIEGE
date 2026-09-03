@@ -1,4 +1,4 @@
-package pdg.game.network;
+package pdg.game.network.http;
 
 /**
  * Provides the client-side authentication API.
@@ -54,6 +54,11 @@ public class AuthClient {
    */
   public void setToken(String token) {
     httpClient.setToken(token);
+  }
+
+  /** Returns the token used to authenticate network requests. */
+  public String getToken() {
+    return httpClient.getToken();
   }
 
   /**

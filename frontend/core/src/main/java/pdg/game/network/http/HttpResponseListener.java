@@ -1,4 +1,4 @@
-package pdg.game.network;
+package pdg.game.network.http;
 
 import com.badlogic.gdx.Net;
 

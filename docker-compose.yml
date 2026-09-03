@@ -20,9 +20,8 @@ services:
       - battle-network
 
 
-
   server:
-    image : ghcr.io/pdg-cybersiege/cybersiege:latest
+    image: ghcr.io/pdg-cybersiege/cybersiege:latest
     container_name: PDG_backend
     depends_on:
       postgres:

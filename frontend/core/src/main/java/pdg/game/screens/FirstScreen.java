@@ -19,6 +19,7 @@ import pdg.game.blocks.HeavyBlockSprite;
 import pdg.game.blocks.LightBlockSprite;
 import pdg.game.blocks.MediumBlockSprite;
 import pdg.game.scene.Background;
+import pdg.game.scene.Cannon;
 import pdg.game.ui.Frame;
 import pdg.game.ui.Score;
 
@@ -47,6 +48,8 @@ public class FirstScreen implements Screen {
 
   /** Rotating loading image displayed on the interface stage. */
   Image loading = new Image();
+
+  Cannon cannon;
 
   /** Creates the first screen for the supplied game instance. */
   public FirstScreen(final Main game) {
@@ -84,7 +87,7 @@ public class FirstScreen implements Screen {
     // =========================
 
     skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
-    Image t = new Image(skin.getDrawable("frame2"));
+
     // ui central avec boutons
     TextButton button1 = new TextButton("cancel", skin, "red");
     TextButton button2 = new TextButton("accept", skin, "green");
@@ -93,6 +96,7 @@ public class FirstScreen implements Screen {
           @Override
           public void clicked(InputEvent event, float x, float y) {
             background.change();
+            cannon.setLoadingStage(1);
           }
         });
     button1.setSize(100, 30);
@@ -146,6 +150,30 @@ public class FirstScreen implements Screen {
     loading.setPosition(stage.getWidth() - 300, stage.getHeight() - 600);
     loading.setOrigin(loading.getWidth() / 2f, loading.getHeight() / 2f);
     stage.addActor(loading);
+
+    cannon = new Cannon();
+    cannon.setPosition(0, 1);
+    cannon.setMirrored(false);
+    cannon.getLauncher().setRotation(100);
+    Gdx.app.log("CANNON", "Launcher center: " + cannon.getLauncherCenter());
+    Gdx.app.log(
+        "CANNON",
+        "relative center: " + cannon.getLauncher().getX() + ", " + cannon.getLauncher().getY());
+    Gdx.app.log("CANNON", "rotation: " + cannon.getLauncher().getRotation());
+    itemStage.addActor(cannon);
+    itemStage.addActor(cannon);
+
+    Cannon cannon2 = new Cannon();
+    cannon2.setPosition(25, 1);
+    cannon2.setMirrored(true);
+    cannon2.getLauncher().setRotation(100);
+    Gdx.app.log("CANNON2", "Launcher center: " + cannon2.getLauncherCenter());
+    Gdx.app.log(
+        "CANNON2",
+        "relative center: " + cannon2.getLauncher().getX() + ", " + cannon2.getLauncher().getY());
+    Gdx.app.log("CANNON2", "rotation: " + cannon2.getLauncher().getRotation());
+    Gdx.app.log("CANNON2", "size: " + cannon2.getWidth() + ", " + cannon2.getHeight());
+    itemStage.addActor(cannon2);
   }
 
   @Override
@@ -157,14 +185,16 @@ public class FirstScreen implements Screen {
     rotation += delta * 360;
     if (rotation >= 360) rotation -= 360; // 1 tour par seconde
     loading.setRotation(rotation);
-
+    cannon.animate(delta);
     // augmenter le score des joueurs toutes les secondes
-    if (timer >= 1f) {
+    if (timer >= 2f) {
       score.addScoreP1();
       score.addScoreP2();
-      background.change();
+      cannon.shoot();
+
       timer = 0;
     }
+
     ScreenUtils.clear(0, 0, 0, 1); // clear l'écran pour ne rien garder de la derniere frame
     if (isVisible) { // désactive ecran si fenetre pas assez grand, pas obliger de garder.$
       // affiche le niveau, puis l'ui par dessus.

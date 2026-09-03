@@ -12,6 +12,9 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import pdg.game.network.http.AuthClient;
+import pdg.game.network.http.HttpClient;
+import pdg.game.network.http.ResponseListener;
 
 public class AuthClientTest {
 

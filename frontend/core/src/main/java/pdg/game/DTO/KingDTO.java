@@ -1,3 +1,39 @@
 package pdg.game.DTO;
 
-public record KingDTO(String sprite, int x, int y, int health, int mass) {}
+/** Represents a king. */
+public class KingDTO {
+
+  private final String sprite;
+  private final int x;
+  private final int y;
+  private final int health;
+  private final int mass;
+
+  public KingDTO(String sprite, float x, float y, int health, int mass) {
+    this.sprite = sprite;
+    this.x = (int) x;
+    this.y = (int) y;
+    this.health = health;
+    this.mass = mass;
+  }
+
+  public String sprite() {
+    return sprite;
+  }
+
+  public int x() {
+    return x;
+  }
+
+  public int y() {
+    return y;
+  }
+
+  public int health() {
+    return health;
+  }
+
+  public int mass() {
+    return mass;
+  }
+}

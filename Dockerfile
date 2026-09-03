@@ -10,6 +10,9 @@ FROM eclipse-temurin:21-jdk AS final-build
 WORKDIR /server
 COPY server/ .
 COPY --from=client-build /frontend/html/build/dist/ src/main/resources/META-INF/resources/
+RUN find src -name "*.java" -exec sed -i 's/\r$//' {} +
+RUN sed -i 's/\r$//' gradlew
+RUN chmod +x gradlew
 RUN ./gradlew build -x test --no-daemon
 
 # ---- Stage 3 : image finale, runtime uniquement ----

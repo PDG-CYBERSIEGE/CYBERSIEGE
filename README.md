@@ -10,7 +10,7 @@ si vous avez ca alors vous pourrez vous connecter avec
 docker login ghcr.io
 ```
 
-une fois connecter avec votre username et votre clé vous pouvez
+une fois connecté avec votre username et votre clé vous pouvez
 
 ```cmd
 docker compose pull
@@ -32,6 +32,13 @@ npm start
      container_name: PDG_backend
 ```
 
+Dans frontend/core/src/main/java/pdg/game/screens/ConnectionScreen.java :
+```java
+  //httpClient = new HttpClient("http://10.190.132.71:8080"); // for local testing
+  httpClient = new HttpClient("http://labo-iot5.iict-heig-vd.ch:8080"); // for release
+
+```
+
 ## pour avoir la version sur votre pc 
 ```yml
   server:
@@ -39,4 +46,18 @@ npm start
       context: .
       dockerfile: Dockerfile
     container_name: PDG_backend
+```
+
+Dans frontend/core/src/main/java/pdg/game/screens/ConnectionScreen.java :
+```java
+  httpClient = new HttpClient("http://10.190.132.71:8080"); // for local testing
+  //httpClient = new HttpClient("http://labo-iot5.iict-heig-vd.ch:8080"); // for release
+
+```
+
+## crée clé pour envoi JWT
+a run dans server/src/main/resources avec un terminal git bash (openssl déja installé) ou autre si openssl installé
+```git bash
+openssl genrsa -out privateKey.pem 2048
+openssl rsa -in privateKey.pem -pubout -out publicKey.pem
 ```
