@@ -69,34 +69,20 @@
 					---
 
 					<!-- .slide: data-background-color="#1a1a2e" -->
-					# Contexte & Problématique
-
-					--
-
-					## Contexte
-
-					Projet réalisé dans le cadre de l'unité **Projet de groupe (PDG)** à la HEIG-VD.
-
-					- Réalisation en équipe d'une application de taille importante
-					- Mise en pratique des compétences acquises durant la formation
-					- Acquisition autonome de connaissances sur des sujets nouveaux
+					# Problématique
 
 					--
 
 					## Le problème
 
-					Les jeux de destruction de structures (type Angry Birds) demandent au joueur de :
+					Les autres jeux de destruction de structure (genre Angry Birds) :
+					- niveaux prédéfinis
+					- solo
+					- stratégie limitée
 
-					- lancer des projectiles sur une construction adverse
-					- choisir où tirer et exploiter la physique du jeu
+					**Créer sa propre structure et la confronter à celle d'un autre joueur ?**
 
-					**Mais** :
-
-					- niveaux **prédéfinis**
-					- jeu **solo**
-
-					Pas de possibilité de développer ses propres stratégies
-					et de les confronter à celles d'autres joueurs.
+					**PAS POSSIBLE !**
 
 					---
 
@@ -105,46 +91,36 @@
 
 					--
 
-					## Principe du jeu
+					## CYBERSIEGE
 
-					Jeu multijoueur en ligne **1 vs 1**, inspiré d'Angry Birds.
+					Jeux de destruction de structure **1 vs 1 en ligne**
 
-					- Partie composée de plusieurs **manches**
-					- Le premier joueur à remporter la majorité des manches gagne
-					- Chaque manche = 2 phases
+					Construire → Attaquer → Détruire
+
+					**Votre stratégie contre celle de l'adversaire**
+
+					**En plusieurs manches !**
 
 					--
 
 					## Phase 1 — Construction
 
-					- Obtention aléatoire d'un certain nombre de blocs
-					- Placement des blocs et du roi dans la zone constructible (drag & drop)
-					- Bouton pour tester l'intégrité de la structure
-					- Bouton pour valider la structure
-					- Validation finale de la construction côté **serveur**
-					- Passage à la bataille quand les deux structures sont validées
-					(ou après un délai maximum)
+					- Obtention des blocs
+					- Placement des blocs et du roi
+					- Test de la structure
+					- Validation côté serveur
+					- Passage à la bataille
 
 					--
 
 					## Phase 2 — Bataille
 
-					- Chaque joueur catapulte des robots (différents types) vers la base adverse
-					- Les robots sont ralentis/rebondissent selon le type de bloc touché
-					- Dégâts proportionnels au type et à la vitesse d'impact
-					- Un bloc sans vie restante est détruit, sinon simplement poussé
-					- Un robot disparaît sous un certain seuil de vitesse
-					- Délai entre deux tirs, dépendant du type de robot
-					- Le serveur valide chaque tir et fait autorité sur l'état du jeu
-					- **Victoire** : premier joueur à détruire le roi adverse
-
-					--
-
-					## Fin de partie
-
-					- Écran de victoire/défaite pour chaque joueur
-					- Options : relancer une partie ou retourner au menu
-					- En cas de déconnexion, le joueur restant gagne
+					- Choix du robot, de la puissance et de l'angle
+					- Tirs vers la structure adverse
+					- Physique et dégâts selon les collisions
+					- Destruction des blocs et du roi
+					- Validation des tirs côté serveur
+					- Victoire : roi adverse détruit
 
 					--
 
@@ -152,21 +128,6 @@
 
 					- Gestion de compte : email, username, mot de passe
 					- Matchmaking : file d'attente pour trouver un adversaire 1v1
-
-					--
-
-					## Exigences non-fonctionnelles clés
-
-					| Exigence | Cible |
-					|---|---|
-					| Joueurs simultanés | 32 |
-					| Rollback visibles / manche | ≤ 2 |
-					| Latence requêtes (p95) | < 200 ms |
-					| Fréquence d'images | ≥ 30 FPS |
-					| Temps de chargement | < 5 s |
-					| Mots de passe | hashés (standard industrie) |
-					| Sécurité | protection injections SQL, HTTP → HTTPS |
-					| Résilience serveur | redémarrage auto en cas de crash |
 
 					---
 
@@ -179,57 +140,26 @@
 
 					- Approche **agile**
 					- Sprints de **3 jours**
-					- Backlog de features issues des user stories / personas
-					- Sélection des tâches par priorité en début de sprint
-					- Répartition des tâches entre les membres
-
-					--
-
-					## Suivi & organisation
-
-					- Tableau **Kanban** (Backlog, Ready, In progress, In review, Done)
-					- Suivi via les **issues** et **pull requests** GitHub
-					- Réunion de fin de sprint : bilan, blocages, suite
+					- Kanban : backlog → tâches → suivi
+					- User stories pour définir les features du backlog
+					- GitHub + Pull Requests
 
 					--
 
 					## Gestion du code source
 
-					- **Git Flow** : branche `dev` (intégration continue) / branche `main` (versions validées)
-					- Une branche dédiée par fonctionnalité ou correction
-					- Intégration uniquement via **Pull Request** + revue par un pair
-					- Aucune modification directe sur `dev` / `main`
-					- Objectif : au moins **1 commit par jour** et par membre
-
-					---
-
-					<!-- .slide: data-background-color="#1a1a2e" -->
-					# Mockup & Landing page
-
-					--
-
-					## Mockup
-
-					<img src="image/mockup_menu.jpg" class="full-slide-img">
-
-					--
-
-					<img src="image/mockup_chargement.jpg" class="full-slide-img">
-
-					--
-
-					<img src="image/mockup_partie.jpg" class="full-slide-img">
-
-					--
-
-					## Landing page
-
-					[Landing page](https://pdg-cybersiege.github.io/CYBERSIEGE/)
+					- Git Flow
+						- dev → intégration
+						- main → versions validées
+					- Une branche par feature/correction
+					- Pull Request + revue de code
+					- Aucun push direct sur dev / main
+					- ≥ 1 commit/jour/membre
 
 					---
 
 					<!-- .slide: data-background-color="#0f3460" -->
-					# Pipeline DevOps
+					# DevOps
 
 					--
 
@@ -254,37 +184,40 @@
 
 					## Stack technique (Java)
 
-					| Composant | Choix | Raison |
-					|---|---|---|
-					| Frontend / rendu jeu | **LibGDX** | game engine complet, gameplay loop + physique, communauté large, Java |
-					| Backend | **Quarkus** | expérience préalable, répond aux besoins |
-					| Base de données | **PostgreSQL** | maîtrisé par l'équipe |
-					| ORM | **Hibernate** | déjà utilisé, évite impedance mismatch |
-					| Versioning | **GitHub** | simplicité |
-					| Pipeline CI/CD | **Github actions** | expérience au préalable |
-					| Tests | **JUnit** | tests de la logique applicative |
-					| Coverage | **Jacoco** | qualité / couverture du code |
-					| Conteneurisation | **Docker / Docker Compose** | environnement reproductible |
+					| Composant | Choix |
+					|---|---|
+					| Frontend / rendu jeu | **LibGDX** |
+					| Backend | **Quarkus** |
+					| Base de données | **PostgreSQL** |
+					| ORM | **Hibernate** |
+					| Versioning | **GitHub** |
+					| Pipeline CI/CD | **Github actions** |
+					| Tests | **JUnit** |
+					| Coverage | **Jacoco** |
+					| Conteneurisation | **Docker / Docker Compose** |
 
 					--
 
 					## Communication client-serveur
 
-					- Requêtes **HTTP** pour les opérations CRUD
-					- **WebSocket** pour le temps réel (phase de bataille, synchronisation)
+					- **HTTP** pour les opérations CRUD
+					- **WebSocket** pour le jeu
 					- Le serveur reste l'unique source de vérité et renvoie l'état
 					de ses calculs pour corriger le client si nécessaire
 
 					--
 
-					## Étapes du pipeline (proposition)
+					## Pipeline DevOps
 
-					1. Push / Pull Request sur `dev` ou `main`
-					2. Build du backend (Quarkus) et du frontend (LibGDX) a l'aide de gradle
-					3. vérification formatage/documentation
-					3. Exécution des tests unitaires (JUnit)
-					4. Analyse de couverture (Jacoco)
-					5. Build des images Docker et enregistrement sur le repository
+					| Étape | Outil |
+					|---|---|
+					| Build | Gradle |
+					| Format | Spotless |
+					| Tests | JUnit |
+					| Coverage | JaCoCo |
+					| Documentation | Javadoc |
+					| Image | Docker |
+					| Automatisation | GitHub Actions |
 
 					--
 
