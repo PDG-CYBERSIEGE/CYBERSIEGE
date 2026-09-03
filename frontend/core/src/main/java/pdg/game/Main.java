@@ -51,8 +51,7 @@ public class Main extends Game {
     TeamDTO ennemyTeam = new TeamDTO("player1", blocks, robots, ennemyKing);
     TeamDTO ownTeam = new TeamDTO("sky", blocks, robots, onwKing);
 
-    Screen screen1 = new FightScreen(this, "sky");
-    screen1.
+    Screen screen1 = new FightScreen(this, "sky", "ennemy");
 
     setScreen(screen1);
 

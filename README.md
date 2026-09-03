@@ -50,8 +50,7 @@ Dans frontend/core/src/main/java/pdg/game/screens/ConnectionScreen.java :
 
 Dans frontend/core/src/main/java/pdg/game/screens/ConnectionScreen.java :
 ```java
-  httpClient = new HttpClient("http://10.190.132.71:8080"); // for local testing
-  //httpClient = new HttpClient("http://labo-iot5.iict-heig-vd.ch:8080"); // for release
+    httpClient = new HttpClient("http://localhost:8080"); // for local testing
 
 ```
 
