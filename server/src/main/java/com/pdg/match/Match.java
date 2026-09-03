@@ -424,7 +424,7 @@ public class Match {
     int blocksPerType = 5;
     int blockHealth = 100;
     int blockMass = 10;
-    int blockLength = 50;
+    int blockLength = 3;
     // should be base on DB
 
     for (String type : blockTypes) {
