@@ -92,6 +92,13 @@ public class FightScreen implements Screen {
   private static final float PHYSICS_TIMESTEP = 1f / 60f; // 60 Hz, standard Box2D
   private float physicsAccumulator = 0f;
 
+
+  // fin de partie
+  private TextButton play_again;
+  private TextButton main_menu;
+  private Label endGameLabel;
+  private Frame frame;
+
   private enum GamePhase {
     BUILD,
     COMBAT
@@ -106,6 +113,8 @@ public class FightScreen implements Screen {
   public FightScreen(Main game, TeamDTO onwTeamDTO, TeamDTO ennemyTeamDTO) {
     this.game = game;
 
+    
+    
     // initiating world
     world = new World(new Vector2(0, -9.81f), true);
     world.setContactListener(new GameContactListener());
@@ -213,6 +222,8 @@ public class FightScreen implements Screen {
 
     // init phase 1
     initialisePhase1();
+
+    
   }
 
   @Override
@@ -324,7 +335,64 @@ public class FightScreen implements Screen {
   }
 
   private void checkEnd() {
-    if (gameEnded) {}
+    if (gameEnded) {
+      
+      if( frame != null) return;
+
+      play_again = new TextButton("play again", skin, "yellow");
+      play_again.setSize(150, 75);
+      play_again.addListener(
+          new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
+              if(play_again.isDisabled()) return;
+
+              play_again.setDisabled(true);
+              main_menu.setDisabled(true);
+
+              game.getMainMenuScreen().LoadOnDisconnect(false);
+              game.getMainMenuScreen().reconnectOnDisconnect(true);
+
+              game.getMainMenuScreen().getGameWebSocket().disconnect();
+
+              endGameLabel.setText("Searching...");
+            }
+          });
+
+
+      main_menu = new TextButton("main menu", skin, "green");
+      main_menu.setSize(150, 75);
+      main_menu.addListener(
+          new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
+              if(main_menu.isDisabled()) return;
+
+              play_again.setDisabled(true);
+              main_menu.setDisabled(true);
+              game.getMainMenuScreen().getGameWebSocket().disconnect();
+              game.setScreen(game.getMainMenuScreen());
+            }
+          });
+
+      endGameLabel = new Label("you won!", skin, "title");
+
+      frame = new Frame(600, 600, "Connection", play_again, main_menu);
+      frame.setPosition(
+      stage.getWidth() / 2f - frame.getWidth() / 2f,
+      stage.getHeight() / 2f - frame.getHeight() / 2f);
+
+      frame.getContent().add(endGameLabel).padBottom(100).center().fillX().row();
+
+      stage.addActor(frame);
+      frame.setPosition(
+          stage.getWidth() / 2f - frame.getWidth() / 2f,
+          stage.getHeight() / 2f - frame.getHeight() / 2f);
+
+      return;
+    }
     if (ownTeam.king.isDead()) {
       score.addScoreP2();
       initialisePhase1();

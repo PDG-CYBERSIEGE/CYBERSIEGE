@@ -64,6 +64,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	}
 	title: {
 		font: CyberpunkCraftpixPixel_title
+		fontColor: white
 	}
 	big_title: {
 		font: CyberpunkCraftpixPixel_big_title

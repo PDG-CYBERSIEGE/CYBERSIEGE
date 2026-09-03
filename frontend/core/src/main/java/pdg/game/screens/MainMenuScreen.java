@@ -45,6 +45,8 @@ public class MainMenuScreen implements Screen {
   AuthClient authClient;
   GameWebSocket gameWebSocket;
   boolean isConnecting = false;
+  boolean loadOnDisconnect = true;
+  boolean reconnectOnDisconnect = true;
 
   FightScreen fightScreen;
   ConnectionScreen connectionScreen;
@@ -204,12 +206,12 @@ public class MainMenuScreen implements Screen {
         });
   }
 
-  private void connectToMatch() {
+  public void connectToMatch() {
     if (isConnecting || button.isDisabled()) {
         return;
     }
 
-    button.getLabel().setText("Connecting...");
+    button.getLabel().setText("searching...");
     button.setDisabled(true);
 
     String token = authClient.getToken();
@@ -220,6 +222,8 @@ public class MainMenuScreen implements Screen {
 
     Gdx.app.log(TAG, "Attempting to connect to matchmaking with token: " + token);
     isConnecting = true;
+    loadOnDisconnect = true;
+    reconnectOnDisconnect = false;
     gameWebSocket.connect(
         "http://localhost:8080",
         token,
@@ -236,9 +240,9 @@ public class MainMenuScreen implements Screen {
               case "START":
                 if (isConnecting) {
                   Start start = GameMessages.parseStart(message);
-                  if (fightScreen == null) {
-                    fightScreen = new FightScreen(game, username, start.opponent);
-                  }
+                  
+                  fightScreen = new FightScreen(game, username, start.opponent);
+        
                   game.setScreen(fightScreen);
                 }
                 break;
@@ -288,10 +292,19 @@ public class MainMenuScreen implements Screen {
           @Override
           public void onDisconnected() {
             isConnecting = false;
-            isConnected = false;
-            button.getLabel().setText("Connect");
-            button.setStyle(skin.get("red_large", TextButton.TextButtonStyle.class));
+            button.getLabel().setText("Play");
+            button.setStyle(skin.get("green_large", TextButton.TextButtonStyle.class));
             button.setDisabled(false);
+
+            if (loadOnDisconnect){
+              game.setScreen(game.getMainMenuScreen());
+            }
+
+            if (reconnectOnDisconnect) {
+              Gdx.app.log(TAG, "Disconnected from matchmaking, will attempt to reconnect...");
+              connectToMatch();
+            }
+            
           }
 
           @Override
@@ -302,6 +315,7 @@ public class MainMenuScreen implements Screen {
             button.getLabel().setText("Connect");
             button.setStyle(skin.get("red_large", TextButton.TextButtonStyle.class));
             button.setDisabled(false);
+            game.setScreen(game.getMainMenuScreen());
           }
         });
   }
@@ -317,6 +331,10 @@ public class MainMenuScreen implements Screen {
     return new TeamDTO("player1", blocks, robots, new KingDTO("kings/geraud.png", 6, 3, 100, 20));
   }
 
+  public GameWebSocket getGameWebSocket() {
+    return gameWebSocket;
+  }
+
   @Override
   public void dispose() {
     if (stage != null) {
@@ -328,5 +346,12 @@ public class MainMenuScreen implements Screen {
     if (backgroundStage != null) {
       backgroundStage.dispose();
     }
+  }
+
+  public void LoadOnDisconnect(boolean load) {
+    loadOnDisconnect = load;
+  }
+  public void reconnectOnDisconnect(boolean reconnect) {
+    reconnectOnDisconnect = reconnect;
   }
 }
