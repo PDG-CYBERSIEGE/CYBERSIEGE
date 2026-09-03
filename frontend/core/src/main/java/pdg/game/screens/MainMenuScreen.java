@@ -45,16 +45,23 @@ public class MainMenuScreen implements Screen {
   GameWebSocket gameWebSocket;
   boolean isConnecting = false;
 
+  FightScreen fightScreen;
+
   /**
    * Creates the main menu screen with background, title, and action button.
    *
    * @param game the main game instance for screen transitions
    * @param backgroundStage the stage containing the background that persists across screens
    */
-  public MainMenuScreen(final Main game, Stage backgroundStage, GameWebSocket gameWebSocket) {
+  public MainMenuScreen(
+      final Main game,
+      Stage backgroundStage,
+      GameWebSocket gameWebSocket,
+      FightScreen fightScreen) {
     this.game = game;
     this.backgroundStage = backgroundStage;
     this.gameWebSocket = gameWebSocket;
+    this.fightScreen = fightScreen;
 
     // Initialize HTTP and authentication clients
     httpClient = new HttpClient("http://localhost:8080"); // for local testing
@@ -211,12 +218,52 @@ public class MainMenuScreen implements Screen {
           @Override
           public void onConnected() {
             Gdx.app.log(TAG, "Connected to matchmaking");
-            gameWebSocket.send(GameMessages.buildValidate(createPlacedTeam()));
           }
 
           @Override
           public void onMessage(String message) {
             Gdx.app.log(TAG, "Match message: " + message);
+            switch (GameMessages.type(message)) {
+              case "START":
+                GameMessages.Start start = GameMessages.parseStart(message);
+                Gdx.app.log(TAG, "Match started: " + start.matchId + " vs " + start.opponent);
+                fightScreen.receiveStart(start);
+                break;
+
+              case "AVAILABLE_COMPONENTS":
+                GameMessages.AvailableComponents availableComponents =
+                    GameMessages.parseAvailableComponents(message);
+                fightScreen.receiveAvailableComponent(availableComponents);
+                break;
+
+              case "BUILD_VALIDATE":
+                GameMessages.BuildValidate buildValidate = GameMessages.parseBuildValidate(message);
+                Gdx.app.log(TAG, "Build validation result: " + buildValidate.valid);
+                fightScreen.receiveBuildValidate(buildValidate);
+                break;
+
+              case "TEAM":
+                GameMessages.Team team = GameMessages.parseTeam(message);
+                Gdx.app.log(TAG, "Team received: " + team.team.name());
+                fightScreen.receiveTeamState(team);
+                break;
+
+              case "FIRE":
+                GameMessages.Fire fire = GameMessages.parseFire(message);
+                Gdx.app.log(
+                    TAG,
+                    "Enemy fired: power="
+                        + fire.power
+                        + ", angle="
+                        + fire.angle
+                        + ", robot="
+                        + fire.robot);
+                fightScreen.receiveEnemyFire(fire);
+
+              default:
+                Gdx.app.log(TAG, "Unhandled match message: " + GameMessages.type(message));
+                break;
+            }
           }
 
           @Override
