@@ -121,27 +121,37 @@ public final class GameMessages {
     return result;
   }
 
+  /**
+   * Parses a build validation result message.
+   *
+   * @param message JSON message
+   * @return parsed build validation result
+   */
+  public static BuildValidate parseBuildValidate(String message) {
+    JsonValue root = READER.parse(message);
+
+    BuildValidate result = new BuildValidate();
+    result.type = root.getString("type", "");
+    result.valid = root.getBoolean("valid", false);
+
+    return result;
+  }
+
   // Outgoing ////////////////////////////////////////////////////
 
   /**
    * Builds a structure validation message.
    *
-   * @param blocks blocks composing the structure
-   * @param king king belonging to the structure
+   * @param team team to validate
    * @return JSON message
    */
-  public static String buildValidate(BlockDTO[] blocks, KingDTO king) {
+  public static String buildValidate(TeamDTO team) {
     StringBuilder sb = new StringBuilder();
-    sb.append("{\"type\":\"BUILD_VALIDATE\",\"blocks\":[");
-    for (int i = 0; i < blocks.length; i++) {
-      if (i > 0) {
-        sb.append(',');
-      }
-      appendBlock(sb, blocks[i]);
-    }
-    sb.append("],\"king\":");
-    appendKing(sb, king);
+
+    sb.append("{\"type\":\"BUILD_VALIDATE\",\"team\":");
+    appendTeam(sb, team);
     sb.append('}');
+
     return sb.toString();
   }
 
@@ -227,6 +237,12 @@ public final class GameMessages {
   public static class Team {
     public String type;
     public TeamDTO team;
+  }
+
+  /** Represents a build validation result received from the server. */
+  public static class BuildValidate {
+    public String type;
+    public boolean valid;
   }
 
   // Reads helpers //////////////////////////////////////////////////////

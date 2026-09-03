@@ -6,6 +6,9 @@ import com.pdg.game.DTO.BlockDTO;
 import com.pdg.game.DTO.KingDTO;
 import com.pdg.game.DTO.RobotDTO;
 import com.pdg.game.DTO.TeamDTO;
+import com.pdg.game.Entity.Robot;
+
+import java.util.ArrayList;
 
 /** Utility class for creating and parsing game WebSocket messages. */
 public final class GameMessages {
@@ -78,7 +81,7 @@ public final class GameMessages {
   public record Fire(String type, int power, float angle, int robot) {}
 
   /** Represents a build validation action. */
-  public record BuildValidate(String type, BlockDTO[] blocks, KingDTO king) {}
+  public record BuildValidate(String type, TeamDTO team) {}
 
   /** Represents a team message. */
   public record Team(String type, TeamDTO team) {}
@@ -104,7 +107,7 @@ public final class GameMessages {
    * @param robots available robots
    * @return JSON message
    */
-  public static String availableComponents(BlockDTO[] blocks, KingDTO king, RobotDTO[] robots) {
+  public static String availableComponents(ArrayList<BlockDTO> blocks, KingDTO king, ArrayList<RobotDTO> robots) {
     return json(new AvailableComponentsMessage("AVAILABLE_COMPONENTS", blocks, king, robots));
   }
 
@@ -125,7 +128,7 @@ public final class GameMessages {
    * @param king opponent's king
    * @return JSON message
    */
-  public static String opponentStructure(BlockDTO[] blocks, KingDTO king) {
+  public static String opponentStructure(ArrayList<BlockDTO> blocks, KingDTO king) {
     return json(new OpponentStructureMessage("OPPONENT_STRUCTURE", blocks, king));
   }
 
@@ -166,16 +169,28 @@ public final class GameMessages {
     return json(new TeamMessage("TEAM", team));
   }
 
+  /**
+   * Creates a build validation result message.
+   *
+   * @param valid whether the build is valid
+   * @return JSON message
+   */
+  public static String buildValidate(boolean valid) {
+    return json(new BuildValidateResultMessage("BUILD_VALIDATE", valid));
+  }
+
   private record StartMessage(String type, String matchId, String opponent) {}
 
-  private record AvailableComponentsMessage(
-      String type, BlockDTO[] blocks, KingDTO king, RobotDTO[] robots) {}
+  private record AvailableComponentsMessage(String type, ArrayList<BlockDTO> blocks, KingDTO king, ArrayList<RobotDTO> robots) {}
 
   private record TimerMessage(String type, int timeRemaining) {}
 
-  private record OpponentStructureMessage(String type, BlockDTO[] blocks, KingDTO king) {}
+  private record OpponentStructureMessage(String type, ArrayList<BlockDTO> blocks, KingDTO king) {}
 
   private record ResultMessage(String type) {}
 
   private record TeamMessage(String type, TeamDTO team) {}
+
+  private record BuildValidateResultMessage(String type, boolean valid) {}
+
 }

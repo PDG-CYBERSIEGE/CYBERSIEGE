@@ -4,19 +4,27 @@ import com.pdg.game.DTO.BlockDTO;
 import com.pdg.game.DTO.KingDTO;
 import com.pdg.game.DTO.RobotDTO;
 import com.pdg.game.DTO.TeamDTO;
+import com.pdg.game.NewGameState;
+
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Represents a match between two players.
  *
- * <p>A match can contain up to two {@link PlayerConnection} instances. When the second player
- * joins, a unique match identifier is generated and sent to both players.
+ * <p>The server is authoritative for the game state of the match.
  */
 public class Match {
 
   private PlayerConnection player1;
   private PlayerConnection player2;
   private long matchId = 0;
+
+  private NewGameState gameState;
+  private TeamDTO team1;
+  private TeamDTO team2;
+  private boolean player1BuildValidated;
+  private boolean player2BuildValidated;
 
   /** Global counter used to generate unique match identifiers. */
   public static AtomicLong nextMatchId = new AtomicLong(1);
@@ -29,25 +37,43 @@ public class Match {
    *
    * @param player the player connection to add to the match
    */
-  public void addPlayer(PlayerConnection player) {
+  public synchronized void addPlayer(PlayerConnection player) {
     if (player1 == null) {
       player1 = player;
-    } else {
+    } else if (player2 == null) {
       player2 = player;
       matchId = nextMatchId.getAndIncrement();
       sendStart(player1, String.valueOf(matchId), String.valueOf(player2.playerId()));
       sendStart(player2, String.valueOf(matchId), String.valueOf(player1.playerId()));
+    } else {
+      player.sendToPlayer(GameMessages.invalid());
     }
   }
 
   /**
    * Removes a player from the match.
    *
-   * <p>TODO
+   * <p>If one player disconnects, the remaining player wins the match.
    *
    * @param playerConnection the player connection to remove
    */
-  void removePlayer(PlayerConnection playerConnection) {}
+  public synchronized void removePlayer(PlayerConnection playerConnection) {
+    if (playerConnection == player1) {
+      player1 = null;
+      if (player2 != null) {
+        sendWinner(player2);
+      }
+      disposeGame();
+      return;
+    }
+    if (playerConnection == player2) {
+      player2 = null;
+      if (player1 != null) {
+        sendWinner(player1);
+      }
+      disposeGame();
+    }
+  }
 
   /**
    * Processes an incoming game message.
@@ -55,33 +81,251 @@ public class Match {
    * @param player player who sent the message
    * @param msg received message
    */
-  void receiveMsg(PlayerConnection player, String msg) {
+  public synchronized void receiveMsg(PlayerConnection player, String msg) {
 
     if (msg.equals("Hello !")) {
       player.sendToPlayer("Hello Back !");
+      return;
     }
 
     switch (GameMessages.type(msg)) {
       case "BUILD_VALIDATE":
-        // todo
+        GameMessages.BuildValidate buildValidate = GameMessages.parseBuildValidate(msg);
+        handleBuildValidate(player, buildValidate);
+
+        System.out.println("[MATCH] Build received: "+ (buildValidate != null && buildValidate.team() != null));
+
         break;
 
       case "FIRE":
-        // todo
-        break;
-
-      case "VERIFY_STATE":
-        // todo
-        break;
-
-      case "TEAM":
-        // todo
+        GameMessages.Fire fire = GameMessages.parseFire(msg);
+        handleFire(player, fire);
         break;
 
       default:
         player.sendToPlayer(GameMessages.invalid());
         break;
     }
+  }
+
+  /**
+   * Validates and stores the player's structure.
+   *
+   * <p>The structure is only stored as the authoritative state if it passes
+   * the server-side validation.
+   *
+   * @param player player who sent the structure
+   * @param buildValidate structure validation request
+   */
+  private void handleBuildValidate(PlayerConnection player, GameMessages.BuildValidate buildValidate) {
+
+    if (buildValidate == null) {
+      player.sendToPlayer(GameMessages.invalid());
+      return;
+    }
+
+    TeamDTO team = buildValidate.team();
+
+    if (team == null) {
+      player.sendToPlayer(GameMessages.invalid());
+      return;
+    }
+
+    // The player must belong to this match.
+    if (player == player1) {
+
+      // TODO: validate structure
+      // For now, we consider every structure valid.
+      boolean valid = true;
+
+      if (!valid) {
+        player.sendToPlayer(GameMessages.invalid());
+        return;
+      }
+
+      // Store the validated structure as the authoritative server state.
+      team1 = team;
+      player1BuildValidated = true;
+
+    } else if (player == player2) {
+
+      // TODO: validate structure
+      // For now, we consider every structure valid.
+      boolean valid = true;
+
+      if (!valid) {
+        player.sendToPlayer(GameMessages.buildValidate(false));
+        return;
+      }
+
+      // Store the validated structure as the authoritative server state.
+      team2 = team;
+      player2BuildValidated = true;
+
+    } else {
+      player.sendToPlayer(GameMessages.invalid());
+      return;
+    }
+
+    // Tell the client that the structure was accepted.
+    player.sendToPlayer(GameMessages.buildValidate(true));
+
+    // We cannot start the battle until both structures have been validated.
+    if (!player1BuildValidated || !player2BuildValidated) {
+      return;
+    }
+
+    // Both structures are valid.
+    // Simulate gravity so that the structures reach their final positions.
+    simulateBuild();
+  }
+
+  /**
+   * Simulates both structures until they stop moving.
+   *
+   * <p>The resulting state becomes the authoritative state of the match.
+   */
+  private void simulateBuild() {
+
+    if (gameState == null) {
+      gameState = new NewGameState();
+    }
+
+    // Give the first structure to the simulation.
+    gameState.simulateGravity(team1, 1);
+
+    // Give the second structure to the simulation.
+    // The simulation starts once both structures are available.
+    TeamDTO[] result = gameState.simulateGravity(team2, 2);
+
+    if (result == null) {
+      return;
+    }
+
+    // Save the stabilized state.
+    team1 = result[0];
+    team2 = result[1];
+
+    // Send the authoritative state to both players.
+    sendTeam(player1, team1);
+    sendTeam(player2, team2);
+  }
+
+  /**
+   * Validates and simulates a robot throw.
+   *
+   * <p>The server performs the complete physical simulation until all movement
+   * has stopped, then sends the resulting authoritative state to both players.
+   *
+   * @param player player who fired
+   * @param fire fire request
+   */
+  private void handleFire(PlayerConnection player, GameMessages.Fire fire) {
+
+    if (fire == null) {
+      player.sendToPlayer(GameMessages.invalid());
+      return;
+    }
+
+    if (gameState == null || team1 == null || team2 == null) {
+      player.sendToPlayer(GameMessages.invalid());
+      return;
+    }
+
+    int playerIndex;
+
+    if (player == player1) {
+      playerIndex = 1;
+    } else if (player == player2) {
+      playerIndex = 2;
+    } else {
+      player.sendToPlayer(GameMessages.invalid());
+      return;
+    }
+
+    float power = fire.power();
+    float angle = fire.angle();
+    int robotIndex = fire.robot();
+
+    // TODO: validate  shot
+
+    boolean valid = true;
+
+    if (!valid) {
+      player.sendToPlayer(GameMessages.invalid());
+      return;
+    }
+
+    try {
+
+      // Run the complete simulation until nothing is moving anymore.
+      TeamDTO enemyTeam =
+              gameState.simulateThrow(
+                      power,
+                      angle,
+                      robotIndex,
+                      playerIndex);
+
+      if (enemyTeam == null) {
+        player.sendToPlayer(GameMessages.invalid());
+        return;
+      }
+
+      // The current implementation of simulateThrow() only returns the
+      // enemy team. The complete updated state will need to be exposed
+      // by NewGameState as well.
+      if (playerIndex == 1) {
+        team2 = enemyTeam;
+      } else {
+        team1 = enemyTeam;
+      }
+
+    } catch (RuntimeException e) {
+      player.sendToPlayer(GameMessages.invalid());
+      return;
+    }
+
+    // The simulation is finished.
+    // Send the authoritative final state to both players.
+    sendTeam(player1, team1);
+    sendTeam(player2, team2);
+
+    checkGameOver();
+  }
+
+  /**
+   * Checks whether the game has ended.
+   */
+  private void checkGameOver() {
+
+    if (team1 == null || team2 == null) {
+      return;
+    }
+
+    boolean team1KingDead = team1.king().health() <= 0;
+    boolean team2KingDead = team2.king().health() <= 0;
+
+    if (team2KingDead) {
+      sendWinner(player1);
+      sendLoser(player2);
+      return;
+    }
+
+    if (team1KingDead) {
+      sendWinner(player2);
+      sendLoser(player1);
+    }
+  }
+
+  /**
+   * Clears the game state.
+   */
+  private void disposeGame() {
+    gameState = null;
+    team1 = null;
+    team2 = null;
+    player1BuildValidated = false;
+    player2BuildValidated = false;
   }
 
   /**
@@ -103,8 +347,7 @@ public class Match {
    * @param king player's king
    * @param robots available robots
    */
-  public void sendAvailableComponents(
-      PlayerConnection player, BlockDTO[] blocks, KingDTO king, RobotDTO[] robots) {
+  public void sendAvailableComponents(PlayerConnection player, ArrayList<BlockDTO> blocks, KingDTO king, ArrayList<RobotDTO>robots) {
     player.sendToPlayer(GameMessages.availableComponents(blocks, king, robots));
   }
 
@@ -125,7 +368,7 @@ public class Match {
    * @param blocks opponent structure blocks
    * @param king opponent's king
    */
-  public void sendOpponentStructure(PlayerConnection player, BlockDTO[] blocks, KingDTO king) {
+  public void sendOpponentStructure(PlayerConnection player, ArrayList<BlockDTO> blocks, KingDTO king) {
     player.sendToPlayer(GameMessages.opponentStructure(blocks, king));
   }
 
