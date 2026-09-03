@@ -214,7 +214,6 @@ public class FightScreen implements Screen {
     lightCountLabel.setPosition(50, 470);
     stage.addActor(lightCountLabel);
 
-
     verifyButton.setPosition(500, 370);
     verifyButton.addListener(
         new ClickListener() {
@@ -475,8 +474,8 @@ public class FightScreen implements Screen {
     multiplexer.addProcessor(ownTeam.king.getInputProcessor());
     Gdx.input.setInputProcessor(multiplexer);
 
-    gravityButton = new GravityButton("OFF", skin, ownTeam);
     // bouton pour la première phase
+    gravityButton = new GravityButton("OFF", skin, ownTeam);
     gravityButton.setPosition(500, 270);
     stage.addActor(gravityButton);
 
