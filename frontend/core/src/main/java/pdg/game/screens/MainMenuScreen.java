@@ -283,6 +283,9 @@ public class MainMenuScreen implements Screen {
               case "WINNER":
                 fightScreen.receiveWin();
                 break;
+              
+              case "LOSER":
+                fightScreen.receiveLost();
               default:
                 Gdx.app.log(TAG, "Unhandled match message: " + GameMessages.type(message));
                 break;
