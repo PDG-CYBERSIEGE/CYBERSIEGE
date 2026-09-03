@@ -467,6 +467,8 @@ public class FightScreen implements Screen {
   }
 
   private void initialisePhase1() {
+    Gdx.app.log("Screen", "debut initiate");
+
     InputMultiplexer multiplexer = new InputMultiplexer();
     multiplexer.addProcessor(stage);
     multiplexer.addProcessor(itemStage);
@@ -487,6 +489,8 @@ public class FightScreen implements Screen {
     applyPhaseVisibility();
     ownTeam.restoreHealth();
     ennemyTeam.restoreHealth();
+    Gdx.app.log("Screen", "fin initiate");
+
   }
 
   private void transitionToPhase2() {
@@ -560,8 +564,9 @@ public class FightScreen implements Screen {
         stage.addActor(btn);
         this.robotsBtn.add(btn);
       }
-
+      Gdx.app.log("Screen", "fin initiate");
       ennemyTeam = new Team(ennemyUser, game, availableComponents, world, itemStage, ENNEMYCANONSPAWN, ARENA_WIDTH);
+
     } else {
       currentPhase = GamePhase.BUILD;
       ownTeam.resetFromAvailableComponents(availableComponents);
