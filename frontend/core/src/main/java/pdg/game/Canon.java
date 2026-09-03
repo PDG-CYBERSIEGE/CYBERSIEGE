@@ -247,7 +247,7 @@ public class Canon {
   }
 
   public void sendRobot(Robot robot, float power, float angle) {
-    this.angle = angle;
+    this.angle = 180f - angle;
     this.power = power;
     loadedRobot = robot;
     fire();
