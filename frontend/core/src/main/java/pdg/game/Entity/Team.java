@@ -27,6 +27,8 @@ public class Team {
   float initialY = 80;
   float offset = 50;
 
+  private float arenaWidth;
+
   private static final float RECONCILIATION_THRESHOLD = 0.5f; // en mètres, à ajuster selon la tolérance voulue
 
 
@@ -42,11 +44,12 @@ public class Team {
   private Stage itemStage;
   private boolean receivedState;
 
-  public Team(Main game, GameMessages.AvailableComponents availableComponents, World world, Stage itemStage, Vector2 canonPos) {
+  public Team(String user, Main game, GameMessages.AvailableComponents availableComponents, World world, Stage itemStage, Vector2 canonPos, float arenaWidth) {
     canon = new Canon(game, world, itemStage, canonPos, new Texture("launcher/launcher.png"));
     this.world = world;
     this.itemStage = itemStage;
     this.receivedState = false;
+    this.arenaWidth = arenaWidth;
     createKing(availableComponents.king);
     createBlocks(availableComponents.blocks);
     createRobot(availableComponents.robots);
@@ -247,26 +250,28 @@ public class Team {
     receivedState = true;
   }
 
-  public void setupToDate(TeamDTO teamDTO){
+  public void setupToDate(TeamDTO teamDTO, boolean ennemy){
 
     for (BlockDTO blockDTO : teamDTO.blocks()){
       for (Block b : tower) {
         if (b.getUUID() == blockDTO.uuid()){
-          b.body.setTransform(new Vector2(blockDTO.x(), blockDTO.y()), blockDTO.angle());
+          Vector2 pos = resolvePosition(blockDTO.x(), blockDTO.y(), ennemy);
+          b.body.setTransform(pos, blockDTO.angle());
           b.updateSprite();
         }
       }
     }
-    king.body.setTransform(new Vector2(teamDTO.king().x(), teamDTO.king().y()), 0);
+    Vector2 kingPos = resolvePosition(teamDTO.king().x(), teamDTO.king().y(), ennemy);
+    king.body.setTransform(kingPos, 0);
 
     received();
   }
 
-  public void checkchanges(TeamDTO teamDTO) {
+  public void checkchanges(TeamDTO teamDTO, boolean ennemy) {
     for (BlockDTO blockDTO : teamDTO.blocks()) {
       for (Block b : tower) {
         if (b.getUUID() == blockDTO.uuid()) {
-          Vector2 serverPos = new Vector2(blockDTO.x(), blockDTO.y());
+          Vector2 serverPos = resolvePosition(blockDTO.x(), blockDTO.y(), ennemy);
           if (b.body.getPosition().dst(serverPos) > RECONCILIATION_THRESHOLD) {
             b.body.setTransform(serverPos, blockDTO.angle());
             b.updateSprite();
@@ -276,7 +281,7 @@ public class Team {
     }
 
     if (king != null) {
-      Vector2 serverKingPos = new Vector2(teamDTO.king().x(), teamDTO.king().y());
+      Vector2 serverKingPos = resolvePosition(teamDTO.king().x(), teamDTO.king().y(), ennemy);
       if (king.body.getPosition().dst(serverKingPos) > RECONCILIATION_THRESHOLD) {
         king.body.setTransform(serverKingPos, 0);
       }
@@ -309,5 +314,11 @@ public class Team {
     }
 
     return new TeamDTO(user, blockDTOs, robotDTOs, king.getDTO());
+  }
+
+  /** Convertit une position reçue du serveur en position locale, en appliquant le miroir si nécessaire. */
+  private Vector2 resolvePosition(float x, float y, boolean ennemy) {
+    float resolvedX = ennemy ? (arenaWidth - x) : x;
+    return new Vector2(resolvedX, y);
   }
 }

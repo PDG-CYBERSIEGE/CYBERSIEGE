@@ -41,6 +41,7 @@ public class Block extends Entity {
   private Rectangle buildZone; // zone autorisée pour ce bloc pendant la phase construction
 
   private Vector2 savedPosition;
+
   private float savedAngle;
   private int length;
 
@@ -168,6 +169,7 @@ public class Block extends Entity {
       body.setGravityScale(1f);
     } else {
       body.setLinearVelocity(0, 0);
+      body.setAngularVelocity(0);
       body.setType(BodyDef.BodyType.KinematicBody);
     }
   }

@@ -86,6 +86,7 @@ public class FightScreen implements Screen {
   private Team ennemyTeam;
 
   private String username;
+  private String ennemyUser;
 
   // list of robotbutton
   private ArrayList<RobotChoiceButton> robotsBtn = new ArrayList<>();
@@ -133,10 +134,8 @@ public class FightScreen implements Screen {
   private boolean isValidated = false;
 
   public FightScreen(Main game, String ownPlayerName, String opponentPlayerName) {
-    this(game, MainMenuScreen.createPlacedTeam(), MainMenuScreen.createPlacedTeam());
-  }
-
-  public FightScreen(Main game, TeamDTO onwTeamDTO, TeamDTO ennemyTeamDTO) {
+    username = ownPlayerName;
+    ennemyUser = opponentPlayerName;
     this.game = game;
 
     skin = new Skin(Gdx.files.internal("futuristic_ui/uiskin.json"));
@@ -220,7 +219,7 @@ public class FightScreen implements Screen {
           @Override
           public void clicked(InputEvent event, float x, float y) {
             if (verifyButton.isActivable()) {
-              game.getMainMenuScreen().getGameWebSocket().send(GameMessages.buildValidate(ownTeam.getDTO()));
+              verify();
             }
           }
         });
@@ -552,13 +551,13 @@ public class FightScreen implements Screen {
   }
 
   public void receiveAvailableComponent(GameMessages.AvailableComponents availableComponents) {
-    ownTeam = new Team(game, availableComponents, world, itemStage, ALLYCANONSPAWN);
+    ownTeam = new Team(username, game, availableComponents, world, itemStage, ALLYCANONSPAWN, ARENA_WIDTH);
     for (RobotChoiceButton btn : this.ownTeam.setupChoiceButton()) {
       stage.addActor(btn);
       this.robotsBtn.add(btn);
     }
 
-    ennemyTeam = new Team(game, availableComponents, world, itemStage, ENNEMYCANONSPAWN);
+    ennemyTeam = new Team(ennemyUser, game, availableComponents, world, itemStage, ENNEMYCANONSPAWN, ARENA_WIDTH);
     initialisePhase1();
   }
 
@@ -572,9 +571,9 @@ public class FightScreen implements Screen {
   public void receiveTeamState(GameMessages.Team team) {
      if (currentPhase == GamePhase.BUILD){
        if (Objects.equals(team.team.name(), ownTeam.user)){
-         ownTeam.setupToDate(team.team);
+         ownTeam.setupToDate(team.team, false);
        } else {
-         ennemyTeam.setupToDate(team.team);
+         ennemyTeam.setupToDate(team.team, true);
        }
 
        if (ownTeam.isReceived() && ennemyTeam.isReceived() && isValidated) {
@@ -583,14 +582,21 @@ public class FightScreen implements Screen {
 
      } else {
        if (Objects.equals(team.team.name(), ownTeam.user)){
-         ownTeam.checkchanges(team.team);
+         ownTeam.checkchanges(team.team, false);
        } else {
-         ennemyTeam.checkchanges(team.team);
+         ennemyTeam.checkchanges(team.team, true);
        }
      }
   }
 
   public void receiveEnemyFire(GameMessages.Fire fire) {
     ennemyTeam.canon.sendRobot(ennemyTeam.getRobot(fire.robot), fire.power, fire.angle);
+  }
+
+  private void verify(){
+    if (!isValidated){
+      game.getMainMenuScreen().getGameWebSocket().send(GameMessages.buildValidate(ownTeam.getDTO()));
+      isValidated = true;
+    }
   }
 }
