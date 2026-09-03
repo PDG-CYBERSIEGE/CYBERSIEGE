@@ -12,7 +12,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.scenes.scene2d.Stage;import pdg.game.DTO.KingDTO;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import pdg.game.DTO.KingDTO;
 
 public class King extends Entity {
 
@@ -123,6 +124,6 @@ public class King extends Entity {
 
   public KingDTO getDTO() {
     return new KingDTO(
-      "", body.getPosition().x - width / 2f, body.getPosition().y - height / 2f, health, mass);
+        "", body.getPosition().x - width / 2f, body.getPosition().y - height / 2f, health, mass);
   }
 }

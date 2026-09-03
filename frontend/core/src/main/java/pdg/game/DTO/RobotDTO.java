@@ -17,7 +17,9 @@ public class RobotDTO {
     this.cooldown = cooldown;
   }
 
-  public int id(){ return id;}
+  public int id() {
+    return id;
+  }
 
   public String sprite() {
     return sprite;

@@ -31,8 +31,8 @@ public class GravityButton extends TextButton {
         });
   }
 
-  private void onClick(){
-    if (!validated){
+  private void onClick() {
+    if (!validated) {
       gravityOff = !gravityOff;
       updateVisual();
       team.changeGravity();

@@ -1,6 +1,6 @@
 package pdg.game.Entity;
 
-import com.badlogic.gdx.Game;import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -29,8 +29,8 @@ public class Team {
 
   private float arenaWidth;
 
-  private static final float RECONCILIATION_THRESHOLD = 0.5f; // en mètres, à ajuster selon la tolérance voulue
-
+  private static final float RECONCILIATION_THRESHOLD =
+      0.5f; // en mètres, à ajuster selon la tolérance voulue
 
   // gravity
   private boolean gravity = false;
@@ -44,7 +44,14 @@ public class Team {
   private Stage itemStage;
   private boolean receivedState;
 
-  public Team(String user, Main game, GameMessages.AvailableComponents availableComponents, World world, Stage itemStage, Vector2 canonPos, float arenaWidth) {
+  public Team(
+      String user,
+      Main game,
+      GameMessages.AvailableComponents availableComponents,
+      World world,
+      Stage itemStage,
+      Vector2 canonPos,
+      float arenaWidth) {
     canon = new Canon(game, world, itemStage, canonPos, new Texture("launcher/launcher.png"));
     this.user = user;
     this.world = world;
@@ -153,7 +160,15 @@ public class Team {
       Body body = createDynamicBody(rect, robotDTO.mass());
       Texture texture = new Texture(robotDTO.sprite());
       Robot robot =
-          new Robot(texture, robotDTO.id(), robotDTO.health(), body, robotDTO.mass(), robotDTO.cooldown(), 1, 1);
+          new Robot(
+              texture,
+              robotDTO.id(),
+              robotDTO.health(),
+              body,
+              robotDTO.mass(),
+              robotDTO.cooldown(),
+              1,
+              1);
       body.setUserData(robot);
       this.robots.add(robot);
     }
@@ -171,8 +186,6 @@ public class Team {
 
     PolygonShape shape = new PolygonShape();
     shape.setAsBox(halfWidth, halfHeight);
-
-
 
     FixtureDef fdef = new FixtureDef();
     fdef.shape = shape;
@@ -252,15 +265,15 @@ public class Team {
     return receivedState;
   }
 
-  private void received(){
+  private void received() {
     receivedState = true;
   }
 
-  public void setupToDate(TeamDTO teamDTO, boolean ennemy){
+  public void setupToDate(TeamDTO teamDTO, boolean ennemy) {
 
-    for (BlockDTO blockDTO : teamDTO.blocks()){
+    for (BlockDTO blockDTO : teamDTO.blocks()) {
       for (Block b : tower) {
-        if (b.getUUID() == blockDTO.uuid()){
+        if (b.getUUID() == blockDTO.uuid()) {
           Vector2 pos = resolvePosition(blockDTO.x(), blockDTO.y(), ennemy);
           b.body.setTransform(pos, blockDTO.angle());
           b.updateSprite();
@@ -317,7 +330,10 @@ public class Team {
     return new TeamDTO(user, blockDTOs, robotDTOs, king.getDTO());
   }
 
-  /** Convertit une position reçue du serveur en position locale, en appliquant le miroir si nécessaire. */
+  /**
+   * Convertit une position reçue du serveur en position locale, en appliquant le miroir si
+   * nécessaire.
+   */
   private Vector2 resolvePosition(float x, float y, boolean ennemy) {
     float resolvedX = ennemy ? (arenaWidth - x) : x;
     return new Vector2(resolvedX, y);
@@ -336,10 +352,9 @@ public class Team {
       king = null;
     }
 
-    for (Robot r : robots){
+    for (Robot r : robots) {
       r.body.setTransform(-100, -100, 0);
     }
-
 
     // Réinitialise l'état de réception pour la prochaine phase de construction
     receivedState = false;

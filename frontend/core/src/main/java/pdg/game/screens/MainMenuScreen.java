@@ -1,7 +1,5 @@
 package pdg.game.screens;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -13,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
+import java.util.ArrayList;
 import pdg.game.DTO.BlockDTO;
 import pdg.game.DTO.KingDTO;
 import pdg.game.DTO.RobotDTO;
@@ -59,10 +57,7 @@ public class MainMenuScreen implements Screen {
    * @param game the main game instance for screen transitions
    * @param backgroundStage the stage containing the background that persists across screens
    */
-  public MainMenuScreen(
-      final Main game,
-      Stage backgroundStage,
-      GameWebSocket gameWebSocket) {
+  public MainMenuScreen(final Main game, Stage backgroundStage, GameWebSocket gameWebSocket) {
     this.game = game;
     this.backgroundStage = backgroundStage;
     this.gameWebSocket = gameWebSocket;
@@ -210,7 +205,7 @@ public class MainMenuScreen implements Screen {
 
   public void connectToMatch() {
     if (isConnecting || button.isDisabled()) {
-        return;
+      return;
     }
 
     button.getLabel().setText("searching...");
@@ -244,7 +239,7 @@ public class MainMenuScreen implements Screen {
                   Start start = GameMessages.parseStart(message);
                   isConnecting = false;
                   fightScreen = new FightScreen(game, username, start.opponent);
-        
+
                   game.setScreen(fightScreen);
                 }
                 break;
@@ -301,7 +296,7 @@ public class MainMenuScreen implements Screen {
             button.setStyle(skin.get("green_large", TextButton.TextButtonStyle.class));
             button.setDisabled(false);
 
-            if (loadOnDisconnect){
+            if (loadOnDisconnect) {
               game.setScreen(game.getMainMenuScreen());
             }
 
@@ -309,7 +304,6 @@ public class MainMenuScreen implements Screen {
               Gdx.app.log(TAG, "Disconnected from matchmaking, will attempt to reconnect...");
               connectToMatch();
             }
-            
           }
 
           @Override
@@ -327,8 +321,8 @@ public class MainMenuScreen implements Screen {
 
   public static TeamDTO createPlacedTeam() {
     ArrayList<BlockDTO> blocks = new ArrayList<>();
-    blocks.add(new BlockDTO("HEAVY", 1,100, 10, true, 5, 1, 0,3));
-    blocks.add(new BlockDTO("HEAVY", 1,100, 10, true, 5, 2, 0,3));
+    blocks.add(new BlockDTO("HEAVY", 1, 100, 10, true, 5, 1, 0, 3));
+    blocks.add(new BlockDTO("HEAVY", 1, 100, 10, true, 5, 2, 0, 3));
 
     ArrayList<RobotDTO> robots = new ArrayList<>();
     robots.add(new RobotDTO(1, "throwables/base.png", 100, 10, 0));
@@ -356,6 +350,7 @@ public class MainMenuScreen implements Screen {
   public void LoadOnDisconnect(boolean load) {
     loadOnDisconnect = load;
   }
+
   public void reconnectOnDisconnect(boolean reconnect) {
     reconnectOnDisconnect = reconnect;
   }

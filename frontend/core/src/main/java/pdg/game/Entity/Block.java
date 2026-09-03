@@ -15,7 +15,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
-import pdg.game.DTO.BlockDTO;import pdg.game.blocks.BlockSprite;
+import pdg.game.DTO.BlockDTO;
+import pdg.game.blocks.BlockSprite;
 import pdg.game.blocks.HeavyBlockSprite;
 import pdg.game.blocks.LightBlockSprite;
 import pdg.game.blocks.MediumBlockSprite;
@@ -70,25 +71,24 @@ public class Block extends Entity {
     this.length = length;
 
     switch (type) {
-      case "HEAVY" :
-
+      case "HEAVY":
         blockSprite = new HeavyBlockSprite(length);
         spawnPosition = HEAVYSPAWN;
-      break;
+        break;
 
-      case "MEDIUM" :
+      case "MEDIUM":
         blockSprite = new MediumBlockSprite(length);
         spawnPosition = MEDIUMSPAWN;
-      break;
-      case "LIGHT" :
+        break;
+      case "LIGHT":
         blockSprite = new LightBlockSprite(length);
         spawnPosition = LIGHTSPAWN;
-      break;
-      default :
+        break;
+      default:
         Gdx.app.error("Block", "Type de bloc inconnu ou null : '" + type + "'");
         blockSprite = null;
         spawnPosition = null;
-      break;
+        break;
     }
 
     if (blockSprite == null) return; // évite le NPE si le type ne matche rien
@@ -136,10 +136,9 @@ public class Block extends Entity {
     return blockSprite;
   }
 
-  //nécessaire vu qu'on utilise une table et non un sprite comme les entité
+  // nécessaire vu qu'on utilise une table et non un sprite comme les entité
   @Override
-  public void draw(SpriteBatch batch) {
-  }
+  public void draw(SpriteBatch batch) {}
 
   /**
    * * Détruit le bloc ainsi que son corps physique Box2D. * * @param world monde Box2D contenant le
@@ -291,20 +290,20 @@ public class Block extends Entity {
     body.setTransform(spawnPosition, 0);
   }
 
-  public long getUUID(){
+  public long getUUID() {
     return UUID;
   }
 
   public BlockDTO getDTO() {
     return new BlockDTO(
-      type,
-      UUID,
-      health,
-      mass,
-      true,
-      body.getPosition().x - width / 2f,
-      body.getPosition().y - height / 2f,
-      savedAngle,
-      length);
+        type,
+        UUID,
+        health,
+        mass,
+        true,
+        body.getPosition().x - width / 2f,
+        body.getPosition().y - height / 2f,
+        savedAngle,
+        length);
   }
 }

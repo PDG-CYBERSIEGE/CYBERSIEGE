@@ -13,8 +13,16 @@ public class BlockDTO {
   private final float angle;
   private final int length;
 
-
-  public BlockDTO(String type, long uuid, int health, int mass, boolean alive, float x, float y, float angle, int length) {
+  public BlockDTO(
+      String type,
+      long uuid,
+      int health,
+      int mass,
+      boolean alive,
+      float x,
+      float y,
+      float angle,
+      int length) {
     this.type = type;
     this.uuid = uuid;
     this.health = health;

@@ -80,7 +80,7 @@ public class Robot extends Entity {
         false);
   }
 
-  public int getId(){
+  public int getId() {
     return id;
   }
 

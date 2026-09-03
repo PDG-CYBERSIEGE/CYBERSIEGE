@@ -16,7 +16,7 @@ public class GameContactListener implements ContactListener {
 
   @Override
   public void beginContact(Contact contact) {
-    if (screen.currentPhase != FightScreen.GamePhase.BUILD){
+    if (screen.currentPhase != FightScreen.GamePhase.BUILD) {
       Fixture fixtureA = contact.getFixtureA();
       Fixture fixtureB = contact.getFixtureB();
 

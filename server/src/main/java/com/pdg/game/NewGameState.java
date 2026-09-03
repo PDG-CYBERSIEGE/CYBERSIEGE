@@ -51,7 +51,11 @@ public class NewGameState {
     Team team = (player == 1) ? arenaSimulation.getTeam1() : arenaSimulation.getTeam2();
     Team enemyTeam = (player == 1) ? arenaSimulation.getTeam2() : arenaSimulation.getTeam1();
 
-    Robot robot = team.robots.stream().filter(r -> r.getDTO().id() == robotIndex).findFirst().orElseThrow(() -> new IllegalArgumentException("Robot not found: " + robotIndex));
+    Robot robot =
+        team.robots.stream()
+            .filter(r -> r.getDTO().id() == robotIndex)
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Robot not found: " + robotIndex));
     team.canon.fire(power, angle);
 
     while (arenaSimulation.isMoving(team) || arenaSimulation.isMoving(enemyTeam)) {

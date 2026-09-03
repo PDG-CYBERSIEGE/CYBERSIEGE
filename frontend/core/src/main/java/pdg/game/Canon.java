@@ -1,6 +1,6 @@
 package pdg.game;
 
-import com.badlogic.gdx.Game;import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -79,7 +79,8 @@ public class Canon {
 
   private InputProcessor cachedInputProcessor;
 
-  public Canon(Main game, World world, Stage itemStage, Vector2 canonPosition, Texture fireSpriteSheet) {
+  public Canon(
+      Main game, World world, Stage itemStage, Vector2 canonPosition, Texture fireSpriteSheet) {
 
     this.game = game;
     this.world = world;
@@ -159,10 +160,12 @@ public class Canon {
     return cachedInputProcessor;
   }
 
-  private void onTouchUp(){
+  private void onTouchUp() {
     isDragging = false;
     isAiming = false;
-    game.getMainMenuScreen().getGameWebSocket().send(GameMessages.fire(power, angle, loadedRobot.getId()));
+    game.getMainMenuScreen()
+        .getGameWebSocket()
+        .send(GameMessages.fire(power, angle, loadedRobot.getId()));
     fire();
   }
 
@@ -180,7 +183,7 @@ public class Canon {
     isFiring = true;
     fireStateTime = 0f;
 
-    if (btn != null){
+    if (btn != null) {
       btn.unload();
       btn = null;
     }

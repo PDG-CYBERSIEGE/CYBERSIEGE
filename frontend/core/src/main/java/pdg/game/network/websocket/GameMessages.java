@@ -303,7 +303,7 @@ public final class GameMessages {
       return null;
     }
     return new KingDTO(
-      value.getString("sprite", ""),
+        value.getString("sprite", ""),
         value.getInt("x", 0),
         value.getInt("y", 0),
         value.getInt("health", 0),

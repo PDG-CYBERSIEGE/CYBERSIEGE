@@ -1,8 +1,12 @@
 package pdg.game.screens;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
+import static pdg.game.utils.StaticValues.ALLYCANONSPAWN;
+import static pdg.game.utils.StaticValues.ENNEMYCANONSPAWN;
+import static pdg.game.utils.StaticValues.OWNBUILDINGZONE;
+import static pdg.game.utils.StaticValues.RECTHEIGHT;
+import static pdg.game.utils.StaticValues.RECTWIDTH;
+import static pdg.game.utils.StaticValues.RECTX;
+import static pdg.game.utils.StaticValues.RECTY;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -31,8 +35,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
-import pdg.game.DTO.TeamDTO;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Objects;
 import pdg.game.Entity.Team;
 import pdg.game.GameContactListener;
 import pdg.game.Main;
@@ -45,13 +50,6 @@ import pdg.game.ui.RobotChoiceButton;
 import pdg.game.ui.Score;
 import pdg.game.ui.VerifyButton;
 import pdg.game.utils.StaticValues;
-import static pdg.game.utils.StaticValues.ALLYCANONSPAWN;
-import static pdg.game.utils.StaticValues.ENNEMYCANONSPAWN;
-import static pdg.game.utils.StaticValues.OWNBUILDINGZONE;
-import static pdg.game.utils.StaticValues.RECTHEIGHT;
-import static pdg.game.utils.StaticValues.RECTWIDTH;
-import static pdg.game.utils.StaticValues.RECTX;
-import static pdg.game.utils.StaticValues.RECTY;
 
 public class FightScreen implements Screen {
 
@@ -114,7 +112,6 @@ public class FightScreen implements Screen {
   private static final float PHYSICS_TIMESTEP = 1f / 60f; // 60 Hz, standard Box2D
   private float physicsAccumulator = 0f;
 
-
   // fin de partie
   private TextButton play_again;
   private TextButton main_menu;
@@ -122,7 +119,6 @@ public class FightScreen implements Screen {
   private Frame frame;
   int scoreP1 = 0;
   int scoreP2 = 0;
-
 
   public enum GamePhase {
     BUILD,
@@ -170,15 +166,12 @@ public class FightScreen implements Screen {
     itemStage.addActor(buildZonePlaceholder);
 
     // ui de comptage de points
-    score =
-      new Score(
-        username, ennemyUser, 2);
+    score = new Score(username, ennemyUser, 2);
 
     verifyButton = new VerifyButton("Verifier", skin);
     heavyCountLabel = new Label("", skin);
     mediumCountLabel = new Label("", skin);
     lightCountLabel = new Label("", skin);
-
 
     createWorldBorders();
   }
@@ -191,7 +184,6 @@ public class FightScreen implements Screen {
     // =========================
     // STAGE
     // =========================
-
 
     // =========================
     // SKIN
@@ -223,15 +215,15 @@ public class FightScreen implements Screen {
           }
         });
     stage.addActor(verifyButton);
-
-
-
   }
 
   @Override
   public void render(float delta) {
     ScreenUtils.clear(0, 0, 0, 1); // clear l'écran pour ne rien garder de la derniere frame
-    if (isVisible && ownTeam != null && ennemyTeam != null) { // désactive ecran si fenetre pas assez grand, pas obliger de garder.$
+    if (isVisible
+        && ownTeam != null
+        && ennemyTeam
+            != null) { // désactive ecran si fenetre pas assez grand, pas obliger de garder.$
 
       checkEnd(); // faut regarder comment on traite le nouveau round.
 
@@ -342,7 +334,7 @@ public class FightScreen implements Screen {
   private void checkEnd() {
     if (gameEnded) {
 
-      if( frame != null) return;
+      if (frame != null) return;
 
       play_again = new TextButton("play again", skin, "yellow");
       play_again.setSize(150, 75);
@@ -351,7 +343,7 @@ public class FightScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
 
-              if(play_again.isDisabled()) return;
+              if (play_again.isDisabled()) return;
 
               play_again.setDisabled(true);
               main_menu.setDisabled(true);
@@ -365,7 +357,6 @@ public class FightScreen implements Screen {
             }
           });
 
-
       main_menu = new TextButton("main menu", skin, "green");
       main_menu.setSize(150, 75);
       main_menu.addListener(
@@ -373,7 +364,7 @@ public class FightScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
 
-              if(main_menu.isDisabled()) return;
+              if (main_menu.isDisabled()) return;
 
               play_again.setDisabled(true);
               main_menu.setDisabled(true);
@@ -386,8 +377,8 @@ public class FightScreen implements Screen {
 
       frame = new Frame(600, 600, "Connection", play_again, main_menu);
       frame.setPosition(
-      stage.getWidth() / 2f - frame.getWidth() / 2f,
-      stage.getHeight() / 2f - frame.getHeight() / 2f);
+          stage.getWidth() / 2f - frame.getWidth() / 2f,
+          stage.getHeight() / 2f - frame.getHeight() / 2f);
 
       frame.getContent().add(endGameLabel).padBottom(100).center().fillX().row();
 
@@ -487,7 +478,6 @@ public class FightScreen implements Screen {
     ownTeam.resetGravity();
     ennemyTeam.resetGravity();
 
-
     if (scoreP1 == 2 || scoreP2 == 2) {
       gameEnded = true;
     }
@@ -497,7 +487,6 @@ public class FightScreen implements Screen {
     ownTeam.restoreHealth();
     ennemyTeam.restoreHealth();
     Gdx.app.log("Screen", "fin initiate");
-
   }
 
   private void transitionToPhase2() {
@@ -505,7 +494,6 @@ public class FightScreen implements Screen {
 
     // setup both towers
     ennemyTeam.changeGravity();
-
 
     // restore potential health issues
     ennemyTeam.restoreHealth();
@@ -538,10 +526,16 @@ public class FightScreen implements Screen {
   }
 
   private void createGroundSprite() {
-    int length = Math.round(ARENA_WIDTH + 16); // un segment par unité de largeur + 8 pour combler a gauche(32 + 8segments)
+    int length =
+        Math.round(
+            ARENA_WIDTH
+                + 16); // un segment par unité de largeur + 8 pour combler a gauche(32 + 8segments)
     HeavyBlockSprite groundSprite = new HeavyBlockSprite(length);
     groundSprite.resize(2); // recalcule la taille à length x 1, cohérent avec le nombre de segments
-    groundSprite.setPosition(-16, 0); // aligné avec le body statique du sol, décalé a gauche pour pas voir le vide pendant la phase de construction
+    groundSprite.setPosition(
+        -16,
+        0); // aligné avec le body statique du sol, décalé a gauche pour pas voir le vide pendant la
+    // phase de construction
     itemStage.addActor(groundSprite);
   }
 
@@ -558,23 +552,31 @@ public class FightScreen implements Screen {
     return image;
   }
 
-  public void receiveStart(GameMessages.Start start) {
+  public void receiveStart(GameMessages.Start start) {}
 
-  }
-
-  public void receiveWin(){
+  public void receiveWin() {
     scoreP1 = 3;
   }
 
   public void receiveAvailableComponent(GameMessages.AvailableComponents availableComponents) {
-    if (currentPhase == GamePhase.BUILD){
-      ownTeam = new Team(username, game, availableComponents, world, itemStage, ALLYCANONSPAWN, ARENA_WIDTH);
+    if (currentPhase == GamePhase.BUILD) {
+      ownTeam =
+          new Team(
+              username, game, availableComponents, world, itemStage, ALLYCANONSPAWN, ARENA_WIDTH);
       for (RobotChoiceButton btn : this.ownTeam.setupChoiceButton()) {
         stage.addActor(btn);
         this.robotsBtn.add(btn);
       }
       Gdx.app.log("Screen", "fin initiate");
-      ennemyTeam = new Team(ennemyUser, game, availableComponents, world, itemStage, ENNEMYCANONSPAWN, ARENA_WIDTH);
+      ennemyTeam =
+          new Team(
+              ennemyUser,
+              game,
+              availableComponents,
+              world,
+              itemStage,
+              ENNEMYCANONSPAWN,
+              ARENA_WIDTH);
 
     } else {
       currentPhase = GamePhase.BUILD;
@@ -586,40 +588,42 @@ public class FightScreen implements Screen {
   }
 
   public void receiveBuildValidate(GameMessages.BuildValidate buildValidate) {
-    if (buildValidate.valid){
+    if (buildValidate.valid) {
       gravityButton.validated();
       isValidated = true;
     }
   }
 
   public void receiveTeamState(GameMessages.Team team) {
-     if (currentPhase == GamePhase.BUILD){
-       if (Objects.equals(team.team.name(), ownTeam.user)){
-         ownTeam.setupToDate(team.team, false);
-       } else {
-         ennemyTeam.setupToDate(team.team, true);
-       }
+    if (currentPhase == GamePhase.BUILD) {
+      if (Objects.equals(team.team.name(), ownTeam.user)) {
+        ownTeam.setupToDate(team.team, false);
+      } else {
+        ennemyTeam.setupToDate(team.team, true);
+      }
 
-       if (ownTeam.isReceived() && ennemyTeam.isReceived()) {
-         transitionToPhase2();
-       }
+      if (ownTeam.isReceived() && ennemyTeam.isReceived()) {
+        transitionToPhase2();
+      }
 
-     } else {
-       if (Objects.equals(team.team.name(), ownTeam.user)){
-         ownTeam.checkchanges(team.team, false);
-       } else {
-         ennemyTeam.checkchanges(team.team, true);
-       }
-     }
+    } else {
+      if (Objects.equals(team.team.name(), ownTeam.user)) {
+        ownTeam.checkchanges(team.team, false);
+      } else {
+        ennemyTeam.checkchanges(team.team, true);
+      }
+    }
   }
 
   public void receiveEnemyFire(GameMessages.Fire fire) {
     ennemyTeam.canon.sendRobot(ennemyTeam.getRobot(fire.robot), fire.power, fire.angle);
   }
 
-  private void verify(){
-    if (!isValidated){
-      game.getMainMenuScreen().getGameWebSocket().send(GameMessages.buildValidate(ownTeam.getDTO()));
+  private void verify() {
+    if (!isValidated) {
+      game.getMainMenuScreen()
+          .getGameWebSocket()
+          .send(GameMessages.buildValidate(ownTeam.getDTO()));
       isValidated = true;
     }
   }
