@@ -1,6 +1,6 @@
 package pdg.game.Entity;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.Game;import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -16,6 +16,7 @@ import pdg.game.DTO.BlockDTO;
 import pdg.game.DTO.KingDTO;
 import pdg.game.DTO.RobotDTO;
 import pdg.game.DTO.TeamDTO;
+import pdg.game.Main;
 import pdg.game.network.websocket.GameMessages;
 import pdg.game.ui.RobotChoiceButton;
 
@@ -41,8 +42,8 @@ public class Team {
   private Stage itemStage;
   private boolean receivedState;
 
-  public Team(GameMessages.AvailableComponents availableComponents, World world, Stage itemStage, Vector2 canonPos) {
-    canon = new Canon(world, itemStage, canonPos, new Texture("launcher/launcher.png"));
+  public Team(Main game, GameMessages.AvailableComponents availableComponents, World world, Stage itemStage, Vector2 canonPos) {
+    canon = new Canon(game, world, itemStage, canonPos, new Texture("launcher/launcher.png"));
     this.world = world;
     this.itemStage = itemStage;
     this.receivedState = false;

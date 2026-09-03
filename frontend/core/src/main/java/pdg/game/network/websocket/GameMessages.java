@@ -181,7 +181,7 @@ public final class GameMessages {
    * @param robot robot used for the attack
    * @return JSON message
    */
-  public static String fire(int power, float angle, int robot) {
+  public static String fire(float power, float angle, int robot) {
     StringBuilder sb = new StringBuilder();
     sb.append("{\"type\":\"FIRE\",\"power\":")
         .append(power)

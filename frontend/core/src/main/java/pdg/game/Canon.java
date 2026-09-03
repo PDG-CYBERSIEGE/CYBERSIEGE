@@ -1,6 +1,6 @@
 package pdg.game;
 
-import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.Game;import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import pdg.game.Entity.Robot;
+import pdg.game.network.websocket.GameMessages;
 import pdg.game.ui.RobotChoiceButton;
 
 /**
@@ -54,6 +55,8 @@ public class Canon {
   private static final float SPRITE_BASE_ANGLE_OFFSET =
       90f; // le sprite pointe vers le haut à 0° de rotation
 
+  private final Main game;
+
   private final World world;
   private final Stage itemStage; // uniquement pour unproject() les touch input
   private final Vector2
@@ -76,8 +79,9 @@ public class Canon {
 
   private InputProcessor cachedInputProcessor;
 
-  public Canon(World world, Stage itemStage, Vector2 canonPosition, Texture fireSpriteSheet) {
+  public Canon(Main game, World world, Stage itemStage, Vector2 canonPosition, Texture fireSpriteSheet) {
 
+    this.game = game;
     this.world = world;
     this.itemStage = itemStage;
     this.canonPosition = canonPosition;
@@ -147,14 +151,19 @@ public class Canon {
           @Override
           public boolean touchUp(int screenX, int screenY, int pointer, int button) {
             if (!isDragging) return false;
-            isDragging = false;
-            isAiming = false;
-            fire();
+            onTouchUp();
             return true;
           }
         };
 
     return cachedInputProcessor;
+  }
+
+  private void onTouchUp(){
+    isDragging = false;
+    isAiming = false;
+    game.getMainMenuScreen().getGameWebSocket().send(GameMessages.fire(power, angle, loadedRobot.getId()));
+    fire();
   }
 
   private void fire() {

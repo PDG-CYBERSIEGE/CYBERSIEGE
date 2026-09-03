@@ -220,8 +220,6 @@ public class FightScreen implements Screen {
           @Override
           public void clicked(InputEvent event, float x, float y) {
             if (verifyButton.isActivable()) {
-              //TODO envoyer un message au serveur pour savoir si c'est valide
-
               game.getMainMenuScreen().getGameWebSocket().send(GameMessages.buildValidate(ownTeam.getDTO()));
             }
           }
@@ -554,13 +552,13 @@ public class FightScreen implements Screen {
   }
 
   public void receiveAvailableComponent(GameMessages.AvailableComponents availableComponents) {
-    ownTeam = new Team(availableComponents, world, itemStage, ALLYCANONSPAWN);
+    ownTeam = new Team(game, availableComponents, world, itemStage, ALLYCANONSPAWN);
     for (RobotChoiceButton btn : this.ownTeam.setupChoiceButton()) {
       stage.addActor(btn);
       this.robotsBtn.add(btn);
     }
 
-    ennemyTeam = new Team(availableComponents, world, itemStage, ENNEMYCANONSPAWN);
+    ennemyTeam = new Team(game, availableComponents, world, itemStage, ENNEMYCANONSPAWN);
     initialisePhase1();
   }
 
