@@ -1,13 +1,15 @@
 package com.pdg.match;
 
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+
 import com.pdg.game.DTO.BlockDTO;
 import com.pdg.game.DTO.KingDTO;
 import com.pdg.game.DTO.RobotDTO;
 import com.pdg.game.DTO.TeamDTO;
 import com.pdg.game.NewGameState;
-import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Represents a match between two players.
@@ -416,32 +418,43 @@ public class Match {
    */
   private void generateAvailableComponents() {
 
-    availableBlocks = new ArrayList<>();
-    availableRobots = new ArrayList<>();
+    availableBlocks = new ArrayList<>(); 
+    availableRobots = new ArrayList<>(); 
 
-    //  Blocks
-    String[] blockTypes = {"HEAVY", "MEDIUM", "LIGHT"};
-    int blocksPerType = 5;
-    int blockHealth = 100;
-    int blockMass = 10;
-    int blockLength = 50;
-    // should be base on DB
-
-    for (String type : blockTypes) {
-      for (int i = 0; i < blocksPerType; i++) {
-        availableBlocks.add(
-            new BlockDTO(
-                type,
-                nextComponentId.getAndIncrement(),
-                blockHealth,
-                blockMass,
-                true,
-                0f,
-                0f,
-                0f,
-                blockLength));
-      }
-    }
+    Random random = new Random();
+ 
+    //  Blocks 
+    String[] blockTypes = {"HEAVY", "MEDIUM", "LIGHT"}; 
+    int blocksPerType = 3; 
+    int blockHealth = 100; 
+    int blockMass = 10; 
+    int blockLength = 4; 
+    // should be base on DB 
+ 
+    for (String type : blockTypes) { 
+      blocksPerType = random.nextInt(4);
+      for (int i = 0; i < blocksPerType; i++) { 
+        blockLength = 1 + random.nextInt(4);
+        blockMass = 10 *  blockLength;
+        blockHealth = 50 * blockLength;
+        switch (type) {
+          case "HEAVY" -> blockHealth *= 3;
+          case "MEDIUM" -> blockHealth *= 2;
+          default -> {}
+        }
+        availableBlocks.add( 
+            new BlockDTO( 
+                type, 
+                nextComponentId.getAndIncrement(), 
+                blockHealth, 
+                blockMass, 
+                true, 
+                0f, 
+                0f, 
+                0f, 
+                blockLength)); 
+      } 
+    } 
 
     // Robots
     String[] robotSprites = {"throwables/base.png", "throwables/black.png", "throwables/green.png"};
