@@ -434,7 +434,7 @@ public class Match {
     for (String type : blockTypes) { 
       blocksPerType = random.nextInt(4);
       for (int i = 0; i < blocksPerType; i++) { 
-        blockLength = 2 + random.nextInt();
+        blockLength = 2 + random.nextInt(3);
         blockMass = 10 *  blockLength;
         blockHealth = 50 * blockLength;
         switch (type) {
